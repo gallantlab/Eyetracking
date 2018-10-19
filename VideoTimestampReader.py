@@ -1,6 +1,5 @@
 import numpy
-import cv2
-from EyetrackingUtilities import map
+from VideoReader import VideoReader
 
 SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0],
@@ -15,60 +14,29 @@ SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0,   0, 255, 255, 255, 255,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0]]).ravel()
 
-class VideoTimestampReader:
+class VideoTimestampReader(VideoReader):
 	"""
-	Gets video frame timestamps from raw eyetracking videos
+	Gets video frame timestamps from raw eyetracking videos.
+	See eyetracker_timestamps
 	"""
 
-	def __init__(self, videoFileName, BGR = None):
+	def __init__(self, videoFileName = None, other = None):
 		"""
 		Constructor
-		@param videoFileName:	str, video file
+		@param videoFileName:	str?, video file
+		@param other:			VideoReader?, other object to init from
 		"""
-		self.fileName = videoFileName
-		self.video = cv2.VideoCapture(videoFileName)
-		self.fps = 0
-		self.width = 0
-		self.height = 0
-		self.duration = 0		# in seconds
-		self.nFrames = 0
+		super(VideoTimestampReader, self).__init__(videoFileName, other)
+
 		templates = numpy.load('./digit-templates.npy')
 		flats = []
 		for i in range(10):
 			flats.append(templates[i, :, :].ravel())
 		self.numberTemplates = numpy.stack(flats)
 
-		self.GetVideoInfo()
-		self.time = numpy.zeros([self.nFrames, 4])  # [t x 3 (HH MM SS MS)] timestamps on the frames
-		self.frames = None		# [t x w x h] video frames; the timestamps are in red, so we keep only that channel
-		self.LoadFrames()
-
-
-	def LoadFrames(self):
-		"""
-		Loads frames to memory
-		@return:
-		"""
-		frames = []
-		success, frame = self.video.read()
-		redIndex = 2 # BGR encoding in the videos
-		while success:
-			frames.append(frame[:, :, redIndex])
-			success, frame = self.video.read()
-		self.frames = numpy.stack(frames)
-		self.frames[self.frames != 255] = 0		# binarize image
-
-
-	def GetVideoInfo(self):
-		"""
-		Gets video info
-		@return:
-		"""
-		self.width = int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
-		self.height = int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-		self.fps = self.video.get(cv2.CAP_PROP_FPS)
-		self.nFrames = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
-		self.duration = self.nFrames / self.fps  # duration in seconds
+		self.time = numpy.zeros([self.nFrames, 4])  		# [t x 3 (HH MM SS MS)] timestamps on the rawFrames
+		self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
+		self.frames[self.frames < 255] = 0					# binarize
 
 
 	def MatchDigit(self, image):
@@ -91,7 +59,7 @@ class VideoTimestampReader:
 		@return:
 		"""
 
-		frame = self.frames[frameIndex, :, :]
+		frame = self.frames[frameIndex, :, :]	# red channel
 
 		hours = int(self.MatchDigit(frame[195:207, 7:15]) * 10 + self.MatchDigit(frame[195:207, 15:23]))		# eyetracker_timestamps.im2hrs()
 		minutes = int (self.MatchDigit(frame[195:207, 35:43]) * 10 + self.MatchDigit(frame[195:207, 43:51]))	# eyetracker_timestamps.im2mins()
@@ -120,5 +88,30 @@ class VideoTimestampReader:
 		Parses timestamps from the images
 		@return:
 		"""
+		### === parallel for ===
 		for frame in range(self.nFrames):
 			self.GetTimeStampForFrame(frame)
+
+
+	def FindOnsetFrame(self, H, M, S, MS, returnDiff = False):
+		"""
+		Find the frame closest to a given time
+		@param H: 			int, hour
+		@param M: 			int, minute
+		@param S: 			int, seconds
+		@param MS: 			int, milliseconds
+		@param returnDiff:	bool, return also the difference from the desired times on this frame?
+		@return: closest frame, int, and time difference between that frame and this time, in ms, int
+		"""
+
+		time = self.time[:, 0] * 3600000 + self.time[:, 1] * 60000 + self.time[:, 2] * 1000 + self.time[:, 3]	# in ms
+		desiredTime = H * 3600000 + M * 60000 + S * 1000 + MS
+
+		diffFromDesired = time - desiredTime
+		frame = numpy.argmin(numpy.abs(diffFromDesired))
+		diff = diffFromDesired[frame]
+
+		if returnDiff:
+			return frame, diff
+		else:
+			return frame
