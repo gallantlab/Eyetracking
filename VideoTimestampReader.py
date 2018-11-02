@@ -35,7 +35,7 @@ class VideoTimestampReader(VideoReader):
 		self.numberTemplates = numpy.stack(flats)
 
 		self.time = numpy.zeros([self.nFrames, 4])  		# [t x 3 (HH MM SS MS)] timestamps on the rawFrames
-		self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
+		self.frames = self.rawFrames.copy()					# red channel only
 		self.frames[self.frames < 255] = 0					# binarize
 
 
@@ -66,7 +66,7 @@ class VideoTimestampReader(VideoReader):
 
 		# eyetracker_timestamps.im2seconds() and eyetracker_timestamps.im2secs()
 		c = frame[195:207, 103:111]
-		if numpy.corrcoef(c.ravel(), SECONDS_SYMBOL)[0, 1] > 0.99:
+		if numpy.corrcoef(c.ravel(), SECONDS_SYMBOL)[0, 1] > 0.95:
 			# shift left for miliseconds
 			a, b, c = (frame[195:207, 87 - 8:95 - 8], frame[195:207, 95 - 8:103 - 8], frame[195:207, 103 - 8:111 - 8])
 

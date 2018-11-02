@@ -81,13 +81,15 @@ class VideoReader(object):
 			rawFrameData = pipe.communicate(self.video)[0]
 
 			frames = numpy.fromstring(rawFrameData, dtype = numpy.uint8)
-			self.frames = frames.reshape(-1, self.width, self.height, 3)
+			self.rawFrames = frames.reshape(-1, self.width, self.height, 3)
 			try:
 				pipe.kill()
 			except OSError:
 				pass
 			del pipe
 			del self.video
+
+		self.rawFrames = self.rawFrames[:, :, :, 2]		# only keep red channel since that's where the time info is and everything else is is b/w
 
 
 	def GetVideoInfo(self):
@@ -133,3 +135,16 @@ class VideoReader(object):
 			self.nFrames = metadata[4]
 			self.fps = int(1 / (metadata[0] * 1000000))
 			self.duration = metadata[0] * metadata[4] / 1000000.0
+
+
+	def WriteVideo(self, outFileName, frames = None):
+		"""
+		Writes a video out to disk
+		@param outFileName:
+		@param frames:
+		@return:
+		"""
+
+		if frames is None:
+			frames = self.frames
+
