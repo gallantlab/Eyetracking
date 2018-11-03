@@ -21,6 +21,7 @@ class VideoReader(object):
 
 		self.rawFrames = None		# [t x w x h x 3] BGR video rawFrames
 		self.frames = None			# [t x w x h] grayscale frames
+		self.frame = None
 
 		self.video = None			# object for reading files
 
@@ -89,7 +90,7 @@ class VideoReader(object):
 			del pipe
 			del self.video
 
-		self.rawFrames = self.rawFrames[:, :, :, 2]		# only keep red channel since that's where the time info is and everything else is is b/w
+		# self.rawFrames = self.rawFrames[:, :, :, 2]		# only keep red channel since that's where the time info is and everything else is is b/w
 
 
 	def GetVideoInfo(self):

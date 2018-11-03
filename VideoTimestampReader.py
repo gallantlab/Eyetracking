@@ -35,8 +35,8 @@ class VideoTimestampReader(VideoReader):
 		self.numberTemplates = numpy.stack(flats)
 
 		self.time = numpy.zeros([self.nFrames, 4])  		# [t x 3 (HH MM SS MS)] timestamps on the rawFrames
-		self.frames = self.rawFrames.copy()					# red channel only
-		self.frames[self.frames < 255] = 0					# binarize
+		# self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
+		# self.frames[self.frames < 255] = 0					# binarize
 
 
 	def MatchDigit(self, image):
@@ -58,25 +58,28 @@ class VideoTimestampReader(VideoReader):
 		@param frameIndex: 	int, frame to parse
 		@return:
 		"""
+		if self.frame is None:
+			self.frame = numpy.zeros([self.height, self.width])
 
-		frame = self.frames[frameIndex, :, :]	# red channel
+		numpy.copyto(self.frame, self.rawFrames[frameIndex, :, :, 2])	# red channel
+		self.frame[self.frame < 255] = 0
 
-		hours = int(self.MatchDigit(frame[195:207, 7:15]) * 10 + self.MatchDigit(frame[195:207, 15:23]))		# eyetracker_timestamps.im2hrs()
-		minutes = int (self.MatchDigit(frame[195:207, 35:43]) * 10 + self.MatchDigit(frame[195:207, 43:51]))	# eyetracker_timestamps.im2mins()
+		hours = int(self.MatchDigit(self.frame[195:207, 7:15]) * 10 + self.MatchDigit(self.frame[195:207, 15:23]))		# eyetracker_timestamps.im2hrs()
+		minutes = int (self.MatchDigit(self.frame[195:207, 35:43]) * 10 + self.MatchDigit(self.frame[195:207, 43:51]))	# eyetracker_timestamps.im2mins()
 
 		# eyetracker_timestamps.im2seconds() and eyetracker_timestamps.im2secs()
-		c = frame[195:207, 103:111]
-		if numpy.corrcoef(c.ravel(), SECONDS_SYMBOL)[0, 1] > 0.95:
+		c = self.frame[195:207, 103:111]
+		if numpy.corrcoef(c.ravel(), SECONDS_SYMBOL)[0, 1] > 0.99:
 			# shift left for miliseconds
-			a, b, c = (frame[195:207, 87 - 8:95 - 8], frame[195:207, 95 - 8:103 - 8], frame[195:207, 103 - 8:111 - 8])
+			a, b, c = (self.frame[195:207, 87 - 8:95 - 8], self.frame[195:207, 95 - 8:103 - 8], self.frame[195:207, 103 - 8:111 - 8])
 
 			# only one leading left digit
-			seconds = self.MatchDigit(frame[195:207, 67:75])
+			seconds = self.MatchDigit(self.frame[195:207, 67:75])
 
 		else:
-			a, b = (frame[195:207, 87:95], frame[195:207, 95:103])
+			a, b = (self.frame[195:207, 87:95], self.frame[195:207, 95:103])
 
-			seconds = int(self.MatchDigit(frame[195:207, 67:75]) * 10 + self.MatchDigit(frame[195:207, 75:83]))
+			seconds = int(self.MatchDigit(self.frame[195:207, 67:75]) * 10 + self.MatchDigit(self.frame[195:207, 75:83]))
 
 		milliseconds = int(self.MatchDigit(a) * 100 + self.MatchDigit(b) * 10 + self.MatchDigit(c))
 

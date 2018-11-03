@@ -3,10 +3,8 @@ import cv2
 import os
 from VideoTimestampReader import VideoTimestampReader
 from scipy.signal import medfilt
-from scipy import stats
 from skimage.draw import circle_perimeter as DrawCircle
 from skimage.io import imsave
-from skimage.transform import hough_ellipse as HoughEllipse
 
 def median2way(data, window):
 	"""
@@ -43,7 +41,7 @@ class PupilFinder(VideoTimestampReader):
 	"""
 
 	def __init__(self, videoFileName = None, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
-				 param2 = 20, minRadius = 5, maxRadius = 0, ellipse = False, filter = None, other = None):
+				 param2 = 20, minRadius = 5, maxRadius = 0, other = None):
 		"""
 		Constructor
 		@param videoFileName:	str?, name of video file to aprse
@@ -55,19 +53,14 @@ class PupilFinder(VideoTimestampReader):
 		@param param2: 			float, accumulator threshold at detection stage, smaller => more errors
 		@param minRadius: 		int, min circle radius
 		@param maxRadius: 		int, max circle radius
-		@param ellipse:			bool, use hough ellipse instead of hough circle transform?
-		@param filter:			funciton?, filtering function, will override all filters if given
 		@param other:			VideoReader?, object to copy contruct from
 		"""
 		super(PupilFinder, self).__init__(videoFileName, other)
-		self.ParseTimestamps()
-
-		self.frames = self.rawFrames		# everything is b/w anyways and we're not modifying the frames
+		# self.frames = self.rawFrames.mean(-1).astype(numpy.uint8)	# average over the color dimensions
 
 		self.window = window
 		self.blur = blur
 		# hough transform parameters
-		self.ellipse = ellipse
 		self.dp = dp
 		self.minDistance = minDistance
 		self.param1 = param1
@@ -75,60 +68,40 @@ class PupilFinder(VideoTimestampReader):
 		self.minRadius = minRadius
 		self.maxRadius = maxRadius
 
-		self.filter = filter
-
 		# crop to window
-		if (self.window is not None):
-			self.frames = self.frames[:, self.window[2]:self.window[3], self.window[0]:self.window[1]]
+		# if (self.window is not None):
+		# 	self.frames = self.frames[:, self.window[2]:self.window[3], self.window[0]:self.window[1]]
 
 		self.rawPupilLocations = None			# [n x 3] array of x, y, radius
-		self.rawGlintLocations = None			# [n x 3] array of x, r, radius of glint location
 		self.frameDiffs = None
 		self.blinks = None						# [n] array, true when blink is detected
 		self.filteredPupilLocations = None
-		self.filteredGlintLocations = None
 
 
-	def FindPupils(self, endFrame = None, bilateral = None, erode = None, filter = None):
+	def FindPupils(self, endFrame = None, bilateral = None):
 		"""
 		Find the circles, i.e. pupils in the rawFrames, see eyetrack.video2circles()
 		@param endFrame:		int?, frame to read to, defaults to reading all rawFrames
-		@param bilateral:		int?, if given, specifies the width of bilateral filter to use
-		@param erode:			int?, if not none, erodes and dilates with filter of this size
-		@param filter:			function?, filter function to use, if given will oveeride
+		@param bilateral:		int?, if present, radius to use for surface blur
 		@return:
 		"""
-
-		if filter is None:
-			filter = self.filter
-
 		if ((endFrame is None) or endFrame > self.nFrames):
 			endFrame = self.nFrames
 
-		self.frameDiffs = numpy.r_[0, numpy.sum(numpy.diff(self.frames, axis = 0) ** 2, (1, 2))]
+		self.frameDiffs = numpy.r_[0, numpy.sum(numpy.diff(self.rawFrames, axis = 0) ** 2, (1, 2, 3))]
 		self.blinks = numpy.where(self.frameDiffs > self.frameDiffs.mean() + self.frameDiffs.std() * 2, True, False)
 
 		pupilLocation = []
 		### === parallel for ===
-		for frame in range(endFrame):
+		for frameIndex in range(endFrame):
 			# eyetrack.find pupil()
-			image = self.frames[frame, :, :]
-			if filter is not None:
-				image = filter(image)
+			self.frame = self.rawFrames[frameIndex, self.window[2]:self.window[3], self.window[0]:self.window[1], :].mean(-1).astype(numpy.uint8)
+			if (bilateral is not None) and (bilateral > 0):
+				self.frame = cv2.bilateralFilter(self.frame, bilateral, 100, 75)
+				self.frame = cv2.medianBlur(self.frame, self.blur)
 			else:
-				if (bilateral is not None):
-					image = cv2.bilateralFilter(image, bilateral, 75, 75)
-				if (self.blur is not None) and (self.blur > 0):
-					image = cv2.medianBlur(image, self.blur)
-				if (erode is not None):
-					size = 4 * erode
-					interval = (2 * erode + 1.) / (size)
-					x = numpy.linspace(-erode - interval / 2., erode + interval / 2., size + 1)
-					kern1d = numpy.diff(stats.norm.cdf(x))
-					kernel_raw = numpy.sqrt(numpy.outer(kern1d, kern1d))
-					kernel = kernel_raw / kernel_raw.sum()
-					image = cv2.dilate(cv2.erode(image, kernel), kernel)
-			circle = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, self.dp, self.minDistance, self.param1, self.param2, self.minRadius, self.maxRadius)
+				self.frame = cv2.medianBlur(self.frames[frameIndex, :, :], self.blur)
+			circle = cv2.HoughCircles(self.frame, cv2.HOUGH_GRADIENT, self.dp, self.minDistance, self.param1, self.param2, self.minRadius, self.maxRadius)
 			if (circle is None):
 				circle = numpy.zeros(3) * numpy.nan
 			circle = circle.squeeze()
@@ -167,14 +140,14 @@ class PupilFinder(VideoTimestampReader):
 			self.filteredPupilLocations[numpy.isnan(self.filteredPupilLocations.sum(axis = -1))] = numpy.nan
 
 
-	def WritePupilFrames(self, directory, startFrame = None, endFrame = None, filtered = True, filteredFrames = False):
+	def WritePupilFrames(self, directory, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
 		Draws frames back out with the pupil circled
 		@param directory: 		str, directory to which to save
 		@param startFrame:		int?, first frame to draw
 		@param endFrame: 		int?, last frame to draw, defaults to all of them
 		@param filtered:		bool, use filtered trace instead of unfiltered?
-		@param filteredFrames:	bool, use filtered frames instead of raw frames?
+		@param burnLocation:	bool, burn location of pupil into image?
 		@return:
 		"""
 		if (startFrame is None):
@@ -193,18 +166,11 @@ class PupilFinder(VideoTimestampReader):
 		if not os.path.exists(directory):
 			os.makedirs(directory)
 
-		image = numpy.zeros([self.height, self.width, 3])
 		### === parallel for ===
 		for frame in range(startFrame, endFrame):
-			for i in range(3):
-				if filteredFrames:
-					if self.window is None:
-						image[:, :, i] = self.frames[frame, :, :]
-					else:
-						image[:, :, i] = self.rawFrames[frame, :, :]
-						image[self.window[2]:self.window[3], self.window[0]:self.window[1], i] = self.frames[frame, :, :]
-				else:
-					image[:, :, i] = self.rawFrames[frame, :, :]
+			image = self.rawFrames[frame, :, :, :].copy()
+			# image[:, :, 1] = image[:, :, 0]
+			# image[:, :, 2] = image[:, :, 0]
 			if not (filtered and self.filteredPupilLocations[frame, 0] == numpy.nan):
 				if (not self.blinks[frame]) and (not numpy.any(numpy.isnan(self.filteredPupilLocations[frame, :]))):
 					for radiusOffset in range(-2, 3):
@@ -212,17 +178,20 @@ class PupilFinder(VideoTimestampReader):
 						image[x, y, 2] = 255
 						image[(circles[frame, 1] - 4):(circles[frame, 1] + 4), (circles[frame, 0] - 1):(circles[frame, 0] + 1), 2] = 255
 						image[(circles[frame, 1] - 1):(circles[frame, 1] + 1), (circles[frame, 0] - 4):(circles[frame, 0] + 4), 2] = 255
+					if burnLocation:
+						cv2.putText(image, 'x: {:03d} y: {:03d} r: {:03d}'.format(circles[frame, 0], circles[frame, 1], circles[frame, 2]), (30, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
+						cv2.putText(image, 'frame {:06d}'.format(frame), (60, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
 			imsave(directory + '/frame_{:06d}.png'.format(frame), image[:, :, ::-1])
 
 
-	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, filteredFrames = False):
+	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
 		Writes a video instead
 		@param fileName:
 		@param startFrame:		int?, first frame to draw
 		@param endFrame: 		int?, last frame to draw, defaults to all of them
 		@param filtered:		bool, use filtered trace instead of unfiltered?
-		@param filteredFrames:	bool, used filtered instead of raw frames?
+		@param burnLocation:	bool, burn location of pupil into image?
 		@return:
 		"""
 		if (startFrame is None):
@@ -239,17 +208,11 @@ class PupilFinder(VideoTimestampReader):
 		circles = self.filteredPupilLocations.astype(numpy.int) if filtered else self.rawPupilLocations.astype(numpy.int)
 
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.fps, (self.width, self.height))
-		image = numpy.zeros([self.height, self.width, 3], dtype = numpy.uint8)
+		image = numpy.zeros_like(self.rawFrames[0, :, :, :])
 		for frame in range(startFrame, endFrame):
-			for i in range(3):
-				if filteredFrames:
-					if self.window is None:
-						image[:, :, i] = self.frames[frame, :, :]
-					else:
-						image[:, :, i] = self.rawFrames[frame, :, :]
-						image[self.window[2]:self.window[3], self.window[0]:self.window[1], i] = self.frames[frame, :, :]
-				else:
-					image[:, :, i] = self.rawFrames[frame, :, :]
+			image = self.rawFrames[frame, :, :, :].copy()
+			# image[:, :, 1] = image[:, :, 0]
+			# image[:, :, 2] = image[:, :, 0]
 			if not (filtered and self.filteredPupilLocations[frame, 0] == numpy.nan):
 				if (not self.blinks[frame]) and (not numpy.any(numpy.isnan(self.filteredPupilLocations[frame, :]))):
 					for radiusOffset in range(-2, 3):
@@ -257,5 +220,12 @@ class PupilFinder(VideoTimestampReader):
 						image[x, y, 2] = 255
 						image[(circles[frame, 1] - 4):(circles[frame, 1] + 4), (circles[frame, 0] - 1):(circles[frame, 0] + 1), 2] = 255
 						image[(circles[frame, 1] - 1):(circles[frame, 1] + 1), (circles[frame, 0] - 4):(circles[frame, 0] + 4), 2] = 255
+					if burnLocation:
+						cv2.putText(image, 'x: {:03d} y: {:03d} r: {:03d}'.format(circles[frame, 0], circles[frame, 1], circles[frame, 2]), (10, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
+				else:
+					if burnLocation:
+						cv2.putText(image, 'Blink', (10, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
+				if burnLocation:
+					cv2.putText(image, 'frame {:06d}'.format(frame), (10, 45), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
 			video.write(image)
 		video.release()

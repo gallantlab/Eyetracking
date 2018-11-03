@@ -1,7 +1,7 @@
 import numpy
 from scipy.interpolate import Rbf as RBF
-from VideoTimestampReader import VideoTimestampReader
 from PupilFinder import PupilFinder
+from TemplatePupilFinder import TemplatePupilFinder
 
 class EyetrackingCalibrator(object):
 	"""
@@ -50,7 +50,7 @@ class EyetrackingCalibrator(object):
 
 
 	def __init__(self, calibrationVideoFile, calibrationBeginTime = None, calibrationPositions = None, calibrationOrder = None,
-				 calibrationDuration = 2, calibrationDelay = 0):
+				 calibrationDuration = 2, calibrationDelay = 0, templates = True):
 		"""
 		Constructor
 		@param calibrationVideoFile:	str, name of video file
@@ -58,18 +58,24 @@ class EyetrackingCalibrator(object):
 		@param calibrationPositions:	[n x 2] array?, pixel positions of calibration points
 		@param calibrationOrder:		array<int>?, sequence in which points were presented
 		@param calibrationDuration:		float, duration of fixation time per point
-		@param calibrationDelay:		float, seconds from the begin time to the onset of the first calibration dot
+		@param calibrationDelay:		float, delay in seconds from begin time to first fixation
+		@param templates:				bool, use template matching instead of hough circles?
 		"""
 		self.calibrationVideoFile = calibrationVideoFile
-		self.timestampReader = VideoTimestampReader(calibrationVideoFile)
-		self.timestampReader.ParseTimestamps()
-		self.pupilFinder = None
+		# self.timestampReader = VideoTimestampReader(calibrationVideoFile)
+		# self.timestampReader.ParseTimestamps()
+		if templates:
+			self.pupilFinder = TemplatePupilFinder(calibrationVideoFile)
+		else:
+			self.pupilFinder = PupilFinder(calibrationVideoFile)
+
+		self.pupilFinder.ParseTimestamps()
 
 		self.calibrationBeginTime = calibrationBeginTime
 		self.calibrationPositions = calibrationPositions if calibrationPositions is not None else EyetrackingCalibrator.GeneratePoints()
 		self.calibrationOrder = calibrationOrder if calibrationOrder  is not None else EyetrackingCalibrator.CalibrationOrder35
 		self.calibrationDuration = calibrationDuration
-		self.calibrationDelay = calibrationDelay	# case where in driving, the first dot comes at the second TTL
+		self.calibrationDelay = calibrationDelay
 
 		self.initCalibrationPositions = self.calibrationPositions.copy()
 		self.initCalibrationOrder = numpy.array(self.calibrationOrder)
@@ -85,8 +91,7 @@ class EyetrackingCalibrator(object):
 
 
 	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
-				   param2 = 20, minRadius = 20, maxRadius = 0, windowSize = 15, outlierThresholds = None, filterPupilSize = True,
-				   surfaceBlur = 15, erode = None, filter = None, ellipse = False):
+				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None, filterPupilSize = True, surfaceBlur = None):
 		"""
 		Finds pupil traces
 		@param window: 				4-ple<int>?, subwindow in frame to examine, order [left, right, top, bottom]
@@ -100,18 +105,24 @@ class EyetrackingCalibrator(object):
 		@param windowSize:			int, median filter time window size
 		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
 		@param filterPupilSize:		bool, filter pupil size alone with position?
-		@param surfaceBlur:			int?, do surface blur before median filter? If none, doesn't
-		@param erode:				int?, if exists, gaussian sigma with which to erode/dilate the glint away
-		@param ellipse:				bool, use ellipse instead of circle transform?
-		@param filter:				function?, custom filter function to use
+		@param surfaceBlur:			int?, if present, radius to use for surface blur
 		@return:
 		"""
-		self.pupilFinder = PupilFinder(None, window, blur, dp, minDistance, param1, param2, minRadius, maxRadius, ellipse, filter, self.timestampReader)
-		self.pupilFinder.FindPupils(bilateral = surfaceBlur, erode = erode)
+		# self.pupilFinder = PupilFinder(None, window, blur, dp, minDistance, param1, param2, minRadius, maxRadius, self.pupilFinder)
+		self.pupilFinder.window = window
+		self.pupilFinder.blur = blur
+		self.pupilFinder.dp = dp
+		self.pupilFinder.minDistance = minDistance
+		self.pupilFinder.param1 = param1
+		self.pupilFinder.param2 = param2
+		self.pupilFinder.minRadius = minRadius
+		self.pupilFinder.maxRadius = maxRadius
+		self.pupilFinder.FindPupils(bilateral = surfaceBlur)
 		self.pupilFinder.FilterPupils(windowSize, outlierThresholds, filterPupilSize)
 
 
-	def EstimateCalibrationPointPositions(self, beginTime = None, method = numpy.nanmedian, startDelay = 1.0 / 6.0, endSkip = 0.0, duration = None):
+	def EstimateCalibrationPointPositions(self, beginTime = None, method = numpy.nanmedian, startDelay = 1.0 / 6.0, endSkip = 0.0, duration = None,
+										  filtered = True):
 		"""
 		Estimates the pupil positions corresponding to each calibration point
 		@param beginTime:	4ple<int>?, time of calibration sequence onset	TODO: replace this with a frame number
@@ -119,6 +130,7 @@ class EyetrackingCalibrator(object):
 		@param startDelay:	float, time delay in seconds to account for eye movement delay
 		@param endSkip:		float, time in seconds to clip from the end of a fixation period
 		@param duration:	float?, duration of each fixation point
+		@param filtered:	bool, use filtered pupil locations?
 		@return:
 		"""
 		if (self.pupilFinder is None):
@@ -130,18 +142,22 @@ class EyetrackingCalibrator(object):
 		if (duration is None):
 			duration = self.calibrationDuration
 
-		firstFrame = self.timestampReader.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
-		firstFrame += int(self.timestampReader.fps * self.calibrationDelay)
-		startOffset = int(self.timestampReader.fps * startDelay)	# convert startDelay time to frame counts
-		endOffset = int(self.timestampReader.fps * endSkip)  # convert startDelay time to frame counts
+		firstFrame = self.pupilFinder.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
+		firstFrame += int(self.calibrationDelay * self.pupilFinder.fps)
+		startOffset = int(self.pupilFinder.fps * startDelay)	# convert startDelay time to frame counts
+		endOffset = int(self.pupilFinder.fps * endSkip)  # convert startDelay time to frame counts
 
 		eyePosition = []
 		eyeVariance = []
 		for point in range(len(self.calibrationOrder)):
-			start = int(point * duration * self.timestampReader.fps + firstFrame + startOffset)
-			end = int((point + 1) * duration * self.timestampReader.fps + firstFrame - endOffset)
-			eyePosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
-			eyeVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+			start = int(point * duration * self.pupilFinder.fps + firstFrame + startOffset)
+			end = int((point + 1) * duration * self.pupilFinder.fps + firstFrame - endOffset)
+			if filtered:
+				eyePosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+				eyeVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+			else:
+				eyePosition.append(method(self.pupilFinder.rawPupilLocations[start:end, :], 0))
+				eyeVariance.append(numpy.nanstd(self.pupilFinder.rawPupilLocations[start:end, :], 0))
 		self.eyeCalibrationPositions = numpy.asarray(eyePosition)
 		self.eyeCalibrationVariances = numpy.asarray(eyeVariance)
 
@@ -233,7 +249,7 @@ class EyetrackingCalibrator(object):
 		Transforms an eyetracking video file or pupil finder to screen coords using this calibration.
 		It's better to give a pupilFinder object that uses customized parameters than to use the defaults and use a file
 		@param pupilFinder:				PupilFinder?, pupil finder object that has been run
-		@param trace:					[n x 3] array?, output traces from a pupil finder
+		@param trace:					[n x 3] array?, output traces
 		@param videoFileName:			str?, file to use
 		@param replaceNanWithPrevious:	bool, replace nan values with the previous value?
 		@return:
