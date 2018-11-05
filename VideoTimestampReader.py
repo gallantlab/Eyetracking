@@ -28,7 +28,7 @@ class VideoTimestampReader(VideoReader):
 		"""
 		super(VideoTimestampReader, self).__init__(videoFileName, other)
 
-		templates = numpy.load('./digit-templates.npy')
+		templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
 		flats = []
 		for i in range(10):
 			flats.append(templates[i, :, :].ravel())
@@ -37,6 +37,7 @@ class VideoTimestampReader(VideoReader):
 		self.time = numpy.zeros([self.nFrames, 4])  		# [t x 3 (HH MM SS MS)] timestamps on the rawFrames
 		# self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
 		# self.frames[self.frames < 255] = 0					# binarize
+		self.isParsed = False
 
 
 	def MatchDigit(self, image):
@@ -91,9 +92,11 @@ class VideoTimestampReader(VideoReader):
 		Parses timestamps from the images
 		@return:
 		"""
+		self.frame = None
 		### === parallel for ===
 		for frame in range(self.nFrames):
 			self.GetTimeStampForFrame(frame)
+		self.isParsed = True
 
 
 	def FindOnsetFrame(self, H, M, S, MS, returnDiff = False):
@@ -106,6 +109,8 @@ class VideoTimestampReader(VideoReader):
 		@param returnDiff:	bool, return also the difference from the desired times on this frame?
 		@return: closest frame, int, and time difference between that frame and this time, in ms, int
 		"""
+		if not self.isParsed:
+			self.ParseTimestamps()
 
 		time = self.time[:, 0] * 3600000 + self.time[:, 1] * 60000 + self.time[:, 2] * 1000 + self.time[:, 3]	# in ms
 		desiredTime = H * 3600000 + M * 60000 + S * 1000 + MS

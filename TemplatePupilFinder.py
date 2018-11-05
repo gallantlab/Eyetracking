@@ -5,7 +5,9 @@ from skimage.draw import circle, circle_perimeter as DrawCircle
 
 class TemplatePupilFinder(PupilFinder):
 	"""
-	A class that finds pupils by template matching and not fitting a circle
+	A class that finds pupils by template matching and not fitting a circle.
+	A pupil is just a black circle on a white background
+	A glint is just a white circle on a black background close to the pupil
 	"""
 	def __init__(self, videoFileName = None, window = None, minRadius = 13, maxRadius = 23, other = None):
 		"""
@@ -88,7 +90,7 @@ class TemplatePupilFinder(PupilFinder):
 				self.rawGlintLocations[frameIndex, 1] += self.window[2]
 			self.rawGlintLocations[frameIndex, 2] = (best + 2) / 2.0
 
-		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - 2 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -2 std confidence = blink
+		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - 1.5 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -1.5 std confidence = blink
 
 
 	def FilterPupils(self, windowSize = 15, outlierThresholds = None, filterPupilSize = True):
@@ -158,7 +160,7 @@ class TemplatePupilFinder(PupilFinder):
 					# outline glint
 					for radiusOffset in range(0, 2):
 						y, x = DrawCircle(glints[frame, 0], glints[frame, 1], glints[frame, 2] + radiusOffset, shape = (self.height, self.width))
-						image[x, y, 1] = 255
+						image[x, y, 0] = 255
 					if burnLocation:
 						cv2.putText(image, 'x: {:03d} y: {:03d} r: {:03d}'.format(pupils[frame, 0], pupils[frame, 1], pupils[frame, 2]), (10, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
 						cv2.putText(image, 'x: {:03d} y: {:03d} r: {:03d}'.format(glints[frame, 0], glints[frame, 1], glints[frame, 2]), (10, 45), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])

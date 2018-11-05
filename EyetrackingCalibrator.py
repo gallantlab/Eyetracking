@@ -69,6 +69,8 @@ class EyetrackingCalibrator(object):
 		else:
 			self.pupilFinder = PupilFinder(calibrationVideoFile)
 
+		self.hasGlint = templates
+
 		self.pupilFinder.ParseTimestamps()
 
 		self.calibrationBeginTime = calibrationBeginTime
@@ -80,8 +82,11 @@ class EyetrackingCalibrator(object):
 		self.initCalibrationPositions = self.calibrationPositions.copy()
 		self.initCalibrationOrder = numpy.array(self.calibrationOrder)
 
-		self.eyeCalibrationPositions = None		# mean/median eye positions in video frames for each calibration point
-		self.eyeCalibrationVariances = None		# Variance in the calibration point eye positions
+		self.pupilCalibrationPositions = None		# mean/median pupil positions in video frames for each calibration point
+		self.pupilCalibrationVariances = None		# Variance in the calibration point eye positions
+
+		self.glintCalibrationPositions = None
+		self.glintCalibrationVariances = None
 
 		self.bestSmoothness = None				# float, best smoothness for the interpolater
 		self.bestMethod = None					# str, best method for interpolating
@@ -147,21 +152,33 @@ class EyetrackingCalibrator(object):
 		startOffset = int(self.pupilFinder.fps * startDelay)	# convert startDelay time to frame counts
 		endOffset = int(self.pupilFinder.fps * endSkip)  # convert startDelay time to frame counts
 
-		eyePosition = []
-		eyeVariance = []
+		pupilPosition = []
+		pupilVariance = []
+		if self.hasGlint:
+			glintPosition = []
+			glintVariance = []
 		for point in range(len(self.calibrationOrder)):
 			start = int(point * duration * self.pupilFinder.fps + firstFrame + startOffset)
 			end = int((point + 1) * duration * self.pupilFinder.fps + firstFrame - endOffset)
 			if filtered:
-				eyePosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
-				eyeVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+				pupilPosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+				pupilVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+				if self.hasGlint:
+					glintPosition.append(method(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
+					glintVariance.append(numpy.nanstd(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
 			else:
-				eyePosition.append(method(self.pupilFinder.rawPupilLocations[start:end, :], 0))
-				eyeVariance.append(numpy.nanstd(self.pupilFinder.rawPupilLocations[start:end, :], 0))
-		self.eyeCalibrationPositions = numpy.asarray(eyePosition)
-		self.eyeCalibrationVariances = numpy.asarray(eyeVariance)
+				pupilPosition.append(method(self.pupilFinder.rawPupilLocations[start:end, :], 0))
+				pupilVariance.append(numpy.nanstd(self.pupilFinder.rawPupilLocations[start:end, :], 0))
+				if self.hasGlint:
+					glintPosition.append(method(self.pupilFinder.rawGlintLocations[start:end, :], 0))
+					glintVariance.append(numpy.nanstd(self.pupilFinder.rawGlintLocations[start:end, :], 0))
+		self.pupilCalibrationPositions = numpy.asarray(pupilPosition)
+		self.pupilCalibrationVariances = numpy.asarray(pupilVariance)
+		if self.hasGlint:
+			self.glintCalibrationPositions = numpy.asarray(glintPosition)
+			self.glintCalibrationVariances = numpy.asarray(glintVariance)
 
-		valid = numpy.isfinite(self.eyeCalibrationPositions[:, :2].sum(1))
+		valid = numpy.isfinite(self.pupilCalibrationPositions[:, :2].sum(1))
 		if numpy.any(numpy.logical_not(valid)):	# if there are nan points, which are bad
 			calibrationOrder = []
 			for i in range(len(self.initCalibrationOrder)):
@@ -170,8 +187,11 @@ class EyetrackingCalibrator(object):
 				else:
 					print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
 			self.calibrationOrder = calibrationOrder
-			self.eyeCalibrationPositions = self.eyeCalibrationPositions[valid, :]
-			self.eyeCalibrationVariances = self.eyeCalibrationVariances[valid, :]
+			self.pupilCalibrationPositions = self.pupilCalibrationPositions[valid, :]
+			self.pupilCalibrationVariances = self.pupilCalibrationVariances[valid, :]
+			if self.hasGlint:
+				self.glintCalibrationPositions = self.glintCalibrationPositions[valid, :]
+				self.glintCalibrationVariances = self.glintCalibrationVariances[valid, :]
 
 		# reorder the calibration points to be the same as the calibration sequence
 		points = []
@@ -180,24 +200,27 @@ class EyetrackingCalibrator(object):
 		self.calibrationPositions = numpy.asarray(points)
 
 
-	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None):
+	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None, vector = False):
 		"""
 		Fit an interpolator to the points via LOO x-validation
 		@param smoothnesses:		list<float>, smoothnesses to try for interpolations
 		@param methods:				list<str>, methods to try
 		@param varianceThreshold:	float?, threshold of variance in the calibration positions to throw away
+		@param vector:				bool, use pupil-glint vector instead of just the pupil position?
 		@return:
 		"""
+		if not self.hasGlint:
+			vector = False
 
-		valid = numpy.ones(self.eyeCalibrationVariances.shape[0]).astype(bool)
+		valid = numpy.ones(self.pupilCalibrationVariances.shape[0]).astype(bool)
 		if varianceThreshold:
-			xThreshold = numpy.percentile(self.eyeCalibrationVariances[:, 0], varianceThreshold)
-			yThreshold = numpy.percentile(self.eyeCalibrationVariances[:, 1], varianceThreshold)
+			xThreshold = numpy.percentile(self.pupilCalibrationVariances[:, 0], varianceThreshold)
+			yThreshold = numpy.percentile(self.pupilCalibrationVariances[:, 1], varianceThreshold)
 
-			valid = self.eyeCalibrationVariances[:, 0] <= xThreshold
-			valid[self.eyeCalibrationVariances[:, 1] > yThreshold] = False
+			valid = self.pupilCalibrationVariances[:, 0] <= xThreshold
+			valid[self.pupilCalibrationVariances[:, 1] > yThreshold] = False
 
-		eyeCalibrationPositions = self.eyeCalibrationPositions[valid, :]
+		eyeCalibrationPositions = self.pupilCalibrationPositions[valid, :]
 		calibrationPositions = self.calibrationPositions[valid, :]
 		calibrationOrder = []
 		for i in range(valid.shape[0]):
