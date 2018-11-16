@@ -87,7 +87,7 @@ class Eyetracker(object):
 		pass
 
 
-	def WriteVideoWithGazePosition(self, frames, fileName, firstFrame = None, outResolution = (1024, 768), flipColors = True):
+	def WriteVideoWithGazePosition(self, frames, fileName, firstFrame = None, outResolution = (1024, 768), flipColors = True, fps = 30):
 		"""
 		Writes out a video using the input frames and given eyetracking
 		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
@@ -95,11 +95,13 @@ class Eyetracker(object):
 		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param outResolution: 	tuple<int, in>, desired output resolution
 		@param flipColors:		bool, flip frame color channels order?
+		@param fps:				float, fps of the frames
 		@return:
 		"""
 		nFrames = frames.shape[0]
-		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps, outResolution)
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.filteredPupilLocations)
+		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, outResolution)
+
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
 		if ((frames.shape[1] != outResolution[1]) or (frames.shape[2] != outResolution[0])):
 			hScale = frames.shape[2] * 1.0 / outResolution[0] * 1.0
@@ -126,7 +128,7 @@ class Eyetracker(object):
 		video.release()
 
 
-	def WriteFramesWithGazePosition(self, frames, folder, firstFrame = None, outResolution = (1024, 768), flipColors = False):
+	def WriteFramesWithGazePosition(self, frames, folder, firstFrame = None, outResolution = (1024, 768), flipColors = False, fps = 30):
 		"""
 		Writes out a video using the input frames and given eyetracking
 		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
@@ -134,10 +136,11 @@ class Eyetracker(object):
 		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param outResolution: 	tuple<int, in>, desired output resolution
 		@param flipColors:		bool, flip frame color channels order?
+		@param fps:				float, fps of the frames
 		@return:
 		"""
 		nFrames = frames.shape[0]
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.filteredPupilLocations)
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
 		if ((frames.shape[1] != outResolution[1]) or (frames.shape[2] != outResolution[0])):
 			hScale = frames.shape[2] * 1.0 / outResolution[0] * 1.0
@@ -166,7 +169,7 @@ class Eyetracker(object):
 			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
 
 
-	def RecenterFramesToVideo(self, frames, fileName, scale = 0.125, firstFrame = None, flipColors = True, padValue = 0.1, gazeSize = (1024, 768)):
+	def RecenterFramesToVideo(self, frames, fileName, scale = 0.125, firstFrame = None, flipColors = True, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
 		"""
 		Writes out a video in which the frames are moved such that the gaze position is always
 		the center
@@ -177,13 +180,14 @@ class Eyetracker(object):
 		@param flipColors:	bool, flip frame color channel order?
 		@param padValue:	float, range [0, 1] value to use for padding
 		@param gazeSize:	tuple<int, int>, stimuli resolution on to which eyetracking is mapepd
+		@param fps:			float, fps of the frames
 		@return:
 		"""
 		nFrames = frames.shape[0]
 		width = frames.shape[2]
 		height = frames.shape[1]
-		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps, (width * 2, height * 2))
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.filteredPupilLocations)
+		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width * 2, height * 2))
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
 		if not firstFrame:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
@@ -202,7 +206,7 @@ class Eyetracker(object):
 		video.release()
 
 
-	def RecenterFrames(self, frames, folder, scale = 0.125, firstFrame = None, flipColors = False, padValue = 0.1, gazeSize = (1024, 768)):
+	def RecenterFrames(self, frames, folder, scale = 0.125, firstFrame = None, flipColors = False, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
 		"""
 		Writes recentered frames to a folder
 		@param frames: 		[t x w x h x 3] array, video frames, assumed ot be same fps as eyetracking
@@ -212,14 +216,15 @@ class Eyetracker(object):
 		@param flipColors:	bool, flip frame color channel order?
 		@param padValue:	float, range [0, 1] value to use for padding
 		@param gazeSize:	tuple<int, int>, stimuli resolution on to which eyetracking is mapepd
+		@param fps:			float, fps of the frames
 		@return:
 		"""
 		nFrames = frames.shape[0]
 		width = frames.shape[2]
 		height = frames.shape[1]
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.filteredPupilLocations)
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
-		if not firstFrame:
+		if firstFrame is None:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
 
 		if not (os.path.exists(folder)):

@@ -130,12 +130,12 @@ class EyetrackingCalibrator(object):
 										  filtered = True):
 		"""
 		Estimates the pupil positions corresponding to each calibration point
-		@param beginTime:	4ple<int>?, time of calibration sequence onset	TODO: replace this with a frame number
-		@param method:		function, method used to aggregated points to one summary point
-		@param startDelay:	float, time delay in seconds to account for eye movement delay
-		@param endSkip:		float, time in seconds to clip from the end of a fixation period
-		@param duration:	float?, duration of each fixation point
-		@param filtered:	bool, use filtered pupil locations?
+		@param beginTime:		4ple<int>?, time of calibration sequence onset	TODO: replace this with a frame number
+		@param method:			function, method used to aggregated points to one summary point
+		@param startDelay:		float, time delay in seconds to account for eye movement delay
+		@param endSkip:			float, time in seconds to clip from the end of a fixation period
+		@param duration:		float?, duration of each fixation point
+		@param filtered:		bool, use filtered pupil locations?
 		@return:
 		"""
 		if (self.pupilFinder is None):
@@ -200,17 +200,18 @@ class EyetrackingCalibrator(object):
 		self.calibrationPositions = numpy.asarray(points)
 
 
-	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None, vector = False):
+	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None,
+			glintVector = False):
 		"""
 		Fit an interpolator to the points via LOO x-validation
 		@param smoothnesses:		list<float>, smoothnesses to try for interpolations
 		@param methods:				list<str>, methods to try
 		@param varianceThreshold:	float?, threshold of variance in the calibration positions to throw away
-		@param vector:				bool, use pupil-glint vector instead of just the pupil position?
+		@param glintVector:			bool, use pupil-glint vector instead of just the pupil position?
 		@return:
 		"""
 		if not self.hasGlint:
-			vector = False
+			glintVector = False
 
 		valid = numpy.ones(self.pupilCalibrationVariances.shape[0]).astype(bool)
 		if varianceThreshold:
@@ -221,6 +222,9 @@ class EyetrackingCalibrator(object):
 			valid[self.pupilCalibrationVariances[:, 1] > yThreshold] = False
 
 		eyeCalibrationPositions = self.pupilCalibrationPositions[valid, :]
+		if glintVector:	# vector from glint to pupil
+			eyeCalibrationPositions -= self.glintCalibrationPositions[valid, :]
+
 		calibrationPositions = self.calibrationPositions[valid, :]
 		calibrationOrder = []
 		for i in range(valid.shape[0]):
@@ -272,7 +276,7 @@ class EyetrackingCalibrator(object):
 		Transforms an eyetracking video file or pupil finder to screen coords using this calibration.
 		It's better to give a pupilFinder object that uses customized parameters than to use the defaults and use a file
 		@param pupilFinder:				PupilFinder?, pupil finder object that has been run
-		@param trace:					[n x 3] array?, output traces
+		@param trace:					[n x 3] array?, output traces from something
 		@param videoFileName:			str?, file to use
 		@param replaceNanWithPrevious:	bool, replace nan values with the previous value?
 		@return:
