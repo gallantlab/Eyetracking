@@ -19,10 +19,15 @@ class Eyetracker(object):
 				 config = None):
 		"""
 		Constructor
-		@param calibrationFileName:
-		@param dataFileName:
-		@param calibrator:
-		@param dataPupilFinder:
+		@param calibrationFileName:		str?, name of eyetracking video for calibration
+		@param dataFileName: 			str?, name of eyetracking video for data
+		@param calibrator: 				EyetrackingCalibrator?, pre-constructed calibration object
+		@param dataPupilFinder: 		PupilFinder?, pre-constructed pupil finding object
+		@param calibrationStart: 		tuple<int, int, int, int>?, (H, M, S, MS) timestamp of the start of the calibration sequence in video
+		@param dataStart: 				tuple<int, int, int, int>?, (H, M, S, MS) timestamp of the start of the data in video
+		@param eyeWindow: 				tuple<int, int, int, int>?, (Left, right, top, bottom) window in the video to look for the pupil
+		@param calibrationPositions: 	[n x 2] array<float>?, list of calibration point positions
+		@param calibrationOrder: 		list<int>?, order of presentation of the calibraiton points
 		@param config:
 		"""
 
@@ -178,7 +183,7 @@ class Eyetracker(object):
 		@param scale: 		float, scale of these frames relative to the eyetracking scale (typically 1024 x 768)
 		@param firstFrame: 	int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param flipColors:	bool, flip frame color channel order?
-		@param padValue:	float, range [0, 1] value to use for padding
+		@param padValue:	float, range [0, 1] value to use for padding in the recentered frames
 		@param gazeSize:	tuple<int, int>, stimuli resolution on to which eyetracking is mapepd
 		@param fps:			float, fps of the frames
 		@return:
@@ -187,16 +192,20 @@ class Eyetracker(object):
 		width = frames.shape[2]
 		height = frames.shape[1]
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width * 2, height * 2))
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces())
 
 		if not firstFrame:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
 
+		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
+		frameIndexingFactor = self.dataPupilFinder.fps / fps
+
 		for frame in range(nFrames):
-			if (frame + firstFrame > gazeLocation.shape[0]):
+			eyetrackingFrame = int(frame * frameIndexingFactor) + firstFrame
+			if (eyetrackingFrame > gazeLocation.shape[0]):
 				break
-			dx = int(gazeSize[0] / 2 - gazeLocation[frame + firstFrame, 0])
-			dy = int(gazeSize[1] / 2 - gazeLocation[frame + firstFrame, 1])
+			dx = int(gazeSize[0] / 2 - gazeLocation[eyetrackingFrame, 0])
+			dy = int(gazeSize[1] / 2 - gazeLocation[eyetrackingFrame, 1])
 			transform = AffineTransform(translation = [dx * scale + width / 2, dy * scale + height / 2])
 			image = warp(frames[frame, :, :, :3], transform.inverse, output_shape = (height * 2, width * 2), cval = padValue) * 255
 			image = image.astype(numpy.uint8)
@@ -224,17 +233,21 @@ class Eyetracker(object):
 		height = frames.shape[1]
 		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
-		if firstFrame is None:
+		if not firstFrame:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
+
+		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
+		frameIndexingFactor = self.dataPupilFinder.fps / fps
 
 		if not (os.path.exists(folder)):
 			os.makedirs(folder)
 
 		for frame in range(nFrames):
-			if (frame + firstFrame > gazeLocation.shape[0]):
+			eyetrackingFrame = int(frame * frameIndexingFactor) + firstFrame
+			if (eyetrackingFrame > gazeLocation.shape[0]):
 				break
-			dx = int(gazeSize[0] / 2 - gazeLocation[frame + firstFrame, 0])
-			dy = int(gazeSize[1] / 2 - gazeLocation[frame + firstFrame, 1])
+			dx = int(gazeSize[0] / 2 - gazeLocation[eyetrackingFrame, 0])
+			dy = int(gazeSize[1] / 2 - gazeLocation[eyetrackingFrame, 1])
 			transform = AffineTransform(translation = [dx * scale + width / 2, dy * scale + height / 2])
 			image = warp(frames[frame, :, :, :3], transform.inverse, output_shape = (height * 2, width * 2), cval = padValue) * 255
 			image = image.astype(numpy.uint8)
@@ -243,15 +256,16 @@ class Eyetracker(object):
 			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
 
 
-	def WriteSideBySideVideo(self, frames, fileName, firstDataFrame = None, firstEyetrackingFrame = None, stimuliResolution = (1024, 768), flipColors = True):
+	def WriteSideBySideVideo(self, frames, fileName, firstDataFrame = None, firstEyetrackingFrame = None, stimuliResolution = (1024, 768), flipColors = True, stimulusFPS = 30):
 		"""
 		Writes a video out with the eyetracking video and stimulus with gaze position side by side
-		@param frames:
-		@param fileName:
+		@param frames:					[time x h x w x 3] stimulus frame array
+		@param fileName:				str, name for video file to write
 		@param firstDataFrame:
 		@param firstEyetrackingFrame:
 		@param stimuliResolution:
-		@param flipColors:
+		@param flipColors:				bool, reverse the colors dimension of the frames when writing the video?
+		@param stimulusFPS:				int, fps of the frames
 		@return:
 		"""
 		nFrames = frames.shape[0]
@@ -269,12 +283,14 @@ class Eyetracker(object):
 		if not firstEyetrackingFrame:
 			firstEyetrackingFrame = self.calibrator.pupilFinder.FindOnsetFrame(self.calibrationStart[0], self.calibrationStart[1], self.calibrationStart[2], self.calibrationStart[3])
 
+		stimulusFrameDropFactor = int(self.dataPupilFinder.fps / stimulusFPS)
+
 		circles = self.dataPupilFinder.filteredPupilLocations.astype(numpy.int)
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps, (stimuliResolution[0] + 320, stimuliResolution[1] if stimuliResolution[1] > 240 else 240))
 		thisFrame = numpy.zeros([stimuliResolution[1] if stimuliResolution[1] > 240 else 240, stimuliResolution[0] + 320, 3], dtype = numpy.uint8)
 		for frame in range(nFrames):							# frame indexes into the frames array
 			dataFrame = frame + firstDataFrame					# indexes correctly into the eyetracking video
-			image = frames[frame, :, :, :3].copy()
+			image = frames[frame / stimulusFrameDropFactor, :, :, :3].copy()
 			if transformation is not None:
 				image = warp(image, transformation, output_shape = (stimuliResolution[1], stimuliResolution[0])) * 255
 			x = int(gazeLocation[dataFrame, 0])

@@ -53,7 +53,10 @@ class TemplatePupilFinder(PupilFinder):
 		theseGlintCorrelations = numpy.zeros([9])
 		for frameIndex in range(endFrame):
 			# === find pupil ===
-			self.frame = self.rawFrames[frameIndex, self.window[2]:self.window[3], self.window[0]:self.window[1], :].mean(-1).astype(numpy.uint8)
+			if self.window is not None:
+				self.frame = self.rawFrames[frameIndex, self.window[2]:self.window[3], self.window[0]:self.window[1], :].mean(-1).astype(numpy.uint8)
+			else:
+				self.frame = self.rawFrames[frameIndex, :, :, :].mean(-1).astype(numpy.uint8)
 			if (bilateral is not None) and (bilateral > 0):
 				self.frame = cv2.bilateralFilter(self.frame, bilateral, 100, 75)
 			if (self.blur > 0):
@@ -121,7 +124,7 @@ class TemplatePupilFinder(PupilFinder):
 
 	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
-		Writes a video instead
+		Writes a video with the pupil circled
 		@param fileName:
 		@param startFrame:		int?, first frame to draw
 		@param endFrame: 		int?, last frame to draw, defaults to all of them

@@ -186,7 +186,7 @@ class PupilFinder(VideoTimestampReader):
 
 	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
-		Writes a video instead
+		Writes a video with the pupil circled
 		@param fileName:
 		@param startFrame:		int?, first frame to draw
 		@param endFrame: 		int?, last frame to draw, defaults to all of them
@@ -231,14 +231,17 @@ class PupilFinder(VideoTimestampReader):
 		video.release()
 
 
-	def GetTraces(self, filtered = True, fps = 30):
+	def GetTraces(self, filtered = True, fps = None):
 		"""
 		Resamples traces to a different fps using closest frame
 		@param filtered:
-		@param fps:
+		@param fps:			int?, if present, resample the traces
 		@return:
 		"""
 		traces = self.filteredPupilLocations if filtered else self.rawPupilLocations
+		if fps is None:
+			return traces
+
 		if (fps - self.fps) < 0.1:
 			return traces
 		# outTrace = numpy.zeros([int(self.duration * fps), 4])
