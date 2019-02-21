@@ -192,7 +192,7 @@ class Eyetracker(object):
 		width = frames.shape[2]
 		height = frames.shape[1]
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width * 2, height * 2))
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces())
+		gazeLocation = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
 
 		if not firstFrame:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
@@ -231,7 +231,7 @@ class Eyetracker(object):
 		nFrames = frames.shape[0]
 		width = frames.shape[2]
 		height = frames.shape[1]
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
+		gazeLocation = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
 
 		if not firstFrame:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
