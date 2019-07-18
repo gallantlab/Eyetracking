@@ -1,4 +1,7 @@
 import numpy
+import io
+import cPickle
+from zipfile import ZipFile
 from scipy.interpolate import Rbf as RBF
 from PupilFinder import PupilFinder
 from TemplatePupilFinder import TemplatePupilFinder
@@ -306,3 +309,106 @@ class EyetrackingCalibrator(object):
 					transformed[i + 1, :] = transformed[i, :]
 
 		return transformed
+
+	def Save(self, fileName):
+		"""
+		Saves calibrated interpolators and whatever else
+		@param fileName:
+		@return:
+		"""
+
+		def SaveNPY(array, zipfile, name):
+			"""
+			Saves a numpy array into a zip
+			@param array: 	numpy array
+			@param zipfile: ZipFile
+			@param name: 	str, name to save
+			@return:
+			"""
+			arrayFile = io.BytesIO()
+			numpy.save(arrayFile, array)
+			arrayFile.seek(0)
+			zipfile.writestr(name, arrayFile.read())
+			arrayFile.close()
+			del arrayFile
+
+		def SavePickle(obj, zipfile, name):
+			"""
+			Pickles an object into a zip
+			@param obj: 	object
+			@param zipfile: ZipFile
+			@param name: 	str, name to save
+			@return:
+			"""
+			pickleFile = io.BytesIO()
+			cPickle.dump(obj, pickleFile)
+			pickleFile.seek(0)
+			zipfile.writestr(name, pickleFile.read())
+			pickleFile.close()
+			del pickleFile
+
+		outFile = ZipFile(fileName, 'w')
+		if self.pupilCalibrationPositions is not None:
+			SaveNPY(self.pupilCalibrationPositions, outFile, 'pupilCalibrationPositions.npy')
+		if self.pupilCalibrationVariances is not None:
+			SaveNPY(self.pupilCalibrationVariances, outFile, 'pupilCalibrationVariances.npy')
+		if self.glintCalibrationPositions is not None:
+			SaveNPY(self.glintCalibrationPositions, outFile, 'glintCalibrationPositions.npy')
+		if self.glintCalibrationVariances is not None:
+			SaveNPY(self.glintCalibrationVariances, outFile, 'glintCalibrationVariances.npy')
+
+		# rbfs can't be save right now
+		# if self.horizontalInterpolater is not None:
+		# 	SavePickle(self.horizontalInterpolater, outFile, 'horizontalInterpolator.pkl')
+		# if self.verticalInterpolater is not None:
+		# 	SavePickle(self.verticalInterpolater, outFile, 'verticalInterpolator.pkl')
+
+
+	def Load(self, fileName):
+		"""
+		Load previously saved interpolators
+		@param fileName:
+		@return:
+		"""
+
+		def ReadNPY(zipfile, subFileName):
+			"""
+			Reads a saved npy from inside the zip
+			@param zipfile: 		ZipFile
+			@param subFileName: 	str, file name
+			@return: array
+			"""
+			arrayFile = io.BytesIO(zipfile.read(subFileName))
+			arrayFile.seek(0)
+			out = numpy.load(arrayFile)
+			del arrayFile
+			return out
+
+		def ReadPickle(zipfile, subFileName):
+			"""
+			Reads a saved pickle from inside the zip
+			@param zipfile: 		ZipFile
+			@param subFileName: 	str, file name
+			@return: object
+			"""
+			objFile = io.BytesIO(zipfile.read(subFileName))
+			objFile.seek(0)
+			out = cPickle.load(objFile)
+			del objFile
+			return out
+
+		inFile = ZipFile(fileName, 'r')
+		subFiles = inFile.NameToInfo.keys()
+		if 'pupilCalibrationPositions.npy' in subFiles:
+			self.pupilCalibrationPositions = ReadNPY(inFile, 'pupilCalibrationPositions.npy')
+		if 'pupilCalibrationVariances.npy' in subFiles:
+			self.pupilCalibrationVariances = ReadNPY(inFile, 'pupilCalibrationVariances.npy')
+		if 'glintCalibrationPositions.npy' in subFiles:
+			self.glintCalibrationPositions = ReadNPY(inFile, 'glintCalibrationPositions.npy')
+		if 'glintCalibrationVariances.npy' in subFiles:
+			self.glintCalibrationVariances = ReadNPY(inFile, 'glintCalibrationVariances.npy')
+		self.Fit()
+		# if 'horizontalInterpolator.pkl' in subFiles:
+		# 	self.horizontalInterpolater = ReadPickle(inFile, 'horizontalInterpolator.pkl')
+		# if 'verticalInterpolator.pkl' in subFiles:
+		# 	self.verticalInterpolater = ReadPickle(inFile, 'verticalInterpolator.pkl')

@@ -283,14 +283,14 @@ class Eyetracker(object):
 		if not firstEyetrackingFrame:
 			firstEyetrackingFrame = self.calibrator.pupilFinder.FindOnsetFrame(self.calibrationStart[0], self.calibrationStart[1], self.calibrationStart[2], self.calibrationStart[3])
 
-		stimulusFrameDropFactor = int(self.dataPupilFinder.fps / stimulusFPS)
+		eyetrackingFramesPerStimulusFrame = int(self.dataPupilFinder.fps / stimulusFPS)
 
 		circles = self.dataPupilFinder.filteredPupilLocations.astype(numpy.int)
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps, (stimuliResolution[0] + 320, stimuliResolution[1] if stimuliResolution[1] > 240 else 240))
 		thisFrame = numpy.zeros([stimuliResolution[1] if stimuliResolution[1] > 240 else 240, stimuliResolution[0] + 320, 3], dtype = numpy.uint8)
-		for frame in range(nFrames):							# frame indexes into the frames array
-			dataFrame = frame + firstDataFrame					# indexes correctly into the eyetracking video
-			image = frames[frame / stimulusFrameDropFactor, :, :, :3].copy()
+		for frame in range(nFrames * eyetrackingFramesPerStimulusFrame):	# frame is output video frame, locked to pupil video fps
+			dataFrame = frame + firstDataFrame								# indexes correctly into the eyetracking video
+			image = frames[frame / eyetrackingFramesPerStimulusFrame, :, :, :3].copy()
 			if transformation is not None:
 				image = warp(image, transformation, output_shape = (stimuliResolution[1], stimuliResolution[0])) * 255
 			x = int(gazeLocation[dataFrame, 0])

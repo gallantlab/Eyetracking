@@ -1,0 +1,95 @@
+import numpy
+import cv2
+import re
+
+import multiprocessing
+
+try:
+	import progressbar as pb
+except ImportError:
+	pass
+
+def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
+	"""
+	Parallelizes a function. Copied from pycortex so as to not have that import
+	@param function:
+	@param iterable:
+	@param nThreads:
+	@return:
+	"""
+	inputQueue = multiprocessing.Queue()
+	outputQueue = multiprocessing.Queue()
+	length = multiprocessing.Value('i', 0)
+
+	def _fill(iterable, nThreads, inputQueue, outputQueue):
+		for data in enumerate(iterable):
+			inputQueue.put(data)
+			length.value += 1
+		for _ in range(nThreads * 2):
+			inputQueue.put((-1, -1))
+
+	def _func(proc, inputQueue, outputQueue):
+		idx, data = inputQueue.get()
+		while idx != -1:
+			outputQueue.put((idx, function(data)))
+			idx, data = inputQueue.get()
+
+	filler = multiprocessing.Process(target = _fill, args = (iterable, nThreads, inputQueue, outputQueue))
+	filler.daemon = True
+	filler.start()
+	for i in range(nThreads):
+		proc = multiprocessing.Process(target = _func, args = (i, inputQueue, outputQueue))
+		proc.daemon = True
+		proc.start()
+
+	try:
+		iterlen = len(iterable)
+	except:
+		filler.join()
+		iterlen = length.value
+
+	data = [[]] * iterlen
+	for _ in range(iterlen):
+		idx, result = outputQueue.get()
+		data[idx] = result
+
+	return data
+
+
+def ParseHistoryForStartTTLs(historyFileName, TR = 2.0, onset = False):
+	"""
+	Parses the history file from Avotec for the start TTL timings for runs
+	@param historyFileName:	str, name of history file from avotec
+	@param TR:				float, TR length used
+	@param onset:			bool, use the TTL pulse HI instead of the LO value?
+	@return:	list<tuple<tuple<float>, int>>, first value is the timestamp of the first TTL in a run, and the second is number of TRs in each run
+	"""
+
+	historyFile = open(historyFileName, 'r')
+	TTLtoken = 'HI' if onset else 'LO'
+	TTLs = []
+
+	line = historyFile.readline()
+	while line != '':
+		tokens = line.split()
+		if len(tokens) > 0 and tokens[-1] == TTLtoken:
+			TTLs.append(tuple([int(token) for token in re.split('[:\.]', tokens[0])]))
+		line = historyFile.readline()
+
+	starts = []
+	firstInRun = TTLs[0]
+	nTRs = 1
+	for i in range(1, len(TTLs) - 1):
+		this = TTLs[i]
+		last = TTLs[i - 1]
+		dt = (this[0] - last[0]) * 3600.0 + (this[1] - last[1]) * 60.0 + (this[2] - last[2]) + (this[3] - last[3]) * 0.001
+		if dt > 1.5 * TR:
+			starts.append((firstInRun, nTRs))
+			firstInRun = this
+			nTRs = 1
+		else:
+			nTRs += 1
+	starts.append((firstInRun, nTRs + 1))	# account for last run in which there's no faraway TR to make the math work
+
+	historyFile.close()
+	return starts

@@ -1,6 +1,8 @@
 import numpy
 import cv2
 import os
+import io
+from zipfile import ZipFile
 from VideoTimestampReader import VideoTimestampReader
 from scipy.signal import medfilt
 from skimage.draw import circle_perimeter as DrawCircle
@@ -270,3 +272,67 @@ class PupilFinder(VideoTimestampReader):
 		outTrace = numpy.array(outTrace)
 
 		return outTrace
+
+	def Save(self, fileName):
+		"""
+		Saves calibrated interpolators and whatever else
+		@param fileName:
+		@return:
+		"""
+
+		def SaveNPY(array, zipfile, name):
+			"""
+			Saves a numpy array into a zip
+			@param array: 	numpy array
+			@param zipfile: ZipFile
+			@param name: 	str, name to save
+			@return:
+			"""
+			arrayFile = io.BytesIO()
+			numpy.save(arrayFile, array)
+			arrayFile.seek(0)
+			zipfile.writestr(name, arrayFile.read())
+			arrayFile.close()
+			del arrayFile
+
+		outFile = ZipFile(fileName, 'w')
+		if self.rawPupilLocations is not None:
+			SaveNPY(self.rawPupilLocations, outFile, 'rawPupilLocations.npy')
+		if self.frameDiffs is not None:
+			SaveNPY(self.frameDiffs, outFile, 'frameDiffs.npy')
+		if self.blinks is not None:
+			SaveNPY(self.blinks, outFile, 'blinks.npy')
+		if self.filteredPupilLocations is not None:
+			SaveNPY(self.filteredPupilLocations, outFile, 'filteredPupilLocations.npy')
+
+
+	def Load(self, fileName):
+		"""
+		Load previously saved interpolators
+		@param fileName:
+		@return:
+		"""
+
+		def ReadNPY(zipfile, subFileName):
+			"""
+			Reads a saved npy from inside the zip
+			@param zipfile: 		ZipFile
+			@param subFileName: 	str, file name
+			@return: array
+			"""
+			arrayFile = io.BytesIO(zipfile.read(subFileName))
+			arrayFile.seek(0)
+			out = numpy.load(arrayFile)
+			del arrayFile
+			return out
+
+		inFile = ZipFile(fileName, 'r')
+		subFiles = inFile.NameToInfo.keys()
+		if 'rawPupilLocations.npy' in subFiles:
+			self.rawPupilLocations= ReadNPY(inFile, 'rawPupilLocations.npy')
+		if 'frameDiffs.npy' in subFiles:
+			self.frameDiffs = ReadNPY(inFile, 'frameDiffs.npy')
+		if 'blinks.npy' in subFiles:
+			self.blinks = ReadNPY(inFile, 'blinks.npy')
+		if 'filteredPupilLocations.npy' in subFiles:
+			self.filteredPupilLocations = ReadNPY(inFile, 'filteredPupilLocations.npy')
