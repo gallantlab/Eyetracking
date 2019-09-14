@@ -1,7 +1,7 @@
 import numpy
 import cv2
-import io
 from zipfile import ZipFile
+from EyetrackingUtilities import SaveNPY, ReadNPY
 from PupilFinder import PupilFinder, median2way, outliers2nan
 from skimage.draw import circle, circle_perimeter as DrawCircle
 
@@ -180,63 +180,43 @@ class TemplatePupilFinder(PupilFinder):
 			video.write(image)
 		video.release()
 
-	def Save(self, fileName):
+	def Save(self, fileName = None, outFile = None):
 		"""
-		Saves calibrated interpolators and whatever else
-		@param fileName:
+		Save out information
+		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
+		@param outFile: 	zipfile?, existing object to write to
 		@return:
 		"""
 
-		def SaveNPY(array, zipfile, name):
-			"""
-			Saves a numpy array into a zip
-			@param array: 	numpy array
-			@param zipfile: ZipFile
-			@param name: 	str, name to save
-			@return:
-			"""
-			arrayFile = io.BytesIO()
-			numpy.save(arrayFile, array)
-			arrayFile.seek(0)
-			zipfile.writestr(name, arrayFile.read())
-			arrayFile.close()
-			del arrayFile
+		closeOnFinish = outFile is None  # we close the file only if this is the actual function that started the file
 
-		outFile = ZipFile(fileName, 'w')
-		if self.rawPupilLocations is not None:
-			SaveNPY(self.rawPupilLocations, outFile, 'rawPupilLocations.npy')
-		if self.frameDiffs is not None:
-			SaveNPY(self.frameDiffs, outFile, 'frameDiffs.npy')
-		if self.blinks is not None:
-			SaveNPY(self.blinks, outFile, 'blinks.npy')
-		if self.filteredPupilLocations is not None:
-			SaveNPY(self.filteredPupilLocations, outFile, 'filteredPupilLocations.npy')
+		if outFile is None:
+			outFile = ZipFile(fileName, 'w')
+
+		super(TemplatePupilFinder, self).Save(None, outFile)
+
 		if self.rawGlintLocations is not None:
 			SaveNPY(self.rawGlintLocations, outFile, 'rawGlintLocations.npy')
 		if self.filteredGlintLocations is not None:
 			SaveNPY(self.filteredGlintLocations, outFile, 'filteredGlintLocations.npy')
 
-	def Load(self, fileName):
+		if closeOnFinish:
+			outFile.close()
+
+	def Load(self, fileName = None, inFile = None):
 		"""
-		Load previously saved interpolators
-		@param fileName:
+		Loads in information
+		@param fileName: 	str? name of file to read, must not be none if infile is none
+		@param inFile:		zipfile? existing object to read from
 		@return:
 		"""
 
-		def ReadNPY(zipfile, subFileName):
-			"""
-			Reads a saved npy from inside the zip
-			@param zipfile: 		ZipFile
-			@param subFileName: 	str, file name
-			@return: array
-			"""
-			arrayFile = io.BytesIO(zipfile.read(subFileName))
-			arrayFile.seek(0)
-			out = numpy.load(arrayFile)
-			del arrayFile
-			return out
+		closeOnFinish = inFile is None
+		if inFile is None:
+			inFile = ZipFile(fileName, 'r')
 
-		inFile = ZipFile(fileName, 'r')
+		super(TemplatePupilFinder, self).Load(fileName, inFile)
+
 		subFiles = inFile.NameToInfo.keys()
 		if 'rawPupilLocations.npy' in subFiles:
 			self.rawPupilLocations= ReadNPY(inFile, 'rawPupilLocations.npy')
@@ -250,3 +230,6 @@ class TemplatePupilFinder(PupilFinder):
 			self.filteredGlintLocations = ReadNPY(inFile, 'filteredGlintLocations.npy')
 		if 'rawGlintLocations.npy' in subFiles:
 			self.rawGlintLocations = ReadNPY(inFile, 'rawGlintLocations.npy')
+
+		if closeOnFinish:
+			inFile.close()

@@ -1,7 +1,6 @@
 import numpy
-import io
-import cPickle
 from zipfile import ZipFile
+from EyetrackingUtilities import ReadNPY, SaveNPY
 from scipy.interpolate import Rbf as RBF
 from PupilFinder import PupilFinder
 from TemplatePupilFinder import TemplatePupilFinder
@@ -82,6 +81,10 @@ class EyetrackingCalibrator(object):
 		self.calibrationDuration = calibrationDuration
 		self.calibrationDelay = calibrationDelay
 
+		# used for searching through different durations
+		self.bestDuration = 0
+		self.bestDurationError = 100
+
 		self.initCalibrationPositions = self.calibrationPositions.copy()
 		self.initCalibrationOrder = numpy.array(self.calibrationOrder)
 
@@ -137,7 +140,7 @@ class EyetrackingCalibrator(object):
 		@param method:			function, method used to aggregated points to one summary point
 		@param startDelay:		float, time delay in seconds to account for eye movement delay
 		@param endSkip:			float, time in seconds to clip from the end of a fixation period
-		@param duration:		float?, duration of each fixation point
+		@param duration:		float|list<float>?, duration of each fixation point, if list, search through all and select best
 		@param filtered:		bool, use filtered pupil locations?
 		@return:
 		"""
@@ -150,57 +153,73 @@ class EyetrackingCalibrator(object):
 		if (duration is None):
 			duration = self.calibrationDuration
 
-		firstFrame = self.pupilFinder.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
-		firstFrame += int(self.calibrationDelay * self.pupilFinder.fps)
-		startOffset = int(self.pupilFinder.fps * startDelay)	# convert startDelay time to frame counts
-		endOffset = int(self.pupilFinder.fps * endSkip)  # convert startDelay time to frame counts
+		isList = False
+		try:
+			isList = len(duration)
+		except:
+			pass
 
-		pupilPosition = []
-		pupilVariance = []
-		if self.hasGlint:
-			glintPosition = []
-			glintVariance = []
-		for point in range(len(self.calibrationOrder)):
-			start = int(point * duration * self.pupilFinder.fps + firstFrame + startOffset)
-			end = int((point + 1) * duration * self.pupilFinder.fps + firstFrame - endOffset)
-			if filtered:
-				pupilPosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
-				pupilVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
-				if self.hasGlint:
-					glintPosition.append(method(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
-					glintVariance.append(numpy.nanstd(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
-			else:
-				pupilPosition.append(method(self.pupilFinder.rawPupilLocations[start:end, :], 0))
-				pupilVariance.append(numpy.nanstd(self.pupilFinder.rawPupilLocations[start:end, :], 0))
-				if self.hasGlint:
-					glintPosition.append(method(self.pupilFinder.rawGlintLocations[start:end, :], 0))
-					glintVariance.append(numpy.nanstd(self.pupilFinder.rawGlintLocations[start:end, :], 0))
-		self.pupilCalibrationPositions = numpy.asarray(pupilPosition)
-		self.pupilCalibrationVariances = numpy.asarray(pupilVariance)
-		if self.hasGlint:
-			self.glintCalibrationPositions = numpy.asarray(glintPosition)
-			self.glintCalibrationVariances = numpy.asarray(glintVariance)
+		if isList:	# see this is where overloading comes in useful
+			self.bestDurationError = 1000
+			self.bestDuration = 0
+			for i in range(len(duration)):
+				self.EstimateCalibrationPointPositions(beginTime, method, startDelay, endSkip, duration[i], filtered)
+				if self.bestError < self.bestDurationError:
+					self.bestDurationError = self.bestError
+					self.bestDuration = duration[i]
+			self.EstimateCalibrationPointPositions(beginTime, method, startDelay, endSkip, self.bestDuration, filtered)
+		else:
+			firstFrame = self.pupilFinder.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
+			firstFrame += int(self.calibrationDelay * self.pupilFinder.fps)
+			startOffset = int(self.pupilFinder.fps * startDelay)	# convert startDelay time to frame counts
+			endOffset = int(self.pupilFinder.fps * endSkip)  # convert startDelay time to frame counts
 
-		valid = numpy.isfinite(self.pupilCalibrationPositions[:, :2].sum(1))
-		if numpy.any(numpy.logical_not(valid)):	# if there are nan points, which are bad
-			calibrationOrder = []
-			for i in range(len(self.initCalibrationOrder)):
-				if valid[i]:
-					calibrationOrder.append(self.initCalibrationOrder[i])
-				else:
-					print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
-			self.calibrationOrder = calibrationOrder
-			self.pupilCalibrationPositions = self.pupilCalibrationPositions[valid, :]
-			self.pupilCalibrationVariances = self.pupilCalibrationVariances[valid, :]
+			pupilPosition = []
+			pupilVariance = []
 			if self.hasGlint:
-				self.glintCalibrationPositions = self.glintCalibrationPositions[valid, :]
-				self.glintCalibrationVariances = self.glintCalibrationVariances[valid, :]
+				glintPosition = []
+				glintVariance = []
+			for point in range(len(self.calibrationOrder)):
+				start = int(point * duration * self.pupilFinder.fps + firstFrame + startOffset)
+				end = int((point + 1) * duration * self.pupilFinder.fps + firstFrame - endOffset)
+				if filtered:
+					pupilPosition.append(method(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+					pupilVariance.append(numpy.nanstd(self.pupilFinder.filteredPupilLocations[start:end, :], 0))
+					if self.hasGlint:
+						glintPosition.append(method(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
+						glintVariance.append(numpy.nanstd(self.pupilFinder.filteredGlintLocations[start:end, :], 0))
+				else:
+					pupilPosition.append(method(self.pupilFinder.rawPupilLocations[start:end, :], 0))
+					pupilVariance.append(numpy.nanstd(self.pupilFinder.rawPupilLocations[start:end, :], 0))
+					if self.hasGlint:
+						glintPosition.append(method(self.pupilFinder.rawGlintLocations[start:end, :], 0))
+						glintVariance.append(numpy.nanstd(self.pupilFinder.rawGlintLocations[start:end, :], 0))
+			self.pupilCalibrationPositions = numpy.asarray(pupilPosition)
+			self.pupilCalibrationVariances = numpy.asarray(pupilVariance)
+			if self.hasGlint:
+				self.glintCalibrationPositions = numpy.asarray(glintPosition)
+				self.glintCalibrationVariances = numpy.asarray(glintVariance)
 
-		# reorder the calibration points to be the same as the calibration sequence
-		points = []
-		for i in self.calibrationOrder:
-			points.append(self.initCalibrationPositions[i, :])
-		self.calibrationPositions = numpy.asarray(points)
+			valid = numpy.isfinite(self.pupilCalibrationPositions[:, :2].sum(1))
+			if numpy.any(numpy.logical_not(valid)):	# if there are nan points, which are bad
+				calibrationOrder = []
+				for i in range(len(self.initCalibrationOrder)):
+					if valid[i]:
+						calibrationOrder.append(self.initCalibrationOrder[i])
+					else:
+						print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
+				self.calibrationOrder = calibrationOrder
+				self.pupilCalibrationPositions = self.pupilCalibrationPositions[valid, :]
+				self.pupilCalibrationVariances = self.pupilCalibrationVariances[valid, :]
+				if self.hasGlint:
+					self.glintCalibrationPositions = self.glintCalibrationPositions[valid, :]
+					self.glintCalibrationVariances = self.glintCalibrationVariances[valid, :]
+
+			# reorder the calibration points to be the same as the calibration sequence
+			points = []
+			for i in self.calibrationOrder:
+				points.append(self.initCalibrationPositions[i, :])
+			self.calibrationPositions = numpy.asarray(points)
 
 
 	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None,
@@ -317,37 +336,10 @@ class EyetrackingCalibrator(object):
 		@return:
 		"""
 
-		def SaveNPY(array, zipfile, name):
-			"""
-			Saves a numpy array into a zip
-			@param array: 	numpy array
-			@param zipfile: ZipFile
-			@param name: 	str, name to save
-			@return:
-			"""
-			arrayFile = io.BytesIO()
-			numpy.save(arrayFile, array)
-			arrayFile.seek(0)
-			zipfile.writestr(name, arrayFile.read())
-			arrayFile.close()
-			del arrayFile
-
-		def SavePickle(obj, zipfile, name):
-			"""
-			Pickles an object into a zip
-			@param obj: 	object
-			@param zipfile: ZipFile
-			@param name: 	str, name to save
-			@return:
-			"""
-			pickleFile = io.BytesIO()
-			cPickle.dump(obj, pickleFile)
-			pickleFile.seek(0)
-			zipfile.writestr(name, pickleFile.read())
-			pickleFile.close()
-			del pickleFile
-
 		outFile = ZipFile(fileName, 'w')
+
+		self.pupilFinder.Save(None, outFile)
+
 		if self.pupilCalibrationPositions is not None:
 			SaveNPY(self.pupilCalibrationPositions, outFile, 'pupilCalibrationPositions.npy')
 		if self.pupilCalibrationVariances is not None:
@@ -356,6 +348,7 @@ class EyetrackingCalibrator(object):
 			SaveNPY(self.glintCalibrationPositions, outFile, 'glintCalibrationPositions.npy')
 		if self.glintCalibrationVariances is not None:
 			SaveNPY(self.glintCalibrationVariances, outFile, 'glintCalibrationVariances.npy')
+		outFile.close()
 
 		# rbfs can't be save right now
 		# if self.horizontalInterpolater is not None:
@@ -371,33 +364,10 @@ class EyetrackingCalibrator(object):
 		@return:
 		"""
 
-		def ReadNPY(zipfile, subFileName):
-			"""
-			Reads a saved npy from inside the zip
-			@param zipfile: 		ZipFile
-			@param subFileName: 	str, file name
-			@return: array
-			"""
-			arrayFile = io.BytesIO(zipfile.read(subFileName))
-			arrayFile.seek(0)
-			out = numpy.load(arrayFile)
-			del arrayFile
-			return out
-
-		def ReadPickle(zipfile, subFileName):
-			"""
-			Reads a saved pickle from inside the zip
-			@param zipfile: 		ZipFile
-			@param subFileName: 	str, file name
-			@return: object
-			"""
-			objFile = io.BytesIO(zipfile.read(subFileName))
-			objFile.seek(0)
-			out = cPickle.load(objFile)
-			del objFile
-			return out
-
 		inFile = ZipFile(fileName, 'r')
+
+		self.pupilFinder.Load(None, fileName)
+
 		subFiles = inFile.NameToInfo.keys()
 		if 'pupilCalibrationPositions.npy' in subFiles:
 			self.pupilCalibrationPositions = ReadNPY(inFile, 'pupilCalibrationPositions.npy')
@@ -407,7 +377,8 @@ class EyetrackingCalibrator(object):
 			self.glintCalibrationPositions = ReadNPY(inFile, 'glintCalibrationPositions.npy')
 		if 'glintCalibrationVariances.npy' in subFiles:
 			self.glintCalibrationVariances = ReadNPY(inFile, 'glintCalibrationVariances.npy')
-		self.Fit()
+
+		inFile.close()
 		# if 'horizontalInterpolator.pkl' in subFiles:
 		# 	self.horizontalInterpolater = ReadPickle(inFile, 'horizontalInterpolator.pkl')
 		# if 'verticalInterpolator.pkl' in subFiles:

@@ -1,13 +1,9 @@
 import numpy
-import cv2
+import cPickle
 import re
+import io
 
 import multiprocessing
-
-try:
-	import progressbar as pb
-except ImportError:
-	pass
 
 def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
 	"""
@@ -29,10 +25,10 @@ def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
 			inputQueue.put((-1, -1))
 
 	def _func(proc, inputQueue, outputQueue):
-		idx, data = inputQueue.get()
-		while idx != -1:
-			outputQueue.put((idx, function(data)))
-			idx, data = inputQueue.get()
+		index, data = inputQueue.get()
+		while index != -1:
+			outputQueue.put((index, function(data)))
+			index, data = inputQueue.get()
 
 	filler = multiprocessing.Process(target = _fill, args = (iterable, nThreads, inputQueue, outputQueue))
 	filler.daemon = True
@@ -50,8 +46,8 @@ def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
 
 	data = [[]] * iterlen
 	for _ in range(iterlen):
-		idx, result = outputQueue.get()
-		data[idx] = result
+		index, result = outputQueue.get()
+		data[index] = result
 
 	return data
 
@@ -93,3 +89,63 @@ def ParseHistoryForStartTTLs(historyFileName, TR = 2.0, onset = False):
 
 	historyFile.close()
 	return starts
+
+
+def SaveNPY(array, zipfile, name):
+	"""
+	Saves a numpy array into a zip
+	@param array: 	numpy array
+	@param zipfile: ZipFile
+	@param name: 	str, name to save
+	@return:
+	"""
+	arrayFile = io.BytesIO()
+	numpy.save(arrayFile, array)
+	arrayFile.seek(0)
+	zipfile.writestr(name, arrayFile.read())
+	arrayFile.close()
+	del arrayFile
+
+
+def ReadNPY(zipfile, subFileName):
+	"""
+	Reads a saved npy from inside the zip
+	@param zipfile: 		ZipFile
+	@param subFileName: 	str, file name
+	@return: array
+	"""
+	arrayFile = io.BytesIO(zipfile.read(subFileName))
+	arrayFile.seek(0)
+	out = numpy.load(arrayFile)
+	del arrayFile
+	return out
+
+
+def ReadPickle(zipfile, subFileName):
+	"""
+	Reads a saved pickle from inside the zip
+	@param zipfile: 		ZipFile
+	@param subFileName: 	str, file name
+	@return: object
+	"""
+	objFile = io.BytesIO(zipfile.read(subFileName))
+	objFile.seek(0)
+	out = cPickle.load(objFile)
+	del objFile
+	return out
+
+
+def SavePickle(obj, zipfile, name):
+	"""
+	Pickles an object into a zip
+	@param obj: 	object
+	@param zipfile: ZipFile
+	@param name: 	str, name to save
+	@return:
+	"""
+	pickleFile = io.BytesIO()
+	cPickle.dump(obj, pickleFile)
+	pickleFile.seek(0)
+	zipfile.writestr(name, pickleFile.read())
+	pickleFile.close()
+	del pickleFile

@@ -1,5 +1,7 @@
 import numpy
 from VideoReader import VideoReader
+from zipfile import ZipFile
+from EyetrackingUtilities import SaveNPY, ReadNPY
 
 SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0],
@@ -34,7 +36,7 @@ class VideoTimestampReader(VideoReader):
 			flats.append(templates[i, :, :].ravel())
 		self.numberTemplates = numpy.stack(flats)
 
-		self.time = numpy.zeros([self.nFrames, 4])  		# [t x 3 (HH MM SS MS)] timestamps on the rawFrames
+		self.time = numpy.zeros([self.nFrames, 4])  			# [t x 4 (HH MM SS MS)] timestamps on the rawFrames
 		# self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
 		# self.frames[self.frames < 255] = 0					# binarize
 		self.isParsed = False
@@ -123,3 +125,40 @@ class VideoTimestampReader(VideoReader):
 			return frame, diff
 		else:
 			return frame
+
+	def Save(self, fileName = None, outFile = None):
+		"""
+		Save out information
+		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
+		@param outFile: 	zipfile?, existing object to write to
+		@return:
+		"""
+		closeOnFinish = outFile is None  # we close the file only if this is the actual function that started the file
+
+		if outFile is None:
+			outFile = ZipFile(fileName, 'w')
+
+		super(VideoTimestampReader, self).Save(None, outFile)
+
+		SaveNPY(self.time, outFile, 'time.npy')
+
+		if closeOnFinish:
+			outFile.close()
+
+	def Load(self, fileName = None, inFile = None):
+		"""
+		Loads in information
+		@param fileName: 	str? name of file to read, must not be none if infile is none
+		@param inFile:		zipfile? existing object to read from
+		@return:
+		"""
+		closeOnFinish = inFile is None
+		if inFile is None:
+			inFile = ZipFile(fileName, 'r')
+
+		super(VideoTimestampReader, self).Load(None, inFile)
+		self.time = ReadNPY(inFile, 'time.npy')
+		self.isParsed = True
+
+		if closeOnFinish:
+			inFile.close()

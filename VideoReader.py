@@ -1,5 +1,7 @@
 import numpy
 import cv2
+from zipfile import ZipFile
+from EyetrackingUtilities import SaveNPY, ReadNPY
 
 class VideoReader(object):
 	"""
@@ -108,9 +110,9 @@ class VideoReader(object):
 			self.duration = self.nFrames / self.fps  # duration in seconds
 			self.isVidCap = True
 		else:	# not a video file on disk
+			import cottoncandy
 			self.isVidCap = False
 			if self.fileName[:3] == 's3:':		# file is on s3; assumed to the gzipped
-				import cottoncandy
 
 				fileName = self.fileName[5:]	# since s3 files being with 's3://'
 				bucket = fileName.split('/')[0]
@@ -149,3 +151,46 @@ class VideoReader(object):
 		if frames is None:
 			frames = self.frames
 
+
+	def Save(self, fileName = None, outFile = None):
+		"""
+		Save out information
+		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
+		@param outFile: 	zipfile?, existing object to write to
+		@return:
+		"""
+
+		closeOnFinish = outFile is None		# we close the file only if this is the actual function that started the file
+
+		if outFile is None:
+			outFile = ZipFile(fileName, 'w')
+
+		SaveNPY(numpy.array([self.fps,
+							 self.width,
+							 self.height,
+							 self.duration,
+							 self.nFrames]), outFile, 'VideoInformation.npy')
+
+		if closeOnFinish:
+			outFile.close()
+
+	def Load(self, fileName = None, inFile = None):
+		"""
+		Loads in information
+		@param fileName: 	str? name of file to read, must not be none if infile is none
+		@param inFile:		zipfile? existing object to read from
+		@return:
+		"""
+		closeOnFinish = inFile is None
+		if inFile is None:
+			inFile = ZipFile(fileName, 'r')
+
+		info = ReadNPY(inFile, 'VideoInformation.npy')
+		self.fps = info[0]
+		self.width = int(info[1])
+		self.height = int(info[2])
+		self.duration = info[3]
+		self.nFrames = int(info[4])
+
+		if closeOnFinish:
+			inFile.close()
