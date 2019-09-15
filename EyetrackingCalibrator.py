@@ -310,7 +310,7 @@ class EyetrackingCalibrator(object):
 										  calibrationPositions[:, 1], function = self.bestMethod, smooth = self.bestSmoothness)
 
 
-	def SearchAndFit(self, durations, delays, verbose = False):
+	def SearchAndFit(self, durations = numpy.arange(2.0, 2.41, 0.01), delays = numpy.arange(1.98, 2.61, 0.01), verbose = False):
 		"""
 		Searches for best duration and delay
 		@param durations: 	list<float>
