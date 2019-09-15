@@ -215,7 +215,7 @@ class TemplatePupilFinder(PupilFinder):
 		if inFile is None:
 			inFile = ZipFile(fileName, 'r')
 
-		super(TemplatePupilFinder, self).Load(fileName, inFile)
+		super(TemplatePupilFinder, self).Load(None, inFile)
 
 		subFiles = inFile.NameToInfo.keys()
 		if 'rawPupilLocations.npy' in subFiles:

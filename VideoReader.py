@@ -42,12 +42,13 @@ class VideoReader(object):
 		@param other: 	VideoReader object
 		@return:
 		"""
-		self.rawFrames = other.rawFrames
-		self.fps = other.fps
-		self.width = other.width
-		self.height = other.height
-		self.duration = other.duration
-		self.nFrames = other.nFrames
+		if (other is not None):
+			self.rawFrames = other.rawFrames
+			self.fps = other.fps
+			self.width = other.width
+			self.height = other.height
+			self.duration = other.duration
+			self.nFrames = other.nFrames
 
 
 	def LoadFrames(self):

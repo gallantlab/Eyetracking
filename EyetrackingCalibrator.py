@@ -1,6 +1,6 @@
 import numpy
 from zipfile import ZipFile
-from EyetrackingUtilities import ReadNPY, SaveNPY
+from EyetrackingUtilities import ReadNPY, SaveNPY, parallelize
 from scipy.interpolate import Rbf as RBF
 from PupilFinder import PupilFinder
 from TemplatePupilFinder import TemplatePupilFinder
@@ -101,6 +101,21 @@ class EyetrackingCalibrator(object):
 		self.verticalInterpolater = None		# RBF, final vertical interpolater
 
 
+	def Copy(self):
+		"""
+		Make a copy of this object, but does not copy the pupil finder's frames so we save space.
+		@return: EyetrackingCalibrator
+		"""
+		newCalibrator = EyetrackingCalibrator(None, self.calibrationBeginTime, self.calibrationPositions, self.calibrationOrder,
+											  self.calibrationDuration, self.calibrationDelay, True)
+		newCalibrator.pupilFinder.rawPupilLocations = self.pupilFinder.rawPupilLocations
+		newCalibrator.pupilFinder.filteredPupilLocations = self.pupilFinder.filteredPupilLocations
+		if type(self.pupilFinder) == TemplatePupilFinder:
+			newCalibrator.pupilFinder.rawGlintLocations = self.pupilFinder.rawGlintLocations
+			newCalibrator.pupilFinder.filteredGlintLocations = self.pupilFinder.filteredGlintLocations
+		return newCalibrator
+
+
 	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
 				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None, filterPupilSize = True, surfaceBlur = None):
 		"""
@@ -133,7 +148,7 @@ class EyetrackingCalibrator(object):
 
 
 	def EstimateCalibrationPointPositions(self, beginTime = None, method = numpy.nanmedian, startDelay = 1.0 / 6.0, endSkip = 0.0, duration = None,
-										  filtered = True):
+										  filtered = True, verbose = True):
 		"""
 		Estimates the pupil positions corresponding to each calibration point
 		@param beginTime:		4ple<int>?, time of calibration sequence onset	TODO: replace this with a frame number
@@ -142,6 +157,7 @@ class EyetrackingCalibrator(object):
 		@param endSkip:			float, time in seconds to clip from the end of a fixation period
 		@param duration:		float|list<float>?, duration of each fixation point, if list, search through all and select best
 		@param filtered:		bool, use filtered pupil locations?
+		@param verbose:			bool, print stuff?
 		@return:
 		"""
 		if (self.pupilFinder is None):
@@ -207,7 +223,8 @@ class EyetrackingCalibrator(object):
 					if valid[i]:
 						calibrationOrder.append(self.initCalibrationOrder[i])
 					else:
-						print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
+						if verbose:
+							print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
 				self.calibrationOrder = calibrationOrder
 				self.pupilCalibrationPositions = self.pupilCalibrationPositions[valid, :]
 				self.pupilCalibrationVariances = self.pupilCalibrationVariances[valid, :]
@@ -293,6 +310,41 @@ class EyetrackingCalibrator(object):
 										  calibrationPositions[:, 1], function = self.bestMethod, smooth = self.bestSmoothness)
 
 
+	def SearchAndFit(self, durations, delays, verbose = False):
+		"""
+		Searches for best duration and delay
+		@param durations: 	list<float>
+		@param delays: 		list<float>
+		@param verbose: 	bool
+		@return:	tuple<float, float, float>, best duration, delay, and error
+		"""
+
+		def singleCombo(delayAndDuration):
+			delay = delayAndDuration[0]
+			duration = delayAndDuration[1]
+			calibrator = self.Copy()
+			calibrator.calibrationDelay = delay
+			calibrator.calibrationDuration = duration
+			calibrator.EstimateCalibrationPointPositions(verbose = verbose)
+			calibrator.Fit()
+			return calibrator.bestError
+
+		delayAndDurations = []
+		for delay in delays:
+			for duration in durations:
+				delayAndDurations.append((delay, duration))
+
+		errors = parallelize(singleCombo, delayAndDurations)
+		minError = 1000
+		minIndex = None
+		for i in range(len(delayAndDurations)):
+			if errors[i] < minError:
+				minError = errors[i]
+				minIndex = i
+
+		return (delayAndDurations[minIndex][1], delayAndDurations[minIndex][0], errors[minIndex])
+
+
 	def TransformToScreenCoordinates(self, pupilFinder = None, trace = None, videoFileName = None, replaceNanWithPrevious = True):
 		"""
 		Transforms an eyetracking video file or pupil finder to screen coords using this calibration.
@@ -366,7 +418,7 @@ class EyetrackingCalibrator(object):
 
 		inFile = ZipFile(fileName, 'r')
 
-		self.pupilFinder.Load(None, fileName)
+		self.pupilFinder.Load(None, inFile)
 
 		subFiles = inFile.NameToInfo.keys()
 		if 'pupilCalibrationPositions.npy' in subFiles:
