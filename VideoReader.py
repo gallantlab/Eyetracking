@@ -35,6 +35,8 @@ class VideoReader(object):
 		else:
 			self.InitFromOther(other)
 
+		print('{}x{} (HxW) video at %d fps with %d frames'.format(self.height, self.width, self.fps, self.nFrames))
+
 
 	def InitFromOther(self, other):
 		"""
