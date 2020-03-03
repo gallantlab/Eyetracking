@@ -52,40 +52,65 @@ def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
 	return data
 
 
-def ParseHistoryForStartTTLs(historyFileName, TR = 2.0, onset = False):
+def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
 	"""
 	Parses the history file from Avotec for the start TTL timings for runs
 	@param historyFileName:	str, name of history file from avotec
+	@param useMovieMarkers:	bool, use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
 	@param TR:				float, TR length used
 	@param onset:			bool, use the TTL pulse HI instead of the LO value?
+	@param threshold:		float, multiple of the TR interval to use as a threshold as a break?
 	@return:	list<tuple<tuple<float>, int>>, first value is the timestamp of the first TTL in a run, and the second is number of TRs in each run
 	"""
 
 	historyFile = open(historyFileName, 'r')
 	TTLtoken = 'HI' if onset else 'LO'
 	TTLs = []
-
-	line = historyFile.readline()
-	while line != '':
-		tokens = line.split()
-		if len(tokens) > 0 and tokens[-1] == TTLtoken:
-			TTLs.append(tuple([int(token) for token in re.split('[:\.]', tokens[0])]))
-		line = historyFile.readline()
-
 	starts = []
-	firstInRun = TTLs[0]
-	nTRs = 1
-	for i in range(1, len(TTLs) - 1):
-		this = TTLs[i]
-		last = TTLs[i - 1]
-		dt = (this[0] - last[0]) * 3600.0 + (this[1] - last[1]) * 60.0 + (this[2] - last[2]) + (this[3] - last[3]) * 0.001
-		if dt > 1.5 * TR:
-			starts.append((firstInRun, nTRs))
-			firstInRun = this
-			nTRs = 1
-		else:
-			nTRs += 1
-	starts.append((firstInRun, nTRs + 1))	# account for last run in which there's no faraway TR to make the math work
+
+	if useMovieMarkers:
+		nTTLs = 0
+		isStarted = False
+		start = None
+		line = historyFile.readline()
+		while line != '':
+			tokens = line.split()
+			if len(tokens) > 0:
+				if tokens[-1] == 'saveMovie[0]:':
+					isStarted = True
+					start = None
+					nTTLs = 0
+				elif tokens[3] == 'Closing':
+					isStarted = False
+					starts.append((start, nTTLs))
+				if isStarted:
+					if tokens[-1] == TTLtoken and tokens[4] == 'TTL':
+						if start is None:
+							start = tuple([int(token) for token in re.split('[:\.]', tokens[0])])
+						nTTLs += 1
+			line = historyFile.readline()
+
+	else:
+		line = historyFile.readline()
+		while line != '':
+			tokens = line.split()
+			if len(tokens) > 0 and tokens[-1] == TTLtoken:
+				TTLs.append(tuple([int(token) for token in re.split('[:\.]', tokens[0])]))
+			line = historyFile.readline()
+
+		firstInRun = TTLs[0]
+		nTRs = 1
+		for i in range(1, len(TTLs) - 1):
+			this = TTLs[i]
+			last = TTLs[i - 1]
+			dt = (this[0] - last[0]) * 3600.0 + (this[1] - last[1]) * 60.0 + (this[2] - last[2]) + (this[3] - last[3]) * 0.001
+			if dt > threshold * TR:
+				starts.append((firstInRun, nTRs))
+				firstInRun = this
+				nTRs = 1
+			else:
+				nTRs += 1
+		starts.append((firstInRun, nTRs + 1))	# account for last run in which there's no faraway TR to make the math work
 
 	historyFile.close()
 	return starts

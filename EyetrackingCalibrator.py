@@ -77,7 +77,7 @@ class EyetrackingCalibrator(object):
 
 		self.calibrationBeginTime = calibrationBeginTime
 		self.calibrationPositions = calibrationPositions if calibrationPositions is not None else EyetrackingCalibrator.GeneratePoints()
-		self.calibrationOrder = calibrationOrder if calibrationOrder  is not None else EyetrackingCalibrator.CalibrationOrder35
+		self.calibrationOrder = calibrationOrder if calibrationOrder is not None else EyetrackingCalibrator.CalibrationOrder35
 		self.calibrationDuration = calibrationDuration
 		self.calibrationDelay = calibrationDelay
 
@@ -240,13 +240,14 @@ class EyetrackingCalibrator(object):
 
 
 	def Fit(self, smoothnesses = numpy.linspace(-0.001, 10, 100), methods = ['thin-plate', 'multiquadric', 'linear', 'cubic'], varianceThreshold = None,
-			glintVector = False):
+			glintVector = False, searchThreshold = 40):
 		"""
 		Fit an interpolator to the points via LOO x-validation
 		@param smoothnesses:		list<float>, smoothnesses to try for interpolations
 		@param methods:				list<str>, methods to try
 		@param varianceThreshold:	float?, threshold of variance in the calibration positions to throw away
 		@param glintVector:			bool, use pupil-glint vector instead of just the pupil position?
+		@param searchThreshold:		float, if the error is above this threshold, search over delays/durations. will not search if is 0
 		@return:
 		"""
 		if not self.hasGlint:
@@ -309,12 +310,16 @@ class EyetrackingCalibrator(object):
 		self.verticalInterpolater  =  RBF(eyeCalibrationPositions[:, 0], eyeCalibrationPositions[:, 1],
 										  calibrationPositions[:, 1], function = self.bestMethod, smooth = self.bestSmoothness)
 
+		if (searchThreshold > 0) and (self.bestError > searchThreshold):
+			print('Min error {:.2f} is above threshold of {:.0f} and will be searching'.format(self.bestError, searchThreshold))
+			self.SearchAndFit()
 
-	def SearchAndFit(self, durations = numpy.arange(2.0, 2.41, 0.01), delays = numpy.arange(1.98, 2.61, 0.01), verbose = False):
+
+	def SearchAndFit(self, durations = numpy.arange(1.98, 2.21, 0.01), delays = numpy.arange(1.98, 2.41, 0.01), verbose = False):
 		"""
 		Searches for best duration and delay
-		@param durations: 	list<float>
-		@param delays: 		list<float>
+		@param durations: 	list<float>, list of durations to search over
+		@param delays: 		list<float>, list of delay lengths to search over
 		@param verbose: 	bool
 		@return:	tuple<float, float, float>, best duration, delay, and error
 		"""
@@ -326,7 +331,7 @@ class EyetrackingCalibrator(object):
 			calibrator.calibrationDelay = delay
 			calibrator.calibrationDuration = duration
 			calibrator.EstimateCalibrationPointPositions(verbose = verbose)
-			calibrator.Fit()
+			calibrator.Fit(searchThreshold = 0)
 			return calibrator.bestError
 
 		delayAndDurations = []
@@ -341,6 +346,11 @@ class EyetrackingCalibrator(object):
 			if errors[i] < minError:
 				minError = errors[i]
 				minIndex = i
+
+		self.calibrationDelay = delayAndDurations[minIndex][0]
+		self.calibrationDuration = delayAndDurations[minIndex][1]
+		self.EstimateCalibrationPointPositions(verbose = verbose)
+		self.Fit(searchThreshold = 0)
 
 		return (delayAndDurations[minIndex][1], delayAndDurations[minIndex][0], errors[minIndex])
 
