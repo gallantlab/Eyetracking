@@ -52,6 +52,15 @@ def parallelize(function, iterable, nThreads = multiprocessing.cpu_count()):
 	return data
 
 
+def TimeToSeconds(time):
+	"""
+	Converts a timestamp to just seconds elapsed
+	@param time: 	tuple<int, int, int, int> of HH:MM:SS.SSS timestamp
+	@return: 	float, seconds equivalence
+	"""
+	return 3600 * time[0] + 60 * time[1] + time[2] + 0.001 * time[3]
+
+
 def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
 	"""
 	Parses the history file from Avotec for the start TTL timings for runs
@@ -67,6 +76,8 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 	TTLtoken = 'HI' if onset else 'LO'
 	TTLs = []
 	starts = []
+	lastTime = (0, 0, 0, 0)
+	duplicates = 0
 
 	if useMovieMarkers:
 		nTTLs = 0
@@ -85,9 +96,14 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 					starts.append((start, nTTLs))
 				if isStarted:
 					if tokens[-1] == TTLtoken and tokens[4] == 'TTL':
+						time = tuple([int(token) for token in re.split('[:\.]', tokens[0])])
 						if start is None:
-							start = tuple([int(token) for token in re.split('[:\.]', tokens[0])])
-						nTTLs += 1
+							start = time
+						if ((TimeToSeconds(time) - TimeToSeconds(lastTime)) > 0.1):	# long enough of an interval since last one such that it's not a duplicate
+							nTTLs += 1
+							lastTime = time
+						else:
+							duplicates += 1
 			line = historyFile.readline()
 
 	else:
@@ -95,7 +111,12 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 		while line != '':
 			tokens = line.split()
 			if len(tokens) > 0 and tokens[-1] == TTLtoken:
-				TTLs.append(tuple([int(token) for token in re.split('[:\.]', tokens[0])]))
+				time = tuple([int(token) for token in re.split('[:\.]', tokens[0])])
+				if (TimeToSeconds(time) - TimeToSeconds(lastTime) > 0.1):  # long enough of an interval since last one such that it's not a duplicate
+					TTLs.append(time)
+					lastTime = time
+				else:
+					duplicates += 1
 			line = historyFile.readline()
 
 		firstInRun = TTLs[0]
@@ -103,7 +124,7 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 		for i in range(1, len(TTLs) - 1):
 			this = TTLs[i]
 			last = TTLs[i - 1]
-			dt = (this[0] - last[0]) * 3600.0 + (this[1] - last[1]) * 60.0 + (this[2] - last[2]) + (this[3] - last[3]) * 0.001
+			dt = TimeToSeconds(this) - TimeToSeconds(last)
 			if dt > threshold * TR:
 				starts.append((firstInRun, nTRs))
 				firstInRun = this
@@ -113,6 +134,7 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 		starts.append((firstInRun, nTRs + 1))	# account for last run in which there's no faraway TR to make the math work
 
 	historyFile.close()
+	print('{} duplicated TTLs'.format(duplicates))
 	return starts
 
 
