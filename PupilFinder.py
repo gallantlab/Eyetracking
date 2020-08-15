@@ -81,6 +81,31 @@ class PupilFinder(VideoTimestampReader):
 		self.filteredPupilLocations = None
 
 
+	def InitFromOther(self, other):
+		"""
+		Jank copy constructor
+		@param other: 	PupilFinder
+		@return:
+		"""
+		super(VideoTimestampReader, self).InitFromOther(other)
+		self.window = other.window
+		self.blur = other.blur
+		self.dp = other.dp
+		self.minDistance = other.minDistance
+		self.param1 = other.param1
+		self.param2 = other.param2
+		self.minRadius = other.minRadius
+		self.maxRadius = other.maxRadius
+		if other.rawPupilLocations is not None:
+			self.rawPupilLocations = other.rawPupilLocations.copy()
+		if other.fameDiffs is not None:
+			self.frameDiffs = other.frameDiffs.copy()
+		if other.blinks is not None:
+			self.blinks = other.blinks.copy()
+		if other.filteredPupilLocations is not None:
+			self.filteredPupilLocations = other.filteredPupilLocations
+
+
 	def FindPupils(self, endFrame = None, bilateral = None):
 		"""
 		Find the circles, i.e. pupils in the rawFrames, see eyetrack.video2circles()

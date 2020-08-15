@@ -42,6 +42,17 @@ class VideoTimestampReader(VideoReader):
 		self.isParsed = False
 
 
+	def InitFromOther(self, other):
+		"""
+		Jank copy constructor
+		@param other: VideoTimeStampReader object
+		@return:
+		"""
+		super(VideoTimestampReader, self).InitFromOther(other)
+		self.time = other.time.copy()
+		self.isParsed = other.isParsed
+
+
 	def MatchDigit(self, image):
 		"""
 		What number is this image?

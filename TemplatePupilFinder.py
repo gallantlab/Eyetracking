@@ -34,6 +34,20 @@ class TemplatePupilFinder(PupilFinder):
 		self.rawGlintLocations = None
 		self.filteredGlintLocations = None
 
+
+	def InitFromOther(self, other):
+		"""
+		Jank copy constructor
+		@param other: 	TemplatPupilFinder
+		@return:
+		"""
+		super(TemplatePupilFinder, self).InitFromOther(other)
+		if other.rawGlintLocations is not None:
+			self.rawGlintLocations = other.rawGlintLocations.copy()
+		if other.filteredGlintLocations is not None:
+			self.filteredGlintLocations = other.filteredGlintLocations.copy()
+
+
 	def FindPupils(self, endFrame = None, bilateral = None):
 		"""
 		Finds pupils by template matching

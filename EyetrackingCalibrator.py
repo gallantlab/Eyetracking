@@ -108,11 +108,7 @@ class EyetrackingCalibrator(object):
 		"""
 		newCalibrator = EyetrackingCalibrator(None, self.calibrationBeginTime, self.calibrationPositions, self.calibrationOrder,
 											  self.calibrationDuration, self.calibrationDelay, True)
-		newCalibrator.pupilFinder.rawPupilLocations = self.pupilFinder.rawPupilLocations
-		newCalibrator.pupilFinder.filteredPupilLocations = self.pupilFinder.filteredPupilLocations
-		if type(self.pupilFinder) == TemplatePupilFinder:
-			newCalibrator.pupilFinder.rawGlintLocations = self.pupilFinder.rawGlintLocations
-			newCalibrator.pupilFinder.filteredGlintLocations = self.pupilFinder.filteredGlintLocations
+		newCalibrator.pupilFinder.InitFromOther(self.pupilFinder)
 		return newCalibrator
 
 

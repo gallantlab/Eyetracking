@@ -32,10 +32,9 @@ class VideoReader(object):
 		if (self.fileName):
 			self.GetVideoInfo()
 			self.LoadFrames()
+			print('{}x{} (HxW) video at {} fps with {} frames'.format(self.height, self.width, self.fps, self.nFrames))
 		else:
 			self.InitFromOther(other)
-
-		print('{}x{} (HxW) video at {} fps with {} frames'.format(self.height, self.width, self.fps, self.nFrames))
 
 
 	def InitFromOther(self, other):
