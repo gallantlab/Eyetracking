@@ -3,8 +3,8 @@ import cv2
 import os
 import io
 from zipfile import ZipFile
-from EyetrackingUtilities import ReadNPY, SaveNPY
-from VideoTimestampReader import VideoTimestampReader
+from .EyetrackingUtilities import ReadNPY, SaveNPY
+from .VideoTimestampReader import VideoTimestampReader
 from scipy.signal import medfilt
 from skimage.draw import circle_perimeter as DrawCircle
 from skimage.io import imsave
@@ -87,7 +87,7 @@ class PupilFinder(VideoTimestampReader):
 		@param other: 	PupilFinder
 		@return:
 		"""
-		super(VideoTimestampReader, self).InitFromOther(other)
+		super(PupilFinder, self).InitFromOther(other)
 		self.window = other.window
 		self.blur = other.blur
 		self.dp = other.dp

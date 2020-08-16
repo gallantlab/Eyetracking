@@ -1,8 +1,8 @@
 import numpy
 import cv2
 import os
-from EyetrackingCalibrator import EyetrackingCalibrator
-from PupilFinder import PupilFinder
+from .EyetrackingCalibrator import EyetrackingCalibrator
+from .PupilFinder import PupilFinder
 from skimage.transform import warp, AffineTransform
 from skimage.draw import circle_perimeter as DrawCircle
 from skimage import io

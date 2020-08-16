@@ -1,5 +1,8 @@
 import numpy
-import cPickle
+try:
+	import cPickle
+except:
+	import _pickle as cPickle
 import re
 import io
 

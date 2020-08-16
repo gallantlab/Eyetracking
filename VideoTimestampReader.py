@@ -1,7 +1,7 @@
 import numpy
-from VideoReader import VideoReader
+from .VideoReader import VideoReader
 from zipfile import ZipFile
-from EyetrackingUtilities import SaveNPY, ReadNPY
+from .EyetrackingUtilities import SaveNPY, ReadNPY
 
 SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0],

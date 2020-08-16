@@ -1,8 +1,8 @@
 import numpy
 import cv2
 from zipfile import ZipFile
-from EyetrackingUtilities import SaveNPY, ReadNPY
-from PupilFinder import PupilFinder, median2way, outliers2nan
+from .EyetrackingUtilities import SaveNPY, ReadNPY
+from .PupilFinder import PupilFinder, median2way, outliers2nan
 from skimage.draw import circle, circle_perimeter as DrawCircle
 
 class TemplatePupilFinder(PupilFinder):
