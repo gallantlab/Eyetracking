@@ -98,7 +98,7 @@ class PupilFinder(VideoTimestampReader):
 		self.maxRadius = other.maxRadius
 		if other.rawPupilLocations is not None:
 			self.rawPupilLocations = other.rawPupilLocations.copy()
-		if other.fameDiffs is not None:
+		if other.frameDiffs is not None:
 			self.frameDiffs = other.frameDiffs.copy()
 		if other.blinks is not None:
 			self.blinks = other.blinks.copy()

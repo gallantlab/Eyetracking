@@ -33,7 +33,7 @@ class VideoReader(object):
 			self.GetVideoInfo()
 			self.LoadFrames()
 			print('{}x{} (HxW) video at {} fps with {} frames'.format(self.height, self.width, self.fps, self.nFrames))
-		else:
+		elif (other is not None):
 			self.InitFromOther(other)
 
 
