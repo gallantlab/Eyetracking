@@ -52,7 +52,7 @@ class EyetrackingCalibrator(object):
 
 
 	def __init__(self, calibrationVideoFile, calibrationBeginTime = None, calibrationPositions = None, calibrationOrder = None,
-				 calibrationDuration = 2, calibrationDelay = 0, templates = True):
+				 calibrationDuration = 2, calibrationDelay = 2, templates = True):
 		"""
 		Constructor
 		@param calibrationVideoFile:	str, name of video file
@@ -85,8 +85,9 @@ class EyetrackingCalibrator(object):
 		self.bestDuration = 0
 		self.bestDurationError = 100
 
-		self.initCalibrationPositions = self.calibrationPositions.copy()
-		self.initCalibrationOrder = numpy.array(self.calibrationOrder)
+		# because the calibration points get re-ordered
+		self.initialCalibrationPositions = self.calibrationPositions.copy()
+		self.initialCalibrationOrder = numpy.array(self.calibrationOrder)
 
 		self.pupilCalibrationPositions = None		# mean/median pupil positions in video frames for each calibration point
 		self.pupilCalibrationVariances = None		# Variance in the calibration point eye positions
@@ -101,13 +102,16 @@ class EyetrackingCalibrator(object):
 		self.verticalInterpolater = None		# RBF, final vertical interpolater
 
 
-	def Copy(self):
+	def Copy(self, duration = None, delay = None):
 		"""
 		Make a copy of this object, but does not copy the pupil finder's frames so we save space.
+		@param duration:	float?, fixation duration to use for the new object, if None will copy this
+		@param delay:		float?, fixation delay to use for the new object, if None will copy this
 		@return: EyetrackingCalibrator
 		"""
-		newCalibrator = EyetrackingCalibrator(None, self.calibrationBeginTime, self.calibrationPositions, self.calibrationOrder,
-											  self.calibrationDuration, self.calibrationDelay, True)
+		newCalibrator = EyetrackingCalibrator(None, self.calibrationBeginTime, self.initialCalibrationPositions, self.initialCalibrationOrder,
+											  duration if duration is not None else self.calibrationDuration,
+											  delay if delay is not None else self.calibrationDelay, True)
 		newCalibrator.pupilFinder.InitFromOther(self.pupilFinder)
 		return newCalibrator
 
@@ -215,9 +219,9 @@ class EyetrackingCalibrator(object):
 			valid = numpy.isfinite(self.pupilCalibrationPositions[:, :2].sum(1))
 			if numpy.any(numpy.logical_not(valid)):	# if there are nan points, which are bad
 				calibrationOrder = []
-				for i in range(len(self.initCalibrationOrder)):
+				for i in range(len(self.initialCalibrationOrder)):
 					if valid[i]:
-						calibrationOrder.append(self.initCalibrationOrder[i])
+						calibrationOrder.append(self.initialCalibrationOrder[i])
 					else:
 						if verbose:
 							print('Skipping bad calibration point {}'.format(self.calibrationOrder[i]))
@@ -231,7 +235,7 @@ class EyetrackingCalibrator(object):
 			# reorder the calibration points to be the same as the calibration sequence
 			points = []
 			for i in self.calibrationOrder:
-				points.append(self.initCalibrationPositions[i, :])
+				points.append(self.initialCalibrationPositions[i, :])
 			self.calibrationPositions = numpy.asarray(points)
 
 
@@ -323,9 +327,7 @@ class EyetrackingCalibrator(object):
 		def singleCombo(delayAndDuration):
 			delay = delayAndDuration[0]
 			duration = delayAndDuration[1]
-			calibrator = self.Copy()
-			calibrator.calibrationDelay = delay
-			calibrator.calibrationDuration = duration
+			calibrator = self.Copy(duration, delay)
 			calibrator.EstimateCalibrationPointPositions(verbose = verbose)
 			calibrator.Fit(searchThreshold = 0)
 			return calibrator.bestError
