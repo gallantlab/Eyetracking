@@ -171,7 +171,6 @@ class VideoTimestampReader(VideoReader):
 				self.GetTimeStampForFrame(frame)
 		else:
 			chunkSize = int(self.nFrames / nThreads)
-			threads = []
 			print('spawning {} threads to read timestamps'.format(nThreads))
 			frameChunks = []
 			for i in range(nThreads):

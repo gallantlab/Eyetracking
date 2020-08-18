@@ -116,7 +116,7 @@ class EyetrackingCalibrator(object):
 
 	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
 				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None,
-				   filterPupilSize = True, surfaceBlur = None, nThreads = 1):
+				   filterPupilSize = True, surfaceBlur = None, nThreads = None):
 		"""
 		Finds pupil traces
 		@param window: 				4-ple<int>?, subwindow in frame to examine, order [left, right, top, bottom]
@@ -131,11 +131,14 @@ class EyetrackingCalibrator(object):
 		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
 		@param filterPupilSize:		bool, filter pupil size alone with position?
 		@param surfaceBlur:			int?, if present, radius to use for surface blur
-		@param nThreads:			int, number of threads to use for pupil finding
+		@param nThreads:			int?, number of threads to use for pupil finding. if none, use all cores
 		@return:
 		"""
 		# self.pupilFinder = PupilFinder(None, window, blur, dp, minDistance, param1, param2, minRadius, maxRadius, self.pupilFinder)
 
+		if nThreads is None:
+			import multiprocessing
+			nThreads = multiprocessing.cpu_count()
 		self.pupilFinder.ParseTimestamps(nThreads)
 		self.pupilFinder.window = window
 		self.pupilFinder.blur = blur
