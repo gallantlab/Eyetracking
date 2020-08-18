@@ -73,8 +73,6 @@ class EyetrackingCalibrator(object):
 
 		self.hasGlint = templates
 
-		self.pupilFinder.ParseTimestamps()
-
 		self.calibrationBeginTime = calibrationBeginTime
 		self.calibrationPositions = calibrationPositions if calibrationPositions is not None else EyetrackingCalibrator.GeneratePoints()
 		self.calibrationOrder = calibrationOrder if calibrationOrder is not None else EyetrackingCalibrator.CalibrationOrder35
@@ -117,7 +115,8 @@ class EyetrackingCalibrator(object):
 
 
 	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
-				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None, filterPupilSize = True, surfaceBlur = None):
+				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None,
+				   filterPupilSize = True, surfaceBlur = None, nThreads = 1):
 		"""
 		Finds pupil traces
 		@param window: 				4-ple<int>?, subwindow in frame to examine, order [left, right, top, bottom]
@@ -132,9 +131,12 @@ class EyetrackingCalibrator(object):
 		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
 		@param filterPupilSize:		bool, filter pupil size alone with position?
 		@param surfaceBlur:			int?, if present, radius to use for surface blur
+		@param nThreads:			int, number of threads to use for pupil finding
 		@return:
 		"""
 		# self.pupilFinder = PupilFinder(None, window, blur, dp, minDistance, param1, param2, minRadius, maxRadius, self.pupilFinder)
+
+		self.pupilFinder.ParseTimestamps(nThreads)
 		self.pupilFinder.window = window
 		self.pupilFinder.blur = blur
 		self.pupilFinder.dp = dp
@@ -143,7 +145,7 @@ class EyetrackingCalibrator(object):
 		self.pupilFinder.param2 = param2
 		self.pupilFinder.minRadius = minRadius
 		self.pupilFinder.maxRadius = maxRadius
-		self.pupilFinder.FindPupils(bilateral = surfaceBlur)
+		self.pupilFinder.FindPupils(bilateral = surfaceBlur, nThreads = nThreads)
 		self.pupilFinder.FilterPupils(windowSize, outlierThresholds, filterPupilSize)
 
 

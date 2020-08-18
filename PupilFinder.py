@@ -106,11 +106,12 @@ class PupilFinder(VideoTimestampReader):
 			self.filteredPupilLocations = other.filteredPupilLocations
 
 
-	def FindPupils(self, endFrame = None, bilateral = None):
+	def FindPupils(self, endFrame = None, bilateral = None, nThreads = 0):
 		"""
 		Find the circles, i.e. pupils in the rawFrames, see eyetrack.video2circles()
 		@param endFrame:		int?, frame to read to, defaults to reading all rawFrames
 		@param bilateral:		int?, if present, radius to use for surface blur
+		@param nThreads:		int, number of threads to use for finding pupils. need to be implemented
 		@return:
 		"""
 		if ((endFrame is None) or endFrame > self.nFrames):

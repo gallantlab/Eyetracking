@@ -1,5 +1,7 @@
 import numpy
+import threading
 import cv2
+import time
 from zipfile import ZipFile
 from .EyetrackingUtilities import SaveNPY, ReadNPY
 from .PupilFinder import PupilFinder, median2way, outliers2nan
@@ -11,6 +13,70 @@ class TemplatePupilFinder(PupilFinder):
 	A pupil is just a black circle on a white background
 	A glint is just a white circle on a black background close to the pupil
 	"""
+	@staticmethod
+	def Worker(rawFrames, radii, window, bilateral, blur, rawPupilLocations, rawGlintLocations,
+			   pupilTemplates, glintTemplates):
+		"""
+		Actual code for template-matching, factored out to a method so it could be multithreaded
+		@param rawFrames:			[frame x width x height x3] frame array
+		@param radii:				list<int> radii to be used to for template matching
+		@param window:				tuple<int, int, int, int>? window in frames to use
+		@param bilateral:			int?, bilateral fiter size
+		@param blur:				int, mediam flur size
+		@param rawPupilLocations:	[frame x value] where to store found pupil locations
+		@param rawGlintLocations:	[frame x value] where to store found glint locations
+		@param pupilTemplates:		[w x h x num] templates for pupils
+		@param glintTemplates:		[w x h x num] templates for glints
+		@return:
+		"""
+		thesePupilPositions = numpy.zeros([len(radii), 2])
+		thesePupilCorrelations = numpy.zeros(len(radii))
+		theseGlintPositions = numpy.zeros([9, 2])
+		theseGlintCorrelations = numpy.zeros([9])
+
+		for frameIndex in range(rawFrames.shape[0]):
+			# === find pupil ===
+			if window is not None:
+				frame = rawFrames[frameIndex, window[2]:window[3], window[0]:window[1], :].mean(-1).astype(numpy.uint8)
+			else:
+				frame = rawFrames[frameIndex, :, :, :].mean(-1).astype(numpy.uint8)
+			if (bilateral is not None) and (bilateral > 0):
+				frame = cv2.bilateralFilter(frame, bilateral, 100, 75)
+			if (blur > 0):
+				frame = cv2.medianBlur(frame, blur)
+			for i in range(len(radii)):
+				res = cv2.matchTemplate(frame, pupilTemplates[:, :, i], cv2.TM_CCOEFF_NORMED)
+				_, maxCorr, _, maxPos = cv2.minMaxLoc(res)
+				thesePupilPositions[i, :] = maxPos
+				thesePupilCorrelations[i] = maxCorr
+			best = numpy.argmax(thesePupilCorrelations)
+			rawPupilLocations[frameIndex, 3] = thesePupilCorrelations[best]
+			rawPupilLocations[frameIndex, :2] = thesePupilPositions[best, :] + 25
+			if window is not None:
+				rawPupilLocations[frameIndex, 0] += window[0]
+				rawPupilLocations[frameIndex, 1] += window[2]
+			rawPupilLocations[frameIndex, 2] = radii[best]
+
+			# === find glint ===
+			x = int(thesePupilPositions[best, 0] + 25)
+			y = int(thesePupilPositions[best, 1] + 25)
+			frame = frame[(y - 20):(y + 20), (x - 20):(x + 20)]  # glint is in close vicinity of the pupil
+			for i in range(9):
+				res = cv2.matchTemplate(frame, glintTemplates[:, :, i], cv2.TM_CCOEFF_NORMED)
+				_, maxCorr, _, maxPos = cv2.minMaxLoc(res)
+				theseGlintPositions[i, :] = maxPos
+				theseGlintCorrelations[i] = maxCorr
+			best = numpy.argmax(theseGlintCorrelations)
+			rawGlintLocations[frameIndex, 3] = theseGlintCorrelations[best]
+			rawGlintLocations[frameIndex, :2] = theseGlintPositions[best, :] + 7
+			rawGlintLocations[frameIndex, 0] += (x - 20)
+			rawGlintLocations[frameIndex, 1] += (y - 20)
+			if window is not None:
+				rawGlintLocations[frameIndex, 0] += window[0]
+				rawGlintLocations[frameIndex, 1] += window[2]
+			rawGlintLocations[frameIndex, 2] = (best + 2) / 2.0
+
+
 	def __init__(self, videoFileName = None, window = None, minRadius = 13, maxRadius = 23, other = None):
 		"""
 		Constructor
@@ -48,11 +114,12 @@ class TemplatePupilFinder(PupilFinder):
 			self.filteredGlintLocations = other.filteredGlintLocations.copy()
 
 
-	def FindPupils(self, endFrame = None, bilateral = None):
+	def FindPupils(self, endFrame = None, bilateral = None, nThreads = 1):
 		"""
 		Finds pupils by template matching
 		@param endFrame:	int?, frame to search to
 		@param bilateral:	bool, useless here, but is overridden from super function
+		@param nThreads:		int, number of threads to use
 		@return:
 		"""
 		if ((endFrame is None) or endFrame > self.nFrames):
@@ -63,54 +130,33 @@ class TemplatePupilFinder(PupilFinder):
 
 		self.rawPupilLocations = numpy.zeros([endFrame, 4])		# here, the colums are [x, y, radius, confidence]
 		self.rawGlintLocations = numpy.zeros([endFrame, 4])
-		thesePupilPositions = numpy.zeros([len(self.radii), 2])
-		thesePupilCorrelations = numpy.zeros(len(self.radii))
-		theseGlintPositions = numpy.zeros([9, 2])
-		theseGlintCorrelations = numpy.zeros([9])
-
+		now = time.time()
 		# === parallel for ===
-		for frameIndex in range(endFrame):
-			# === find pupil ===
-			if self.window is not None:
-				self.frame = self.rawFrames[frameIndex, self.window[2]:self.window[3], self.window[0]:self.window[1], :].mean(-1).astype(numpy.uint8)
-			else:
-				self.frame = self.rawFrames[frameIndex, :, :, :].mean(-1).astype(numpy.uint8)
-			if (bilateral is not None) and (bilateral > 0):
-				self.frame = cv2.bilateralFilter(self.frame, bilateral, 100, 75)
-			if (self.blur > 0):
-				self.frame = cv2.medianBlur(self.frame, self.blur)
-			for i in range(len(self.radii)):
-				res = cv2.matchTemplate(self.frame, self.pupilTemplates[:, :, i], cv2.TM_CCOEFF_NORMED)
-				_, maxCorr, _, maxPos = cv2.minMaxLoc(res)
-				thesePupilPositions[i, :] = maxPos
-				thesePupilCorrelations[i] = maxCorr
-			best = numpy.argmax(thesePupilCorrelations)
-			self.rawPupilLocations[frameIndex, 3] = thesePupilCorrelations[best]
-			self.rawPupilLocations[frameIndex, :2] = thesePupilPositions[best, :] + 25
-			if self.window is not None:
-				self.rawPupilLocations[frameIndex, 0] += self.window[0]
-				self.rawPupilLocations[frameIndex, 1] += self.window[2]
-			self.rawPupilLocations[frameIndex, 2] = self.radii[best]
+		if nThreads == 1:
+			print('single thread')
+			TemplatePupilFinder.Worker(self.rawFrames[:endFrame, :, :, :], self.radii, self.window,
+									   bilateral, self.blur, self.rawPupilLocations, self.rawGlintLocations,
+									   self.pupilTemplates, self.glintTemplates)
 
-			# === find glint ===
-			x = int(thesePupilPositions[best, 0] + 25)
-			y = int(thesePupilPositions[best, 1] + 25)
-			self.frame = self.frame[(y - 20):(y + 20), (x - 20):(x + 20)]	# glint is in close vicinity of the pupil
-			for i in range(9):
-				res = cv2.matchTemplate(self.frame, self.glintTemplates[:, :, i], cv2.TM_CCOEFF_NORMED)
-				_, maxCorr, _, maxPos = cv2.minMaxLoc(res)
-				theseGlintPositions[i, :] = maxPos
-				theseGlintCorrelations[i] = maxCorr
-			best = numpy.argmax(theseGlintCorrelations)
-			self.rawGlintLocations[frameIndex, 3] = theseGlintCorrelations[best]
-			self.rawGlintLocations[frameIndex, :2] = theseGlintPositions[best, :] + 7
-			self.rawGlintLocations[frameIndex, 0] += (x - 20)
-			self.rawGlintLocations[frameIndex, 1] += (y - 20)
-			if self.window is not None:
-				self.rawGlintLocations[frameIndex, 0] += self.window[0]
-				self.rawGlintLocations[frameIndex, 1] += self.window[2]
-			self.rawGlintLocations[frameIndex, 2] = (best + 2) / 2.0
-
+		else:
+			chunkSize = int(endFrame / nThreads)
+			threads = []
+			print('spawning {} threads to find pupils'.format(nThreads))
+			for thread in range(nThreads):
+				start = chunkSize * thread
+				end = start + chunkSize
+				if thread == (nThreads - 1):
+					end = endFrame
+				threads.append(threading.Thread(target = TemplatePupilFinder.Worker,
+												args = (self.rawFrames[start:end, :, :, :], self.radii, self.window,
+														bilateral, self.blur, self.rawPupilLocations[start:end, :],
+														self.rawGlintLocations[start:end, :], self.pupilTemplates,
+														self.glintTemplates)))
+			for thread in threads:
+				thread.start()
+			for thread in threads:
+				thread.join()
+		print(time.time() - now)
 		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - 1.5 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -1.5 std confidence = blink
 
 

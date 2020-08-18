@@ -1,7 +1,8 @@
 import numpy
+import time
 from .VideoReader import VideoReader
 from zipfile import ZipFile
-from .EyetrackingUtilities import SaveNPY, ReadNPY
+from .EyetrackingUtilities import SaveNPY, ReadNPY, parallelize
 
 SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0],
@@ -21,6 +22,66 @@ class VideoTimestampReader(VideoReader):
 	Gets video frame timestamps from raw eyetracking videos.
 	See eyetracker_timestamps
 	"""
+	templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
+	flats = []
+	for i in range(10):
+		flats.append(templates[i, :, :].ravel())
+	numberTemplates = numpy.stack(flats)
+
+	@staticmethod
+	def GetTimeStampForFrames(frames):
+		"""
+		Parallelizable function for getting timestamps for a bunch of frames
+		@param frames: 	[frame, w, h, 3] frames array
+		@param out: 	[frame, 4] timestamp array to write into
+		@return:
+		"""
+
+		# separate data in memory because that way the processes won't all have to read from the
+		# same memory and deal with concurrency slowdowns
+		templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
+		flats = []
+		for i in range(10):
+			flats.append(templates[i, :, :].ravel())
+		numberTemplates = numpy.stack(flats)
+		dat = numpy.zeros([frames.shape[0], 4])
+
+		def matchDigit(image):
+			"""
+			What number is this image?
+			@param image: 	2d numpy array
+			@return: int, number
+			"""
+			corrs = []
+			flatImage = image.ravel()
+			for i in range(10):
+				corrs.append(numpy.corrcoef(flatImage, numberTemplates[i, :])[0, 1])
+			return numpy.argmax(corrs)
+
+		frames[frames < 255] = 0
+		for frameIndex in range(frames.shape[0]):
+			frame = frames[frameIndex, :, :]	# red channel
+	
+			hours = int(matchDigit(frame[:, 7:15]) * 10 + matchDigit(frame[:, 15:23]))		# eyetracker_timestamps.im2hrs()
+			minutes = int (matchDigit(frame[:, 35:43]) * 10 + matchDigit(frame[:, 43:51]))	# eyetracker_timestamps.im2mins()
+	
+			# eyetracker_timestamps.im2seconds() and eyetracker_timestamps.im2secs()
+			c = frame[:, 103:111]
+			if numpy.corrcoef(c.ravel(), SECONDS_SYMBOL)[0, 1] > 0.99:
+				# shift left for miliseconds
+				a, b, c = (frame[:, 87 - 8:95 - 8], frame[:, 95 - 8:103 - 8], frame[:, 103 - 8:111 - 8])
+	
+				# only one leading left digit
+				seconds = matchDigit(frame[:, 67:75])
+	
+			else:
+				a, b = (frame[:, 87:95], frame[:, 95:103])
+	
+				seconds = int(matchDigit(frame[:, 67:75]) * 10 + matchDigit(frame[:, 75:83]))
+	
+			milliseconds = int(matchDigit(a) * 100 + matchDigit(b) * 10 + matchDigit(c))
+			dat[frameIndex, :] = [hours, minutes, seconds, milliseconds]
+		return dat
 
 	def __init__(self, videoFileName = None, other = None):
 		"""
@@ -29,12 +90,7 @@ class VideoTimestampReader(VideoReader):
 		@param other:			VideoReader?, other object to init from
 		"""
 		super(VideoTimestampReader, self).__init__(videoFileName, other)
-
-		templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
-		flats = []
-		for i in range(10):
-			flats.append(templates[i, :, :].ravel())
-		self.numberTemplates = numpy.stack(flats)
+		self.numberTemplates = VideoTimestampReader.numberTemplates
 
 		self.time = numpy.zeros([self.nFrames, 4])  			# [t x 4 (HH MM SS MS)] timestamps on the rawFrames
 		# self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
@@ -53,7 +109,8 @@ class VideoTimestampReader(VideoReader):
 		self.isParsed = other.isParsed
 
 
-	def MatchDigit(self, image):
+	@staticmethod
+	def MatchDigit(image):
 		"""
 		What number is this image?
 		@param image: 	2d numpy array
@@ -62,7 +119,7 @@ class VideoTimestampReader(VideoReader):
 		corrs = []
 		flatImage = image.ravel()
 		for i in range(10):
-			corrs.append(numpy.corrcoef(flatImage, self.numberTemplates[i, :])[0, 1])
+			corrs.append(numpy.corrcoef(flatImage, VideoTimestampReader.numberTemplates[i, :])[0, 1])
 		return numpy.argmax(corrs)
 
 
@@ -78,8 +135,8 @@ class VideoTimestampReader(VideoReader):
 		numpy.copyto(self.frame, self.rawFrames[frameIndex, :, :, 2])	# red channel
 		self.frame[self.frame < 255] = 0
 
-		hours = int(self.MatchDigit(self.frame[195:207, 7:15]) * 10 + self.MatchDigit(self.frame[195:207, 15:23]))		# eyetracker_timestamps.im2hrs()
-		minutes = int (self.MatchDigit(self.frame[195:207, 35:43]) * 10 + self.MatchDigit(self.frame[195:207, 43:51]))	# eyetracker_timestamps.im2mins()
+		hours = int(VideoTimestampReader.MatchDigit(self.frame[195:207, 7:15]) * 10 + VideoTimestampReader.MatchDigit(self.frame[195:207, 15:23]))		# eyetracker_timestamps.im2hrs()
+		minutes = int (VideoTimestampReader.MatchDigit(self.frame[195:207, 35:43]) * 10 + VideoTimestampReader.MatchDigit(self.frame[195:207, 43:51]))	# eyetracker_timestamps.im2mins()
 
 		# eyetracker_timestamps.im2seconds() and eyetracker_timestamps.im2secs()
 		c = self.frame[195:207, 103:111]
@@ -88,27 +145,44 @@ class VideoTimestampReader(VideoReader):
 			a, b, c = (self.frame[195:207, 87 - 8:95 - 8], self.frame[195:207, 95 - 8:103 - 8], self.frame[195:207, 103 - 8:111 - 8])
 
 			# only one leading left digit
-			seconds = self.MatchDigit(self.frame[195:207, 67:75])
+			seconds = VideoTimestampReader.MatchDigit(self.frame[195:207, 67:75])
 
 		else:
 			a, b = (self.frame[195:207, 87:95], self.frame[195:207, 95:103])
 
-			seconds = int(self.MatchDigit(self.frame[195:207, 67:75]) * 10 + self.MatchDigit(self.frame[195:207, 75:83]))
+			seconds = int(VideoTimestampReader.MatchDigit(self.frame[195:207, 67:75]) * 10 + VideoTimestampReader.MatchDigit(self.frame[195:207, 75:83]))
 
-		milliseconds = int(self.MatchDigit(a) * 100 + self.MatchDigit(b) * 10 + self.MatchDigit(c))
+		milliseconds = int(VideoTimestampReader.MatchDigit(a) * 100 + VideoTimestampReader.MatchDigit(b) * 10 + VideoTimestampReader.MatchDigit(c))
 
 		self.time[frameIndex, :] = [hours, minutes, seconds, milliseconds]
 
 
-	def ParseTimestamps(self):
+	def ParseTimestamps(self, nThreads = 1):
 		"""
 		Parses timestamps from the images
+		@param nThreads:	int, number of threads to sue
 		@return:
 		"""
 		self.frame = None
+		now = time.time()
 		### === parallel for ===
-		for frame in range(self.nFrames):
-			self.GetTimeStampForFrame(frame)
+		if nThreads == 1:
+			for frame in range(self.nFrames):
+				self.GetTimeStampForFrame(frame)
+		else:
+			chunkSize = int(self.nFrames / nThreads)
+			threads = []
+			print('spawning {} threads to read timestamps'.format(nThreads))
+			frameChunks = []
+			for i in range(nThreads):
+				start = chunkSize * i
+				end = start + chunkSize
+				if (i == (nThreads - 1)):
+					end = self.nFrames
+				frameChunks.append(self.rawFrames[start:end, 195:207, :125, 2].copy())
+			results = parallelize(VideoTimestampReader.GetTimeStampForFrames, frameChunks, nThreads)
+			self.time = numpy.vstack(tuple(results))
+		print(time.time() - now)
 		self.isParsed = True
 
 
