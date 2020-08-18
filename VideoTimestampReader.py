@@ -1,5 +1,4 @@
 import numpy
-import time
 from .VideoReader import VideoReader
 from zipfile import ZipFile
 from .EyetrackingUtilities import SaveNPY, ReadNPY, parallelize
@@ -164,14 +163,12 @@ class VideoTimestampReader(VideoReader):
 		@return:
 		"""
 		self.frame = None
-		now = time.time()
 		### === parallel for ===
 		if nThreads == 1:
 			for frame in range(self.nFrames):
 				self.GetTimeStampForFrame(frame)
 		else:
 			chunkSize = int(self.nFrames / nThreads)
-			print('spawning {} threads to read timestamps'.format(nThreads))
 			frameChunks = []
 			for i in range(nThreads):
 				start = chunkSize * i
@@ -181,7 +178,6 @@ class VideoTimestampReader(VideoReader):
 				frameChunks.append(self.rawFrames[start:end, 195:207, :125, 2].copy())
 			results = parallelize(VideoTimestampReader.GetTimeStampForFrames, frameChunks, nThreads)
 			self.time = numpy.vstack(tuple(results))
-		print(time.time() - now)
 		self.isParsed = True
 
 

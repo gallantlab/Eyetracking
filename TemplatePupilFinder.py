@@ -1,7 +1,6 @@
 import numpy
 import threading
 import cv2
-import time
 from zipfile import ZipFile
 from .EyetrackingUtilities import SaveNPY, ReadNPY
 from .PupilFinder import PupilFinder, median2way, outliers2nan
@@ -130,10 +129,8 @@ class TemplatePupilFinder(PupilFinder):
 
 		self.rawPupilLocations = numpy.zeros([endFrame, 4])		# here, the colums are [x, y, radius, confidence]
 		self.rawGlintLocations = numpy.zeros([endFrame, 4])
-		now = time.time()
 		# === parallel for ===
 		if nThreads == 1:
-			print('single thread')
 			TemplatePupilFinder.Worker(self.rawFrames[:endFrame, :, :, :], self.radii, self.window,
 									   bilateral, self.blur, self.rawPupilLocations, self.rawGlintLocations,
 									   self.pupilTemplates, self.glintTemplates)
@@ -141,7 +138,6 @@ class TemplatePupilFinder(PupilFinder):
 		else:
 			chunkSize = int(endFrame / nThreads)
 			threads = []
-			print('spawning {} threads to find pupils'.format(nThreads))
 			for thread in range(nThreads):
 				start = chunkSize * thread
 				end = start + chunkSize
@@ -156,7 +152,6 @@ class TemplatePupilFinder(PupilFinder):
 				thread.start()
 			for thread in threads:
 				thread.join()
-		print(time.time() - now)
 		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - 1.5 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -1.5 std confidence = blink
 
 
