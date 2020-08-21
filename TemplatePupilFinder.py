@@ -87,8 +87,20 @@ class TemplatePupilFinder(PupilFinder):
 		"""
 		super(TemplatePupilFinder, self).__init__(videoFileName, window, other = other)
 		self.radii = range(minRadius, maxRadius + 1)
+		"""
+		@ivar: Range of pupil radii to search for in pixels
+		@type: list<int>
+		"""
 		self.pupilTemplates = numpy.ones([51, 51, len(self.radii)], numpy.uint8) * 255
+		"""
+		@ivar: Templates for matching pupils, black circles on white background
+		@type: numpy.ndarray
+		"""
 		self.glintTemplates = numpy.zeros([15, 15, 9], numpy.uint8)	# glint isn't that big, do radius range 1-5 px
+		"""
+		@ivar: Templates for matching glints, is white circle on black background 
+		@type: numpy.ndarray
+		"""
 		for i in range(len(self.radii)):
 			y, x = circle(25, 25, self.radii[i])
 			self.pupilTemplates[x, y, i] = 0
@@ -97,7 +109,15 @@ class TemplatePupilFinder(PupilFinder):
 			self.glintTemplates[x, y, i - 2] = 255
 
 		self.rawGlintLocations = None
+		"""
+		@ivar: Glint locations in each video frame
+		@type: Optional[numpy.ndarray]
+		"""
 		self.filteredGlintLocations = None
+		"""
+		@ivar: Temporally filtered glint locations
+		@type: Optional[numpy.ndarray]
+		"""
 
 
 	def InitFromOther(self, other):

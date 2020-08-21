@@ -40,6 +40,7 @@ def outliers2nan(data, percentile = 95, absVals = False):
 class PupilFinder(VideoTimestampReader):
 	"""
 	Finds the pupil in the videos and generates a trace of it.
+	Uses the hough transform.
 	See tweak_eyetrack_preproc
 	"""
 
@@ -62,23 +63,71 @@ class PupilFinder(VideoTimestampReader):
 		# self.frames = self.rawFrames.mean(-1).astype(numpy.uint8)	# average over the color dimensions
 
 		self.window = window
+		"""
+		@ivar: Window in frame to look for the pupil in [left, right, top bottom]
+		@type: tuple<int, int, int, int>
+		"""
 		self.blur = blur
+		"""
+		@ivar: Median filter width
+		@type: int
+		"""
 		# hough transform parameters
 		self.dp = dp
+		"""
+		@ivar: Inverse ration of accumulator resolution to image resolution in Hough transform
+		@type: float
+		"""
 		self.minDistance = minDistance
+		"""
+		@ivar: Minimum distance in pixels between multiple detected circules by Hough transform
+		@type: float
+		"""
 		self.param1 = param1
+		"""
+		@ivar: upper threshold for Canny edge detector in Hough transform
+		@type: float
+		"""
 		self.param2 = param2
+		"""
+		@ivar: accumulator threashold for Hough transform. Smaller => more errors
+		@type: float
+		"""
 		self.minRadius = minRadius
+		"""
+		@ivar: Minimum circle radius in pixels
+		@type: int
+		"""
 		self.maxRadius = maxRadius
+		"""
+		@ivar: Maximum circle radius in pixels
+		@type: int
+		"""
 
 		# crop to window
 		# if (self.window is not None):
 		# 	self.frames = self.frames[:, self.window[2]:self.window[3], self.window[0]:self.window[1]]
 
 		self.rawPupilLocations = None			# [n x 3] array of x, y, radius
+		"""
+		@ivar: Raw pupil locations read from video file, columns are [x, y, radius]
+		@type: numpy.ndarray
+		"""
 		self.frameDiffs = None
+		"""
+		@ivar: Diffs between each successive frame for pupil locations
+		@type:	 numpy.ndarray
+		"""
 		self.blinks = None						# [n] array, true when blink is detected
+		"""
+		@ivar: Is there a blink this frame?
+		@type: list<bool>
+		"""
 		self.filteredPupilLocations = None
+		"""
+		@ivar: Pupil locations that have been temporally filtered
+		@type: numpy.ndarray
+		"""
 
 
 	def InitFromOther(self, other):

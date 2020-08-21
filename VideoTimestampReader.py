@@ -15,6 +15,9 @@ SECONDS_SYMBOL = numpy.array([[0,   0,   0,   0,   0,   0,   0,   0],
 							  [0, 255, 255,   0,   0, 255, 255,   0],
 							  [0,   0, 255, 255, 255, 255,   0,   0],
 							  [0,   0,   0,   0,   0,   0,   0,   0]]).ravel()
+"""
+Hard-coded array for the shape of the seconds symbol burned into the video
+"""
 
 class VideoTimestampReader(VideoReader):
 	"""
@@ -22,10 +25,19 @@ class VideoTimestampReader(VideoReader):
 	See eyetracker_timestamps
 	"""
 	templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
+	"""
+	@cvar: number templates for reading timestamps
+	@type: numpy.ndarray
+	@todo: change this to be not hard-coded for thalidomide
+	"""
 	flats = []
 	for i in range(10):
 		flats.append(templates[i, :, :].ravel())
 	numberTemplates = numpy.stack(flats)
+	"""
+	@cvar: flattened array of the number templates
+	@type: numpy.ndarray
+	"""
 
 	@staticmethod
 	def GetTimeStampForFrames(frames):
@@ -89,11 +101,23 @@ class VideoTimestampReader(VideoReader):
 		"""
 		super(VideoTimestampReader, self).__init__(videoFileName, other)
 		self.numberTemplates = VideoTimestampReader.numberTemplates
+		"""
+		@ivar: Number templates used for reading timestamps
+		@type: numpy.ndarray
+		"""
 
 		self.time = numpy.zeros([self.nFrames, 4])  			# [t x 4 (HH MM SS MS)] timestamps on the rawFrames
+		"""
+		@ivar: Timestamps that have been read out. Colums are Hour, Minute, Second, Milliseconds
+		@type: numpy.ndarray<int>
+		"""
 		# self.frames = self.rawFrames[:, :, :, 2].copy()		# red channel only
 		# self.frames[self.frames < 255] = 0					# binarize
 		self.isParsed = False
+		"""
+		@ivar: Have we already parsed the video?
+		@type: bool
+		"""
 
 
 	def InitFromOther(self, other):

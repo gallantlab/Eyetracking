@@ -10,19 +10,23 @@ class EyetrackingCalibrator(object):
 	Calibrates eyetracking from a raw video. Estimates a TPS warping for the points.
 	"""
 
-	# order used in 1024x768 single repeat calibration (e.g. driving auto calibration)
 	CalibrationOrder35 = [13, 30, 17, 16, 2, 27, 1, 28, 25, 10, 26, 9, 14, 5, 34, 32,
 						  31, 12, 8, 33, 18, 19, 3, 23, 29, 20, 7, 0, 4, 24, 22, 11, 15,
 						  21, 6]
+	"""
+	@cvar: order used in 1024x768 single repeat calibration (e.g. driving auto calibration)
+	"""
 
-	# order used in 1024x768 two repeat calibration (e.g. stimulus/eyetracking/play.py)
-	# see stimulus/eyetracking/eyetrack.index
-	# these numbers are offset by -1 b/c image 0 there is a blank screen
 	CalibrationOrder70 = [13, 30, 17, 16, 2, 27, 1, 28, 25, 10, 26, 9, 14, 5, 34, 32,
 						  31, 12, 8, 33, 18, 19, 3, 23, 29, 20, 7, 0, 4, 24, 22, 11, 15,
 						  21, 6, 30, 6, 15, 33, 32, 10, 20, 0, 7, 19, 8, 21, 1, 11, 4, 24,
 						  13, 18, 34, 26, 17, 14, 5, 27, 25, 28, 22, 31, 16, 29, 9, 23, 2,
 						  3, 12]
+	"""
+	@cvar: order used in 1024x768 two repeat calibration (e.g. stimulus/eyetracking/play.py)
+	see stimulus/eyetracking/eyetrack.index in stimulus marchine
+	these numbers are offset by -1 b/c image 0 there is a blank screen
+	"""
 
 	@staticmethod
 	def GeneratePoints(width = 1024, height = 768, nHorizontal = 7, nVertical = 5, DPIUnscaleFactor = 1.0):
@@ -64,40 +68,124 @@ class EyetrackingCalibrator(object):
 		@param templates:				bool, use template matching instead of hough circles?
 		"""
 		self.calibrationVideoFile = calibrationVideoFile
+		"""
+		@ivar: video file name
+		@type: str
+		"""
 		# self.timestampReader = VideoTimestampReader(calibrationVideoFile)
 		# self.timestampReader.ParseTimestamps()
 		if templates:
 			self.pupilFinder = TemplatePupilFinder(calibrationVideoFile)
+			"""
+			@ivar: pupil finder object used to find calibration pupils
+			@type: PupilFinder
+			"""
 		else:
 			self.pupilFinder = PupilFinder(calibrationVideoFile)
 
 		self.hasGlint = templates
+		"""
+		@ivar: can this object find the glint in addition to the pupil?
+		@type: bool
+		"""
 
 		self.calibrationBeginTime = calibrationBeginTime
+		"""
+		@ivar: Timestamp of first TTL in calibration
+		@type: tuple<int, int, int, int>
+		"""
 		self.calibrationPositions = calibrationPositions if calibrationPositions is not None else EyetrackingCalibrator.GeneratePoints()
+		"""
+		@ivar: screen pixel positions of calibration dots
+		@type: numpy.ndarray
+		"""
 		self.calibrationOrder = calibrationOrder if calibrationOrder is not None else EyetrackingCalibrator.CalibrationOrder35
+		"""
+		@ivar: order in which the calibration dots are presented
+		@type: list<int>
+		"""
 		self.calibrationDuration = calibrationDuration
+		"""
+		@ivar: time in seconds each dot is presented
+		@type: float
+		"""
 		self.calibrationDelay = calibrationDelay
+		"""
+		@ivar: time in seconds between the first TTL and presentation of first dot
+		@type: float
+		"""
 
 		# used for searching through different durations
 		self.bestDuration = 0
+		"""
+		@ivar: If searching for different calibrationDurations, best duration found
+		@type: float
+		"""
 		self.bestDurationError = 100
+		"""
+		@ivar: If searching for different calibrationDurections, error corresponding to best duration
+		@type: float
+		"""
 
 		# because the calibration points get re-ordered
 		self.initialCalibrationPositions = self.calibrationPositions.copy()
+		"""
+		@ivar: Stored copy of calibration positions, because calibrationPositions will be shuffled according to presentation order
+		@type: numpy.ndarray
+		"""
 		self.initialCalibrationOrder = numpy.array(self.calibrationOrder)
+		"""
+		@ivar: Stored copy of calibration order
+		@type: list<int>
+		"""
 
 		self.pupilCalibrationPositions = None		# mean/median pupil positions in video frames for each calibration point
+		"""
+		@ivar: mean or median pupil positions in video positions for each calibration point
+		@type: numpy.ndarray
+		"""
 		self.pupilCalibrationVariances = None		# Variance in the calibration point eye positions
+		"""
+		@ivar: variance in calibration point eye positions
+		@type: numpy.ndarray
+		"""
 
 		self.glintCalibrationPositions = None
+		"""
+		@ivar: mean or median glint locations for each calibration point
+		@type: numpy.ndarray
+		"""
 		self.glintCalibrationVariances = None
+		"""
+		@ivar: variance in glint locations for each calibration point
+		@type: numpy.ndarray
+		"""
 
 		self.bestSmoothness = None				# float, best smoothness for the interpolater
+		"""
+		@ivar: best smootheness value for interpolating gaze location
+		@type: float
+		"""
 		self.bestMethod = None					# str, best method for interpolating
+		"""
+		@ivar: best method for interpolating gaze location
+		@type: str
+		"""
 		self.bestError = -1						# float, error on best fit
+		"""
+		@ivar: best leave-one-out error for gaze interpolation fitting
+		@type: float
+		"""
 		self.horizontalInterpolater = None		# RBF, final horizontal interpolater
+		"""
+		@ivar: final interpolator for X gaze location
+		@type: scipy.interpolate.Rbf
+		"""
 		self.verticalInterpolater = None		# RBF, final vertical interpolater
+		"""
+		@ivar: final interpolator for Y gaze location
+		@type: scipy.interpolate.Rbf
+		"""
 
 
 	def Copy(self, duration = None, delay = None):

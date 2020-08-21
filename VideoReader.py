@@ -14,20 +14,64 @@ class VideoReader(object):
 		@param other:			VideoReader?, use for copy constructing
 		"""
 		self.fileName = videoFileName
+		"""
+		@ivar: name of video file
+		@type: str
+		"""
 
 		self.fps = 0
+		"""
+		@ivar: FPS of video
+		@type: float
+		"""
 		self.width = 0
+		"""
+		@ivar: Width of video in pixels
+		@type: int
+		"""
 		self.height = 0
+		"""
+		@ivar: height of video
+		@type: int
+		"""
 		self.duration = 0		# in seconds
+		"""
+		@ivar: Duration of video in seconds
+		@type: float
+		"""
 		self.nFrames = 0
+		"""
+		@ivar: Number of frames in video
+		@type: int
+		"""
 
 		self.rawFrames = None		# [t x w x h x 3] BGR video rawFrames
+		"""
+		@ivar: Frames that have been read in
+		@type: [time x w x h x 3] numpy.ndarray
+		"""
 		self.frames = None			# [t x w x h] grayscale frames
+		"""
+		@ivar: Grayscale frames
+		@type: [time x w x h] numpy.ndarray
+		"""
 		self.frame = None
+		"""
+		@ivar: Current frame being processed
+		@type: [w x h] numpy.ndarray
+		"""
 
 		self.video = None			# object for reading files
+		"""
+		@ivar: Object for reading video files
+		@type: cv2.VideoCapture
+		"""
 
 		self.isVidCap = None		# bool?
+		"""
+		@ivar: Is this a VideoCap source from disk?
+		@type: bool?
+		"""
 
 		if (self.fileName):
 			self.GetVideoInfo()
