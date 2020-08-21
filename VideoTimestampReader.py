@@ -1,4 +1,5 @@
 import numpy
+from os import path
 from .VideoReader import VideoReader
 from zipfile import ZipFile
 from .EyetrackingUtilities import SaveNPY, ReadNPY, parallelize
@@ -24,11 +25,10 @@ class VideoTimestampReader(VideoReader):
 	Gets video frame timestamps from raw eyetracking videos.
 	See eyetracker_timestamps
 	"""
-	templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
+	templates = numpy.load(path.join(path.dirname(__file__), 'digit-templates.npy'))
 	"""
 	@cvar: number templates for reading timestamps
 	@type: numpy.ndarray
-	@todo: change this to be not hard-coded for thalidomide
 	"""
 	flats = []
 	for i in range(10):
@@ -49,7 +49,7 @@ class VideoTimestampReader(VideoReader):
 
 		# separate data in memory because that way the processes won't all have to read from the
 		# same memory and deal with concurrency slowdowns
-		templates = numpy.load('/D/Repositories/Eyetracking/digit-templates.npy')
+		templates = numpy.load(path.join(path.dirname(__file__), 'digit-templates.npy'))
 		flats = []
 		for i in range(10):
 			flats.append(templates[i, :, :].ravel())
