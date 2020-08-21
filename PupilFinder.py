@@ -133,8 +133,8 @@ class PupilFinder(VideoTimestampReader):
 	def InitFromOther(self, other):
 		"""
 		Jank copy constructor
-		@param other: 	PupilFinder
-		@return:
+		@param other: 	other object
+		@type other:	PupilFinder
 		"""
 		super(PupilFinder, self).InitFromOther(other)
 		self.window = other.window
@@ -158,10 +158,12 @@ class PupilFinder(VideoTimestampReader):
 	def FindPupils(self, endFrame = None, bilateral = None, nThreads = 0):
 		"""
 		Find the circles, i.e. pupils in the rawFrames, see eyetrack.video2circles()
-		@param endFrame:		int?, frame to read to, defaults to reading all rawFrames
-		@param bilateral:		int?, if present, radius to use for surface blur
-		@param nThreads:		int, number of threads to use for finding pupils. need to be implemented
-		@return:
+		@param endFrame:		frame to read to, defaults to reading all rawFrames
+		@param bilateral:		if present, radius to use for surface blur
+		@param nThreads:		number of threads to use for finding pupils. need to be implemented
+		@type endFrame:			int?
+		@type bilateral:		int?
+		@type nThreads:			int
 		"""
 		if ((endFrame is None) or endFrame > self.nFrames):
 			endFrame = self.nFrames
@@ -194,10 +196,12 @@ class PupilFinder(VideoTimestampReader):
 	def FilterPupils(self, windowSize = 15, outlierThresholds = None, filterPupilSize = True):
 		"""
 		Filters raw pupil locations
-		@param windowSize:			int, median filter time window size
-		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
-		@param filterPupilSize:		bool, filter pupil size alone with position?
-		@return:
+		@param windowSize:			median filter time window size
+		@param outlierThresholds:	thresholds in percentiles at which to nan outliers, if none, does not nan outliers
+		@param filterPupilSize:		filter pupil size alone with position?
+		@type windowSize:			int
+		@type outlierThresholds:	list<float>?
+		@type filterPupilSize:		bool
 		"""
 		if (self.rawPupilLocations is None):
 			self.FindPupils()
@@ -221,12 +225,16 @@ class PupilFinder(VideoTimestampReader):
 	def WritePupilFrames(self, directory, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
 		Draws frames back out with the pupil circled
-		@param directory: 		str, directory to which to save
-		@param startFrame:		int?, first frame to draw
-		@param endFrame: 		int?, last frame to draw, defaults to all of them
-		@param filtered:		bool, use filtered trace instead of unfiltered?
-		@param burnLocation:	bool, burn location of pupil into image?
-		@return:
+		@param directory: 		directory to which to save
+		@param startFrame:		first frame to draw
+		@param endFrame: 		last frame to draw, defaults to all of them
+		@param filtered:		use filtered trace instead of unfiltered?
+		@param burnLocation:	burn location of pupil into image?
+		@param directory: 		str
+		@param startFrame:		int?
+		@param endFrame: 		int?
+		@param filtered:		bool
+		@param burnLocation:	bool
 		"""
 		if (startFrame is None):
 			startFrame = 0
@@ -265,12 +273,16 @@ class PupilFinder(VideoTimestampReader):
 	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
 		Writes a video with the pupil circled
-		@param fileName:
-		@param startFrame:		int?, first frame to draw
-		@param endFrame: 		int?, last frame to draw, defaults to all of them
-		@param filtered:		bool, use filtered trace instead of unfiltered?
-		@param burnLocation:	bool, burn location of pupil into image?
-		@return:
+		@param fileName:		file name
+		@param startFrame:		first frame to draw
+		@param endFrame: 		last frame to draw, defaults to all of them
+		@param filtered:		use filtered trace instead of unfiltered?
+		@param burnLocation:	burn location of pupil into image?
+		@param fileName:		str
+		@param startFrame:		int?
+		@param endFrame: 		int?
+		@param filtered:		bool
+		@param burnLocation:	bool
 		"""
 		if (startFrame is None):
 			startFrame = 0
@@ -312,9 +324,12 @@ class PupilFinder(VideoTimestampReader):
 	def GetTraces(self, filtered = True, fps = None):
 		"""
 		Resamples traces to a different fps using closest frame
-		@param filtered:
-		@param fps:			int?, if present, resample the traces
-		@return:
+		@param filtered:	temporally filter the traces?
+		@param fps:			f present, resample the traces to this FPS
+		@param filtered:	bool
+		@param fps:			int?
+		@return:	pupil locations
+		@rtype: numpy.ndarray
 		"""
 		traces = self.filteredPupilLocations if filtered else self.rawPupilLocations
 		if fps is None:
@@ -352,9 +367,10 @@ class PupilFinder(VideoTimestampReader):
 	def Save(self, fileName = None, outFile = None):
 		"""
 		Save out information
-		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
-		@param outFile: 	zipfile?, existing object to write to
-		@return:
+		@param fileName: 	name of file to save, must be not none if fileObject is None
+		@param outFile: 	existing object to write to
+		@type fileName: 	str?
+		@type outFile: 	zipfile?
 		"""
 
 		closeOnFinish = outFile is None  # we close the file only if this is the actual function that started the file
@@ -380,9 +396,10 @@ class PupilFinder(VideoTimestampReader):
 	def Load(self, fileName = None, inFile = None):
 		"""
 		Loads in information
-		@param fileName: 	str? name of file to read, must not be none if infile is none
-		@param inFile:		zipfile? existing object to read from
-		@return:
+		@param fileName: 	name of file to read, must not be none if infile is none
+		@param inFile:		existing object to read from
+		@type fileName: 	str?
+		@type inFile:		zipfile?
 		"""
 
 		closeOnFinish = inFile is None

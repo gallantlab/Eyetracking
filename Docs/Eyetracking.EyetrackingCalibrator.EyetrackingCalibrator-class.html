@@ -115,7 +115,7 @@ object --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">EyetrackingCalibrator</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -211,7 +211,7 @@ object --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">tuple&lt;float, float, float&gt;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -231,7 +231,7 @@ object --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -325,7 +325,7 @@ object --+
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -653,14 +653,14 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>width</code></strong> - int, screen width</li>
-        <li><strong class="pname"><code>height</code></strong> - int, screen height</li>
-        <li><strong class="pname"><code>nHorizontal</code></strong> - int, number of horizontal points</li>
-        <li><strong class="pname"><code>nVertical</code></strong> - int, number of vertical points</li>
-        <li><strong class="pname"><code>DPIUnscaleFactor</code></strong> - float, factor used to _unscale_ the DPI scaling in Unreal UMG, 
-          return value of UCarlaUMGBase::DPIScaleFactor</li>
+        <li><strong class="pname"><code>width</code></strong> (int) - screen width</li>
+        <li><strong class="pname"><code>height</code></strong> (int) - screen height</li>
+        <li><strong class="pname"><code>nHorizontal</code></strong> (int) - number of horizontal points</li>
+        <li><strong class="pname"><code>nVertical</code></strong> (int) - number of vertical points</li>
+        <li><strong class="pname"><code>DPIUnscaleFactor</code></strong> (float) - factor used to _unscale_ the DPI scaling in Unreal UMG, return 
+          value of UCarlaUMGBase::DPIScaleFactor</li>
     </ul></dd>
-    <dt>Returns:</dt>
+    <dt>Returns: numpy.ndarray</dt>
         <dd>[(nHorizontal x nVertical) x 2] array</dd>
   </dl>
 </td></tr></table>
@@ -691,13 +691,13 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>calibrationVideoFile</code></strong> - str, name of video file</li>
-        <li><strong class="pname"><code>calibrationBeginTime</code></strong> - 4ple&lt;int&gt;?, time of calibration sequence onset</li>
-        <li><strong class="pname"><code>calibrationPositions</code></strong> - [n x 2] array?, pixel positions of calibration points</li>
-        <li><strong class="pname"><code>calibrationOrder</code></strong> - array&lt;int&gt;?, sequence in which points were presented</li>
-        <li><strong class="pname"><code>calibrationDuration</code></strong> - float, duration of fixation time per point</li>
-        <li><strong class="pname"><code>calibrationDelay</code></strong> - float, delay in seconds from begin time to first fixation</li>
-        <li><strong class="pname"><code>templates</code></strong> - bool, use template matching instead of hough circles?</li>
+        <li><strong class="pname"><code>calibrationVideoFile</code></strong> (str) - name of video file</li>
+        <li><strong class="pname"><code>calibrationBeginTime</code></strong> (4ple&lt;int&gt;?) - time of calibration sequence onset</li>
+        <li><strong class="pname"><code>calibrationPositions</code></strong> ([n x 2] array?) - pixel positions of calibration points</li>
+        <li><strong class="pname"><code>calibrationOrder</code></strong> (array&lt;int&gt;?) - sequence in which points were presented</li>
+        <li><strong class="pname"><code>calibrationDuration</code></strong> (float) - duration of fixation time per point</li>
+        <li><strong class="pname"><code>calibrationDelay</code></strong> (float) - delay in seconds from begin time to first fixation</li>
+        <li><strong class="pname"><code>templates</code></strong> (bool) - use template matching instead of hough circles?</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
@@ -731,7 +731,7 @@ object --+
         <li><strong class="pname"><code>delay</code></strong> - float?, fixation delay to use for the new object, if None will 
           copy this</li>
     </ul></dd>
-    <dt>Returns:</dt>
+    <dt>Returns: EyetrackingCalibrator</dt>
         <dd>EyetrackingCalibrator</dd>
   </dl>
 </td></tr></table>
@@ -767,24 +767,22 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>window</code></strong> - 4-ple&lt;int&gt;?, subwindow in frame to examine, order [left, 
-          right, top, bottom]</li>
-        <li><strong class="pname"><code>blur</code></strong> - int, median blur filter width</li>
-        <li><strong class="pname"><code>dp</code></strong> - float, inverse ratio of accumulator resolution to image 
-          resolution</li>
-        <li><strong class="pname"><code>minDistance</code></strong> - float, min distance between centers of detected circles</li>
-        <li><strong class="pname"><code>param1</code></strong> - float, higher threshold for canny edge detector</li>
-        <li><strong class="pname"><code>param2</code></strong> - float, accumulator threshold at detection stage, smaller =&gt; 
-          more errors</li>
-        <li><strong class="pname"><code>minRadius</code></strong> - int, min circle radius</li>
-        <li><strong class="pname"><code>maxRadius</code></strong> - int, max circle radius</li>
-        <li><strong class="pname"><code>windowSize</code></strong> - int, median filter time window size</li>
-        <li><strong class="pname"><code>outlierThresholds</code></strong> - list&lt;float&gt;?, thresholds in percentiles at which to nan 
-          outliers, if none, does not nan outliers</li>
-        <li><strong class="pname"><code>filterPupilSize</code></strong> - bool, filter pupil size alone with position?</li>
-        <li><strong class="pname"><code>surfaceBlur</code></strong> - int?, if present, radius to use for surface blur</li>
-        <li><strong class="pname"><code>nThreads</code></strong> - int?, number of threads to use for pupil finding. if none, use 
-          all cores</li>
+        <li><strong class="pname"><code>window</code></strong> (4-ple&lt;int&gt;?) - subwindow in frame to examine, order [left, right, top, bottom]</li>
+        <li><strong class="pname"><code>blur</code></strong> (int) - median blur filter width</li>
+        <li><strong class="pname"><code>dp</code></strong> (float) - inverse ratio of accumulator resolution to image resolution</li>
+        <li><strong class="pname"><code>minDistance</code></strong> (float) - min distance between centers of detected circles</li>
+        <li><strong class="pname"><code>param1</code></strong> (float) - higher threshold for canny edge detector</li>
+        <li><strong class="pname"><code>param2</code></strong> (float) - accumulator threshold at detection stage, smaller =&gt; more 
+          errors</li>
+        <li><strong class="pname"><code>minRadius</code></strong> (int) - min circle radius</li>
+        <li><strong class="pname"><code>maxRadius</code></strong> (int) - max circle radius</li>
+        <li><strong class="pname"><code>windowSize</code></strong> (int) - median filter time window size</li>
+        <li><strong class="pname"><code>outlierThresholds</code></strong> (list&lt;float&gt;?) - thresholds in percentiles at which to nan outliers, if none, does
+          not nan outliers</li>
+        <li><strong class="pname"><code>filterPupilSize</code></strong> (bool) - filter pupil size alone with position?</li>
+        <li><strong class="pname"><code>surfaceBlur</code></strong> (int?) - if present, radius to use for surface blur</li>
+        <li><strong class="pname"><code>nThreads</code></strong> (int?) - number of threads to use for pupil finding. if none, use all 
+          cores</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -815,15 +813,15 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>beginTime</code></strong> - 4ple&lt;int&gt;?, time of calibration sequence onset  TODO: 
-          replace this with a frame number</li>
-        <li><strong class="pname"><code>method</code></strong> - function, method used to aggregated points to one summary point</li>
-        <li><strong class="pname"><code>startDelay</code></strong> - float, time delay in seconds to account for eye movement delay</li>
-        <li><strong class="pname"><code>endSkip</code></strong> - float, time in seconds to clip from the end of a fixation period</li>
-        <li><strong class="pname"><code>duration</code></strong> - float|list&lt;float&gt;?, duration of each fixation point, if 
-          list, search through all and select best</li>
-        <li><strong class="pname"><code>filtered</code></strong> - bool, use filtered pupil locations?</li>
-        <li><strong class="pname"><code>verbose</code></strong> - bool, print stuff?</li>
+        <li><strong class="pname"><code>beginTime</code></strong> - time of calibration sequence onset      TODO: replace this with a
+          frame number</li>
+        <li><strong class="pname"><code>method</code></strong> (function) - method used to aggregated points to one summary point</li>
+        <li><strong class="pname"><code>startDelay</code></strong> (float) - time delay in seconds to account for eye movement delay</li>
+        <li><strong class="pname"><code>endSkip</code></strong> (float) - time in seconds to clip from the end of a fixation period</li>
+        <li><strong class="pname"><code>duration</code></strong> (float|list&lt;float&gt;?) - duration of each fixation point, if list, search through all and 
+          select best</li>
+        <li><strong class="pname"><code>filtered</code></strong> (bool) - use filtered pupil locations?</li>
+        <li><strong class="pname"><code>verbose</code></strong> (bool) - verbose?</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -851,12 +849,11 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>smoothnesses</code></strong> - list&lt;float&gt;, smoothnesses to try for interpolations</li>
-        <li><strong class="pname"><code>methods</code></strong> - list&lt;str&gt;, methods to try</li>
-        <li><strong class="pname"><code>varianceThreshold</code></strong> - float?, threshold of variance in the calibration positions to 
-          throw away</li>
-        <li><strong class="pname"><code>glintVector</code></strong> - bool, use pupil-glint vector instead of just the pupil position?</li>
-        <li><strong class="pname"><code>searchThreshold</code></strong> - float, if the error is above this threshold, search over 
+        <li><strong class="pname"><code>smoothnesses</code></strong> (list&lt;float&gt;) - smoothnesses to try for interpolations</li>
+        <li><strong class="pname"><code>methods</code></strong> (list&lt;str&gt;) - methods to try</li>
+        <li><strong class="pname"><code>varianceThreshold</code></strong> (float?) - threshold of variance in the calibration positions to throw away</li>
+        <li><strong class="pname"><code>glintVector</code></strong> (bool) - use pupil-glint vector instead of just the pupil position?</li>
+        <li><strong class="pname"><code>searchThreshold</code></strong> (float) - if the error is above this threshold, search over 
           delays/durations. will not search if is 0</li>
     </ul></dd>
   </dl>
@@ -883,12 +880,12 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>durations</code></strong> - list&lt;float&gt;, list of durations to search over</li>
-        <li><strong class="pname"><code>delays</code></strong> - list&lt;float&gt;, list of delay lengths to search over</li>
-        <li><strong class="pname"><code>verbose</code></strong> - bool</li>
+        <li><strong class="pname"><code>durations</code></strong> (list&lt;float&gt;) - list of durations to search over</li>
+        <li><strong class="pname"><code>delays</code></strong> (list&lt;float&gt;) - list of delay lengths to search over</li>
+        <li><strong class="pname"><code>verbose</code></strong> (bool) - verbose?</li>
     </ul></dd>
-    <dt>Returns:</dt>
-        <dd>tuple&lt;float, float, float&gt;, best duration, delay, and error</dd>
+    <dt>Returns: tuple&lt;float, float, float&gt;</dt>
+        <dd>best duration, delay, and error</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -916,11 +913,13 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>pupilFinder</code></strong> - PupilFinder?, pupil finder object that has been run</li>
-        <li><strong class="pname"><code>trace</code></strong> - [n x 3] array?, output traces from something</li>
-        <li><strong class="pname"><code>videoFileName</code></strong> - str?, file to use</li>
-        <li><strong class="pname"><code>replaceNanWithPrevious</code></strong> - bool, replace nan values with the previous value?</li>
+        <li><strong class="pname"><code>pupilFinder</code></strong> (PupilFinder?) - pupil finder object that has been run</li>
+        <li><strong class="pname"><code>trace</code></strong> ([n x 3] array?) - output pupil location traces from a PupilFinder</li>
+        <li><strong class="pname"><code>videoFileName</code></strong> (str?) - video file to use</li>
+        <li><strong class="pname"><code>replaceNanWithPrevious</code></strong> (bool) - replace nan values with the previous value?</li>
     </ul></dd>
+    <dt>Returns: numpy.ndarray</dt>
+        <dd>screen coordinates corresponding to pupil location</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -943,7 +942,7 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>fileName</code></strong></li>
+        <li><strong class="pname"><code>fileName</code></strong> (str)</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -967,7 +966,7 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>fileName</code></strong></li>
+        <li><strong class="pname"><code>fileName</code></strong> (str)</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -1080,7 +1079,7 @@ object --+
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Fri Aug 21 19:24:05 2020
+    on Fri Aug 21 21:18:25 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

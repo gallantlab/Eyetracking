@@ -33,12 +33,18 @@ class EyetrackingCalibrator(object):
 		"""
 		Generates calibration point locations. See /auto/k8/anunez/stimulusdata/eyetrack1024/draw_array_transparent_withborder.py
 		or EyetrackingCalibrationHUD::EventConstruct for how these points were generated for presentation
-		@param width: 				int, screen width
-		@param height: 				int, screen height
-		@param nHorizontal: 		int, number of horizontal points
-		@param nVertical: 			int, number of vertical points
-		@param DPIUnscaleFactor:	float, factor used to _unscale_ the DPI scaling in Unreal UMG, return value of UCarlaUMGBase::DPIScaleFactor
+		@param width: 				screen width
+		@type width:				int
+		@param height: 				screen height
+		@type height:				int
+		@param nHorizontal: 		number of horizontal points
+		@type nHorizontal:			int
+		@param nVertical: 			number of vertical points
+		@type nVertical:			int
+		@param DPIUnscaleFactor:	factor used to _unscale_ the DPI scaling in Unreal UMG, return value of UCarlaUMGBase::DPIScaleFactor
+		@type DPIUnscaleFactor:		float
 		@return: [(nHorizontal x nVertical) x 2] array
+		@rtype: numpy.ndarray
 		"""
 
 		Yspace = int(height / nVertical / DPIUnscaleFactor)
@@ -59,13 +65,20 @@ class EyetrackingCalibrator(object):
 				 calibrationDuration = 2, calibrationDelay = 2, templates = True):
 		"""
 		Constructor
-		@param calibrationVideoFile:	str, name of video file
-		@param calibrationBeginTime:	4ple<int>?, time of calibration sequence onset
-		@param calibrationPositions:	[n x 2] array?, pixel positions of calibration points
-		@param calibrationOrder:		array<int>?, sequence in which points were presented
-		@param calibrationDuration:		float, duration of fixation time per point
-		@param calibrationDelay:		float, delay in seconds from begin time to first fixation
-		@param templates:				bool, use template matching instead of hough circles?
+		@param calibrationVideoFile:	name of video file
+		@type calibrationVideoFile:		str
+		@param calibrationBeginTime:	time of calibration sequence onset
+		@type calibrationBeginTime:		4ple<int>?
+		@param calibrationPositions:	pixel positions of calibration points
+		@type calibrationPositions:		[n x 2] array?
+		@param calibrationOrder:		sequence in which points were presented
+		@type calibrationOrder:			array<int>?
+		@param calibrationDuration:		duration of fixation time per point
+		@type calibrationDuration:		float
+		@param calibrationDelay:		delay in seconds from begin time to first fixation
+		@type calibrationDelay:			float
+		@param templates:				use template matching instead of hough circles?
+		@type templates:				bool
 		"""
 		self.calibrationVideoFile = calibrationVideoFile
 		"""
@@ -194,6 +207,7 @@ class EyetrackingCalibrator(object):
 		@param duration:	float?, fixation duration to use for the new object, if None will copy this
 		@param delay:		float?, fixation delay to use for the new object, if None will copy this
 		@return: EyetrackingCalibrator
+		@rtype: EyetrackingCalibrator
 		"""
 		newCalibrator = EyetrackingCalibrator(None, self.calibrationBeginTime, self.initialCalibrationPositions, self.initialCalibrationOrder,
 											  duration if duration is not None else self.calibrationDuration,
@@ -207,20 +221,32 @@ class EyetrackingCalibrator(object):
 				   filterPupilSize = True, surfaceBlur = None, nThreads = None):
 		"""
 		Finds pupil traces
-		@param window: 				4-ple<int>?, subwindow in frame to examine, order [left, right, top, bottom]
-		@param blur: 				int, median blur filter width
-		@param dp: 					float, inverse ratio of accumulator resolution to image resolution
-		@param minDistance: 		float, min distance between centers of detected circles
-		@param param1: 				float, higher threshold for canny edge detector
-		@param param2: 				float, accumulator threshold at detection stage, smaller => more errors
-		@param minRadius: 			int, min circle radius
-		@param maxRadius: 			int, max circle radius
-		@param windowSize:			int, median filter time window size
-		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
-		@param filterPupilSize:		bool, filter pupil size alone with position?
-		@param surfaceBlur:			int?, if present, radius to use for surface blur
-		@param nThreads:			int?, number of threads to use for pupil finding. if none, use all cores
-		@return:
+		@param window: 				subwindow in frame to examine, order [left, right, top, bottom]
+		@param blur: 				median blur filter width
+		@param dp: 					inverse ratio of accumulator resolution to image resolution
+		@param minDistance: 		min distance between centers of detected circles
+		@param param1: 				higher threshold for canny edge detector
+		@param param2: 				accumulator threshold at detection stage, smaller => more errors
+		@param minRadius: 			min circle radius
+		@param maxRadius: 			max circle radius
+		@param windowSize:			median filter time window size
+		@param outlierThresholds:	thresholds in percentiles at which to nan outliers, if none, does not nan outliers
+		@param filterPupilSize:		filter pupil size alone with position?
+		@param surfaceBlur:			if present, radius to use for surface blur
+		@param nThreads:			number of threads to use for pupil finding. if none, use all cores
+		@type window: 				4-ple<int>?
+		@type blur: 				int
+		@type dp: 					float
+		@type minDistance: 			float
+		@type param1: 				float
+		@type param2: 				float
+		@type minRadius: 			int
+		@type maxRadius: 			int
+		@type windowSize:			int
+		@type outlierThresholds:	list<float>?
+		@type filterPupilSize:		bool
+		@type surfaceBlur:			int?
+		@type nThreads:				int?
 		"""
 		# self.pupilFinder = PupilFinder(None, window, blur, dp, minDistance, param1, param2, minRadius, maxRadius, self.pupilFinder)
 
@@ -244,13 +270,19 @@ class EyetrackingCalibrator(object):
 										  filtered = True, verbose = True):
 		"""
 		Estimates the pupil positions corresponding to each calibration point
-		@param beginTime:		4ple<int>?, time of calibration sequence onset	TODO: replace this with a frame number
-		@param method:			function, method used to aggregated points to one summary point
-		@param startDelay:		float, time delay in seconds to account for eye movement delay
-		@param endSkip:			float, time in seconds to clip from the end of a fixation period
-		@param duration:		float|list<float>?, duration of each fixation point, if list, search through all and select best
-		@param filtered:		bool, use filtered pupil locations?
-		@param verbose:			bool, print stuff?
+		@param beginTime:		time of calibration sequence onset	TODO: replace this with a frame number
+		@param method:			method used to aggregated points to one summary point
+		@param startDelay:		time delay in seconds to account for eye movement delay
+		@param endSkip:			time in seconds to clip from the end of a fixation period
+		@param duration:		duration of each fixation point, if list, search through all and select best
+		@param filtered:		use filtered pupil locations?
+		@param verbose:			verbose?
+		@type method:			function
+		@type startDelay:		float
+		@type endSkip:			float
+		@type duration:			float|list<float>?
+		@type filtered:			bool
+		@type verbose:			bool
 		@return:
 		"""
 		if (self.pupilFinder is None):
@@ -336,12 +368,16 @@ class EyetrackingCalibrator(object):
 			glintVector = False, searchThreshold = 40):
 		"""
 		Fit an interpolator to the points via LOO x-validation
-		@param smoothnesses:		list<float>, smoothnesses to try for interpolations
-		@param methods:				list<str>, methods to try
-		@param varianceThreshold:	float?, threshold of variance in the calibration positions to throw away
-		@param glintVector:			bool, use pupil-glint vector instead of just the pupil position?
-		@param searchThreshold:		float, if the error is above this threshold, search over delays/durations. will not search if is 0
-		@return:
+		@param smoothnesses:		smoothnesses to try for interpolations
+		@param methods:				methods to try
+		@param varianceThreshold:	threshold of variance in the calibration positions to throw away
+		@param glintVector:			use pupil-glint vector instead of just the pupil position?
+		@param searchThreshold:		if the error is above this threshold, search over delays/durations. will not search if is 0		
+		@type smoothnesses:			list<float>
+		@type methods:				list<str>
+		@type varianceThreshold:	float?
+		@type glintVector:			bool
+		@type searchThreshold:		float
 		"""
 		if not self.hasGlint:
 			glintVector = False
@@ -411,10 +447,14 @@ class EyetrackingCalibrator(object):
 	def SearchAndFit(self, durations = numpy.arange(1.98, 2.21, 0.01), delays = numpy.arange(1.98, 2.41, 0.01), verbose = False):
 		"""
 		Searches for best duration and delay
-		@param durations: 	list<float>, list of durations to search over
-		@param delays: 		list<float>, list of delay lengths to search over
-		@param verbose: 	bool
-		@return:	tuple<float, float, float>, best duration, delay, and error
+		@param durations: 	list of durations to search over
+		@param delays: 		list of delay lengths to search over
+		@param verbose: 	verbose?
+		@type durations: 	list<float>
+		@type delays: 		list<float>
+		@type verbose: 		bool
+		@return:	best duration, delay, and error
+		@rtype:		tuple<float, float, float>
 		"""
 
 		def singleCombo(delayAndDuration):
@@ -450,11 +490,16 @@ class EyetrackingCalibrator(object):
 		"""
 		Transforms an eyetracking video file or pupil finder to screen coords using this calibration.
 		It's better to give a pupilFinder object that uses customized parameters than to use the defaults and use a file
-		@param pupilFinder:				PupilFinder?, pupil finder object that has been run
-		@param trace:					[n x 3] array?, output traces from something
-		@param videoFileName:			str?, file to use
-		@param replaceNanWithPrevious:	bool, replace nan values with the previous value?
-		@return:
+		@param pupilFinder:				pupil finder object that has been run
+		@param trace:					output pupil location traces from a PupilFinder
+		@param videoFileName:			video file to use
+		@param replaceNanWithPrevious:	replace nan values with the previous value?
+		@type pupilFinder:				PupilFinder?
+		@type trace:					[n x 3] array?
+		@type videoFileName:			str?
+		@type replaceNanWithPrevious:	bool
+		@return: screen coordinates corresponding to pupil location
+		@rtype: numpy.ndarray
 		"""
 
 		# grumble grumble function overloading...
@@ -486,7 +531,7 @@ class EyetrackingCalibrator(object):
 		"""
 		Saves calibrated interpolators and whatever else
 		@param fileName:
-		@return:
+		@type fileName: str
 		"""
 
 		outFile = ZipFile(fileName, 'w')
@@ -514,7 +559,7 @@ class EyetrackingCalibrator(object):
 		"""
 		Load previously saved interpolators
 		@param fileName:
-		@return:
+		@type fileName: str
 		"""
 
 		inFile = ZipFile(fileName, 'r')

@@ -17,16 +17,24 @@ class TemplatePupilFinder(PupilFinder):
 			   pupilTemplates, glintTemplates):
 		"""
 		Actual code for template-matching, factored out to a method so it could be multithreaded
-		@param rawFrames:			[frame x width x height x3] frame array
-		@param radii:				list<int> radii to be used to for template matching
-		@param window:				tuple<int, int, int, int>? window in frames to use
-		@param bilateral:			int?, bilateral fiter size
-		@param blur:				int, mediam flur size
-		@param rawPupilLocations:	[frame x value] where to store found pupil locations
-		@param rawGlintLocations:	[frame x value] where to store found glint locations
-		@param pupilTemplates:		[w x h x num] templates for pupils
-		@param glintTemplates:		[w x h x num] templates for glints
-		@return:
+		@param rawFrames:			frame array
+		@param radii:				radii to be used to for template matching
+		@param window:				window in frames to use
+		@param bilateral:			bilateral fiter size
+		@param blur:				mediam flur size
+		@param rawPupilLocations:	where to store found pupil locations
+		@param rawGlintLocations:	where to store found glint locations
+		@param pupilTemplates:		templates for pupils
+		@param glintTemplates:		templates for glints
+		@type rawFrames:			numpy.ndarray
+		@type radii:				list<int>
+		@type window:				tuple<int>
+		@type bilateral:			int?
+		@type blur:					int
+		@type rawPupilLocations:	[frame x value] numpy.ndarray
+		@type rawGlintLocations:	[frame x value] numpy.ndarray
+		@type pupilTemplates:		[w x h x num] numpy.ndarray
+		@type glintTemplates:		[w x h x num] numpy.ndarray
 		"""
 		thesePupilPositions = numpy.zeros([len(radii), 2])
 		thesePupilCorrelations = numpy.zeros(len(radii))
@@ -79,11 +87,16 @@ class TemplatePupilFinder(PupilFinder):
 	def __init__(self, videoFileName = None, window = None, minRadius = 13, maxRadius = 23, other = None):
 		"""
 		Constructor
-		@param videoFileName:	str?, name of video file to parse
-		@param window: 			4-ple<int>?, subwindow in frame to examine, order [left, right, top bottom]
-		@param minRadius:		int, smallest radius to look for
-		@param maxRadius:		int, biggest radius to look for, should not be bigger than 25
-		@param other:			VideoReader?, object to copy construct from
+		@param videoFileName:	name of video file to parse
+		@param window: 			subwindow in frame to examine, order [left, right, top bottom]
+		@param minRadius:		smallest radius to look for
+		@param maxRadius:		biggest radius to look for, should not be bigger than 25
+		@param other:			object to copy construct from
+		@type videoFileName:	str?
+		@type window: 			4-ple<int>?
+		@type minRadius:		int
+		@type maxRadius:		int
+		@type other:			VideoReader?
 		"""
 		super(TemplatePupilFinder, self).__init__(videoFileName, window, other = other)
 		self.radii = range(minRadius, maxRadius + 1)
@@ -124,7 +137,7 @@ class TemplatePupilFinder(PupilFinder):
 		"""
 		Jank copy constructor
 		@param other: 	TemplatPupilFinder
-		@return:
+		@type other: 	TemplatPupilFinder
 		"""
 		super(TemplatePupilFinder, self).InitFromOther(other)
 		if other.rawGlintLocations is not None:
@@ -136,10 +149,12 @@ class TemplatePupilFinder(PupilFinder):
 	def FindPupils(self, endFrame = None, bilateral = None, nThreads = 1):
 		"""
 		Finds pupils by template matching
-		@param endFrame:	int?, frame to search to
-		@param bilateral:	bool, useless here, but is overridden from super function
-		@param nThreads:		int, number of threads to use
-		@return:
+		@param endFrame:		frame to read to, defaults to reading all rawFrames
+		@param bilateral:		useless here but overridden from parent class
+		@param nThreads:		number of threads to use for finding pupils. need to be implemented
+		@type endFrame:			int?
+		@type bilateral:		int?
+		@type nThreads:			int
 		"""
 		if ((endFrame is None) or endFrame > self.nFrames):
 			endFrame = self.nFrames
@@ -178,9 +193,12 @@ class TemplatePupilFinder(PupilFinder):
 	def FilterPupils(self, windowSize = 15, outlierThresholds = None, filterPupilSize = True):
 		"""
 		Filters raw pupil and glint locations
-		@param windowSize:			int, median filter time window size
-		@param outlierThresholds:	list<float>?, thresholds in percentiles at which to nan outliers, if none, does not nan outliers
-		@param filterPupilSize:		bool, filter pupil size alone with position?
+		@param windowSize:			median filter time window size
+		@param outlierThresholds:	thresholds in percentiles at which to nan outliers, if none, does not nan outliers
+		@param filterPupilSize:		filter pupil size alone with position?
+		@type windowSize:			int
+		@type outlierThresholds:	list<float>?
+		@type filterPupilSize:		bool
 		@return:
 		"""
 		super(TemplatePupilFinder, self).FilterPupils(windowSize, outlierThresholds, filterPupilSize)
@@ -204,12 +222,17 @@ class TemplatePupilFinder(PupilFinder):
 	def WritePupilVideo(self, fileName, startFrame = None, endFrame = None, filtered = True, burnLocation = True):
 		"""
 		Writes a video with the pupil circled
-		@param fileName:
-		@param startFrame:		int?, first frame to draw
-		@param endFrame: 		int?, last frame to draw, defaults to all of them
-		@param filtered:		bool, use filtered trace instead of unfiltered?
-		@param burnLocation:	bool, burn location of pupil into image?
-		@return:
+		Writes a video with the pupil circled
+		@param fileName:		file name
+		@param startFrame:		first frame to draw
+		@param endFrame: 		last frame to draw, defaults to all of them
+		@param filtered:		use filtered trace instead of unfiltered?
+		@param burnLocation:	burn location of pupil into image?
+		@param fileName:		str
+		@param startFrame:		int?
+		@param endFrame: 		int?
+		@param filtered:		bool
+		@param burnLocation:	bool
 		"""
 		if (startFrame is None):
 			startFrame = 0
@@ -258,9 +281,10 @@ class TemplatePupilFinder(PupilFinder):
 	def Save(self, fileName = None, outFile = None):
 		"""
 		Save out information
-		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
-		@param outFile: 	zipfile?, existing object to write to
-		@return:
+		@param fileName: 	name of file to save, must be not none if fileObject is None
+		@param outFile: 	existing object to write to
+		@type fileName: 	str?
+		@type outFile: 		zipfile?
 		"""
 
 		closeOnFinish = outFile is None  # we close the file only if this is the actual function that started the file
@@ -281,9 +305,10 @@ class TemplatePupilFinder(PupilFinder):
 	def Load(self, fileName = None, inFile = None):
 		"""
 		Loads in information
-		@param fileName: 	str? name of file to read, must not be none if infile is none
-		@param inFile:		zipfile? existing object to read from
-		@return:
+		@param fileName: 	name of file to read, must not be none if infile is none
+		@param inFile:		existing object to read from
+		@type fileName: 	str?
+		@type inFile:		zipfile?
 		"""
 
 		closeOnFinish = inFile is None

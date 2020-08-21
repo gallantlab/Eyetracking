@@ -188,7 +188,8 @@
         <span class="summary-sig-arg">endFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">filtered</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">burnLocation</span>=<span class="summary-sig-default">True</span>)</span><br />
-      Writes a video with the pupil circled</td>
+      Writes a video with the pupil circled Writes a video with the pupil 
+      circled</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.TemplatePupilFinder-pysrc.html#TemplatePupilFinder.WritePupilVideo">source&nbsp;code</a></span>
             
@@ -259,7 +260,7 @@
     >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.PupilFinder.PupilFinder-class.html">PupilFinder.PupilFinder</a></th></tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -303,7 +304,7 @@
     >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">int|tuple&lt;int, int&gt;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -368,7 +369,7 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#GetVideoInfo" class="summary-sig-name">GetVideoInfo</a>(<span class="summary-sig-arg">self</span>)</span><br />
+          <td><span class="summary-sig"><a name="GetVideoInfo"></a><span class="summary-sig-name">GetVideoInfo</span>(<span class="summary-sig-arg">self</span>)</span><br />
       Gets video info</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.GetVideoInfo">source&nbsp;code</a></span>
@@ -385,7 +386,7 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#LoadFrames" class="summary-sig-name">LoadFrames</a>(<span class="summary-sig-arg">self</span>)</span><br />
+          <td><span class="summary-sig"><a name="LoadFrames"></a><span class="summary-sig-name">LoadFrames</span>(<span class="summary-sig-arg">self</span>)</span><br />
       Loads rawFrames to memory</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.LoadFrames">source&nbsp;code</a></span>
@@ -464,7 +465,7 @@
     >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -912,15 +913,15 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>rawFrames</code></strong> - [frame x width x height x3] frame array</li>
-        <li><strong class="pname"><code>radii</code></strong> - list&lt;int&gt; radii to be used to for template matching</li>
-        <li><strong class="pname"><code>window</code></strong> - tuple&lt;int, int, int, int&gt;? window in frames to use</li>
-        <li><strong class="pname"><code>bilateral</code></strong> - int?, bilateral fiter size</li>
-        <li><strong class="pname"><code>blur</code></strong> - int, mediam flur size</li>
-        <li><strong class="pname"><code>rawPupilLocations</code></strong> - [frame x value] where to store found pupil locations</li>
-        <li><strong class="pname"><code>rawGlintLocations</code></strong> - [frame x value] where to store found glint locations</li>
-        <li><strong class="pname"><code>pupilTemplates</code></strong> - [w x h x num] templates for pupils</li>
-        <li><strong class="pname"><code>glintTemplates</code></strong> - [w x h x num] templates for glints</li>
+        <li><strong class="pname"><code>rawFrames</code></strong> (numpy.ndarray) - frame array</li>
+        <li><strong class="pname"><code>radii</code></strong> (list&lt;int&gt;) - radii to be used to for template matching</li>
+        <li><strong class="pname"><code>window</code></strong> (tuple&lt;int&gt;) - window in frames to use</li>
+        <li><strong class="pname"><code>bilateral</code></strong> (int?) - bilateral fiter size</li>
+        <li><strong class="pname"><code>blur</code></strong> (int) - mediam flur size</li>
+        <li><strong class="pname"><code>rawPupilLocations</code></strong> ([frame x value] numpy.ndarray) - where to store found pupil locations</li>
+        <li><strong class="pname"><code>rawGlintLocations</code></strong> ([frame x value] numpy.ndarray) - where to store found glint locations</li>
+        <li><strong class="pname"><code>pupilTemplates</code></strong> ([w x h x num] numpy.ndarray) - templates for pupils</li>
+        <li><strong class="pname"><code>glintTemplates</code></strong> ([w x h x num] numpy.ndarray) - templates for glints</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -949,12 +950,11 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>videoFileName</code></strong> - str?, name of video file to parse</li>
-        <li><strong class="pname"><code>window</code></strong> - 4-ple&lt;int&gt;?, subwindow in frame to examine, order [left, 
-          right, top bottom]</li>
-        <li><strong class="pname"><code>minRadius</code></strong> - int, smallest radius to look for</li>
-        <li><strong class="pname"><code>maxRadius</code></strong> - int, biggest radius to look for, should not be bigger than 25</li>
-        <li><strong class="pname"><code>other</code></strong> - VideoReader?, object to copy construct from</li>
+        <li><strong class="pname"><code>videoFileName</code></strong> (str?) - name of video file to parse</li>
+        <li><strong class="pname"><code>window</code></strong> (4-ple&lt;int&gt;?) - subwindow in frame to examine, order [left, right, top bottom]</li>
+        <li><strong class="pname"><code>minRadius</code></strong> (int) - smallest radius to look for</li>
+        <li><strong class="pname"><code>maxRadius</code></strong> (int) - biggest radius to look for, should not be bigger than 25</li>
+        <li><strong class="pname"><code>other</code></strong> (VideoReader?) - object to copy construct from</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
@@ -981,7 +981,7 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>other</code></strong> - TemplatPupilFinder</li>
+        <li><strong class="pname"><code>other</code></strong> (TemplatPupilFinder) - TemplatPupilFinder</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.VideoReader.VideoReader-class.html#InitFromOther">VideoReader.VideoReader.InitFromOther</a>
@@ -1010,9 +1010,10 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>endFrame</code></strong> - int?, frame to search to</li>
-        <li><strong class="pname"><code>bilateral</code></strong> - bool, useless here, but is overridden from super function</li>
-        <li><strong class="pname"><code>nThreads</code></strong> - int, number of threads to use</li>
+        <li><strong class="pname"><code>endFrame</code></strong> (int?) - frame to read to, defaults to reading all rawFrames</li>
+        <li><strong class="pname"><code>bilateral</code></strong> (int?) - useless here but overridden from parent class</li>
+        <li><strong class="pname"><code>nThreads</code></strong> (int) - number of threads to use for finding pupils. need to be 
+          implemented</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.PupilFinder.PupilFinder-class.html#FindPupils">PupilFinder.PupilFinder.FindPupils</a>
@@ -1041,10 +1042,10 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>windowSize</code></strong> - int, median filter time window size</li>
-        <li><strong class="pname"><code>outlierThresholds</code></strong> - list&lt;float&gt;?, thresholds in percentiles at which to nan 
-          outliers, if none, does not nan outliers</li>
-        <li><strong class="pname"><code>filterPupilSize</code></strong> - bool, filter pupil size alone with position?</li>
+        <li><strong class="pname"><code>windowSize</code></strong> (int) - median filter time window size</li>
+        <li><strong class="pname"><code>outlierThresholds</code></strong> (list&lt;float&gt;?) - thresholds in percentiles at which to nan outliers, if none, does
+          not nan outliers</li>
+        <li><strong class="pname"><code>filterPupilSize</code></strong> (bool) - filter pupil size alone with position?</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.PupilFinder.PupilFinder-class.html#FilterPupils">PupilFinder.PupilFinder.FilterPupils</a>
@@ -1071,15 +1072,21 @@
     </td>
   </tr></table>
   
-  <p>Writes a video with the pupil circled</p>
+  <p>Writes a video with the pupil circled Writes a video with the pupil 
+  circled</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>fileName</code></strong></li>
-        <li><strong class="pname"><code>startFrame</code></strong> - int?, first frame to draw</li>
-        <li><strong class="pname"><code>endFrame</code></strong> - int?, last frame to draw, defaults to all of them</li>
-        <li><strong class="pname"><code>filtered</code></strong> - bool, use filtered trace instead of unfiltered?</li>
-        <li><strong class="pname"><code>burnLocation</code></strong> - bool, burn location of pupil into image?</li>
+        <li><strong class="pname"><code>fileName</code></strong> - file name</li>
+        <li><strong class="pname"><code>startFrame</code></strong> - first frame to draw</li>
+        <li><strong class="pname"><code>endFrame</code></strong> - last frame to draw, defaults to all of them</li>
+        <li><strong class="pname"><code>filtered</code></strong> - use filtered trace instead of unfiltered?</li>
+        <li><strong class="pname"><code>burnLocation</code></strong> - burn location of pupil into image?</li>
+        <li><strong class="pname"><code>fileName</code></strong> - str</li>
+        <li><strong class="pname"><code>startFrame</code></strong> - int?</li>
+        <li><strong class="pname"><code>endFrame</code></strong> - int?</li>
+        <li><strong class="pname"><code>filtered</code></strong> - bool</li>
+        <li><strong class="pname"><code>burnLocation</code></strong> - bool</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.PupilFinder.PupilFinder-class.html#WritePupilVideo">PupilFinder.PupilFinder.WritePupilVideo</a>
@@ -1107,9 +1114,8 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>fileName</code></strong> - str?, name of file to save, must be not none if fileObject is 
-          None</li>
-        <li><strong class="pname"><code>outFile</code></strong> - zipfile?, existing object to write to</li>
+        <li><strong class="pname"><code>fileName</code></strong> (str?) - name of file to save, must be not none if fileObject is None</li>
+        <li><strong class="pname"><code>outFile</code></strong> (zipfile?) - existing object to write to</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.VideoReader.VideoReader-class.html#Save">VideoReader.VideoReader.Save</a>
@@ -1137,8 +1143,8 @@
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>fileName</code></strong> - str? name of file to read, must not be none if infile is none</li>
-        <li><strong class="pname"><code>inFile</code></strong> - zipfile? existing object to read from</li>
+        <li><strong class="pname"><code>fileName</code></strong> (str?) - name of file to read, must not be none if infile is none</li>
+        <li><strong class="pname"><code>inFile</code></strong> (zipfile?) - existing object to read from</li>
     </ul></dd>
     <dt>Overrides:
         <a href="Eyetracking.VideoReader.VideoReader-class.html#Load">VideoReader.VideoReader.Load</a>
@@ -1179,7 +1185,7 @@
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Fri Aug 21 19:24:05 2020
+    on Fri Aug 21 21:18:25 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

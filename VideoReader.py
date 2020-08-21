@@ -10,8 +10,10 @@ class VideoReader(object):
 	def __init__(self, videoFileName = None, other = None):
 		"""
 		Constructor
-		@param videoFileName:	str?, video file
-		@param other:			VideoReader?, use for copy constructing
+		@param videoFileName:	video file name
+		@param other:			use for copy constructing
+		@type videoFileName:	str?
+		@type other:			VideoReader?
 		"""
 		self.fileName = videoFileName
 		"""
@@ -84,8 +86,8 @@ class VideoReader(object):
 	def InitFromOther(self, other):
 		"""
 		A jank copy constructor
-		@param other: 	VideoReader object
-		@return:
+		@param other: 	Videoobject to init from
+		@type other: VideoReader
 		"""
 		if (other is not None):
 			self.rawFrames = other.rawFrames
@@ -99,7 +101,6 @@ class VideoReader(object):
 	def LoadFrames(self):
 		"""
 		Loads rawFrames to memory
-		@return:
 		"""
 		if (self.isVidCap is None):
 			self.GetVideoInfo()
@@ -144,7 +145,6 @@ class VideoReader(object):
 	def GetVideoInfo(self):
 		"""
 		Gets video info
-		@return:
 		"""
 		vc = cv2.VideoCapture(self.fileName)
 		if (vc.isOpened()):
@@ -191,7 +191,6 @@ class VideoReader(object):
 		Writes a video out to disk
 		@param outFileName:
 		@param frames:
-		@return:
 		"""
 
 		if frames is None:
@@ -201,9 +200,10 @@ class VideoReader(object):
 	def Save(self, fileName = None, outFile = None):
 		"""
 		Save out information
-		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
-		@param outFile: 	zipfile?, existing object to write to
-		@return:
+		@param fileName: 	name of file to save, must be not none if fileObject is None
+		@param outFile: 	existing object to write to
+		@type fileName: 	str?
+		@type outFile: 		zipfile?
 		"""
 
 		closeOnFinish = outFile is None		# we close the file only if this is the actual function that started the file
@@ -223,9 +223,10 @@ class VideoReader(object):
 	def Load(self, fileName = None, inFile = None):
 		"""
 		Loads in information
-		@param fileName: 	str? name of file to read, must not be none if infile is none
-		@param inFile:		zipfile? existing object to read from
-		@return:
+		@param fileName: 	name of file to read, must not be none if infile is none
+		@param inFile:		existing object to read from
+		@param fileName: 	str?
+		@param inFile:		zipfile?
 		"""
 		closeOnFinish = inFile is None
 		if inFile is None:

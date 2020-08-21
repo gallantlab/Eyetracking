@@ -23,7 +23,6 @@ Hard-coded array for the shape of the seconds symbol burned into the video
 class VideoTimestampReader(VideoReader):
 	"""
 	Gets video frame timestamps from raw eyetracking videos.
-	See eyetracker_timestamps
 	"""
 	templates = numpy.load(path.join(path.dirname(__file__), 'digit-templates.npy'))
 	"""
@@ -43,8 +42,10 @@ class VideoTimestampReader(VideoReader):
 	def GetTimeStampForFrames(frames):
 		"""
 		Parallelizable function for getting timestamps for a bunch of frames
-		@param frames: 	[frame, w, h, 3] frames array
-		@return:
+		@param frames: 	frames array
+		@type frames:	[frame, w, h, 3]  numpy.ndarray
+		@return: timestamps
+		@rtype: numpy.ndarray
 		"""
 
 		# separate data in memory because that way the processes won't all have to read from the
@@ -96,8 +97,10 @@ class VideoTimestampReader(VideoReader):
 	def __init__(self, videoFileName = None, other = None):
 		"""
 		Constructor
-		@param videoFileName:	str?, video file
-		@param other:			VideoReader?, other object to init from
+		@param videoFileName:	video file name
+		@param other:			other object to init from
+		@type videoFileName:	str?
+		@type other:			VideoReader?
 		"""
 		super(VideoTimestampReader, self).__init__(videoFileName, other)
 		self.numberTemplates = VideoTimestampReader.numberTemplates
@@ -124,7 +127,7 @@ class VideoTimestampReader(VideoReader):
 		"""
 		Jank copy constructor
 		@param other: VideoTimeStampReader object
-		@return:
+		@type other: VideoTimestampReader
 		"""
 		super(VideoTimestampReader, self).InitFromOther(other)
 		self.time = other.time.copy()
@@ -136,7 +139,9 @@ class VideoTimestampReader(VideoReader):
 		"""
 		What number is this image?
 		@param image: 	2d numpy array
-		@return: int, number
+		@type image: numpy.ndarray
+		@return: number in this array
+		@rtype int
 		"""
 		corrs = []
 		flatImage = image.ravel()
@@ -148,8 +153,8 @@ class VideoTimestampReader(VideoReader):
 	def GetTimeStampForFrame(self, frameIndex):
 		"""
 		Gets the timestamp on a single frame. See eyetracker_timestamps.image2time()
-		@param frameIndex: 	int, frame to parse
-		@return:
+		@param frameIndex: 	frame to parse
+		@type frameIndex:	int
 		"""
 		if self.frame is None:
 			self.frame = numpy.zeros([self.height, self.width])
@@ -182,8 +187,8 @@ class VideoTimestampReader(VideoReader):
 	def ParseTimestamps(self, nThreads = 1):
 		"""
 		Parses timestamps from the images
-		@param nThreads:	int, number of threads to sue
-		@return:
+		@param nThreads:	number of threads to use
+		@type nThreads: int
 		"""
 		self.frame = None
 		### === parallel for ===
@@ -207,12 +212,18 @@ class VideoTimestampReader(VideoReader):
 	def FindOnsetFrame(self, H, M, S, MS, returnDiff = False):
 		"""
 		Find the frame closest to a given time
-		@param H: 			int, hour
-		@param M: 			int, minute
-		@param S: 			int, seconds
-		@param MS: 			int, milliseconds
-		@param returnDiff:	bool, return also the difference from the desired times on this frame?
-		@return: closest frame, int, and time difference between that frame and this time, in ms, int
+		@param H: 			hour
+		@param M: 			minute
+		@param S: 			seconds
+		@param MS: 			milliseconds
+		@param returnDiff:	return also the difference from the desired times on this frame?
+		@param H: 			int
+		@param M: 			int
+		@param S: 			int
+		@param MS: 			int
+		@param returnDiff:	bool
+		@return: closest frame, and optionally time difference between that frame and this time in ms
+		@rtype: int|tuple<int, int>
 		"""
 		if not self.isParsed:
 			self.ParseTimestamps()
@@ -232,9 +243,10 @@ class VideoTimestampReader(VideoReader):
 	def Save(self, fileName = None, outFile = None):
 		"""
 		Save out information
-		@param fileName: 	str?, name of file to save, must be not none if fileObject is None
-		@param outFile: 	zipfile?, existing object to write to
-		@return:
+		@param fileName: 	name of file to save, must be not none if fileObject is None
+		@param outFile: 	existing object to write to
+		@type fileName: 	str?
+		@type outFile: 		zipfile?
 		"""
 		closeOnFinish = outFile is None  # we close the file only if this is the actual function that started the file
 
@@ -251,9 +263,10 @@ class VideoTimestampReader(VideoReader):
 	def Load(self, fileName = None, inFile = None):
 		"""
 		Loads in information
-		@param fileName: 	str? name of file to read, must not be none if infile is none
-		@param inFile:		zipfile? existing object to read from
-		@return:
+		@param fileName: 	name of file to read, must not be none if infile is none
+		@param inFile:		existing object to read from
+		@param fileName: 	str?
+		@param inFile:		zipfile?
 		"""
 		closeOnFinish = inFile is None
 		if inFile is None:
