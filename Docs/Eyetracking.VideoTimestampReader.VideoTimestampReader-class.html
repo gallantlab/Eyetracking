@@ -1,0 +1,874 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Eyetracking.VideoTimestampReader.VideoTimestampReader</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="Eyetracking-module.html">Package&nbsp;Eyetracking</a> ::
+        <a href="Eyetracking.VideoTimestampReader-module.html">Module&nbsp;VideoTimestampReader</a> ::
+        Class&nbsp;VideoTimestampReader
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class VideoTimestampReader</h1><p class="nomargin-top"><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+             object --+    
+                      |    
+<a href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader.VideoReader</a> --+
+                          |
+                         <strong class="uidshort">VideoTimestampReader</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="Eyetracking.PupilFinder.PupilFinder-class.html">PupilFinder.PupilFinder</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Gets video frame timestamps from raw eyetracking videos. See 
+  eyetracker_timestamps</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">videoFileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">other</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Constructor</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#InitFromOther" class="summary-sig-name">InitFromOther</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Jank copy constructor</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.InitFromOther">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#GetTimeStampForFrame" class="summary-sig-name">GetTimeStampForFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">frameIndex</span>)</span><br />
+      Gets the timestamp on a single frame.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.GetTimeStampForFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#ParseTimestamps" class="summary-sig-name">ParseTimestamps</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">nThreads</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Parses timestamps from the images</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.ParseTimestamps">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#FindOnsetFrame" class="summary-sig-name">FindOnsetFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">H</span>,
+        <span class="summary-sig-arg">M</span>,
+        <span class="summary-sig-arg">S</span>,
+        <span class="summary-sig-arg">MS</span>,
+        <span class="summary-sig-arg">returnDiff</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Find the frame closest to a given time</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.FindOnsetFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#Save" class="summary-sig-name">Save</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">outFile</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Save out information</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.Save">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#Load" class="summary-sig-name">Load</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">inFile</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Loads in information</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.Load">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader.VideoReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#GetVideoInfo" class="summary-sig-name">GetVideoInfo</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Gets video info</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.GetVideoInfo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#LoadFrames" class="summary-sig-name">LoadFrames</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Loads rawFrames to memory</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.LoadFrames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#WriteVideo" class="summary-sig-name">WriteVideo</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">outFileName</span>,
+        <span class="summary-sig-arg">frames</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Writes a video out to disk</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.WriteVideo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#GetTimeStampForFrames" class="summary-sig-name">GetTimeStampForFrames</a>(<span class="summary-sig-arg">frames</span>)</span><br />
+      Parallelizable function for getting timestamps for a bunch of frames</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#MatchDigit" class="summary-sig-name">MatchDigit</a>(<span class="summary-sig-arg">image</span>)</span><br />
+      What number is this image?</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#templates" class="summary-name">templates</a> = <code title="array([[[ 20,  26,  15,  13,  22,  21,  20,  24],
+        [ 19,  21, 255, 255, 255, 255,  35,  27],
+        [  5, 255, 255,  16,  12, 255, 255,  20],
+        [ 26, 255, 255,  19,  23, 255, 255,  20],
+        [ 15, 255, 255,  19,  19, 255, 255,  29],
+        [ 22, 255, 255,  34,  21, 255, 255,  16],
+        [ 10, 255, 255,  16,  12, 255, 255,  24],
+        [ 12, 255, 255,   2,  19, 255, 255,  21],
+...">array([[[ 20,  26,  15,  13,  22,  21,  20,  2<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#flats" class="summary-name">flats</a> = <code title="[array([ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
+5,
+       255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 255\
+,
+       255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 255\
+,
+        29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  16\
+,
+..."><code class="variable-group">[</code>array([ 20,  26,  15,  13,  22,  21,  20,  24,  19,  <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#numberTemplates" class="summary-name">numberTemplates</a> = <code title="array([[ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
+5,
+        255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 25\
+5,
+        255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 25\
+5,
+         29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  1\
+6,
+...">array([[ 20,  26,  15,  13,  22,  21,  20,  <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="i"></a><span class="summary-name">i</span> = <code title="9">9</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="GetTimeStampForFrames"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTimeStampForFrames</span>(<span class="sig-arg">frames</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parallelizable function for getting timestamps for a bunch of 
+  frames</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>frames</code></strong> - [frame, w, h, 3] frames array</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">videoFileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">other</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Constructor</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>videoFileName</code></strong> - str?, video file</li>
+        <li><strong class="pname"><code>other</code></strong> - VideoReader?, other object to init from</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="InitFromOther"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">InitFromOther</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.InitFromOther">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Jank copy constructor</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - VideoTimeStampReader object</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#InitFromOther">VideoReader.VideoReader.InitFromOther</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="MatchDigit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MatchDigit</span>(<span class="sig-arg">image</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>What number is this image?</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>image</code></strong> - 2d numpy array</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>int, number</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTimeStampForFrame"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTimeStampForFrame</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">frameIndex</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.GetTimeStampForFrame">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the timestamp on a single frame. See 
+  eyetracker_timestamps.image2time()</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>frameIndex</code></strong> - int, frame to parse</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ParseTimestamps"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ParseTimestamps</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">nThreads</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.ParseTimestamps">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses timestamps from the images</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>nThreads</code></strong> - int, number of threads to sue</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="FindOnsetFrame"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">FindOnsetFrame</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">H</span>,
+        <span class="sig-arg">M</span>,
+        <span class="sig-arg">S</span>,
+        <span class="sig-arg">MS</span>,
+        <span class="sig-arg">returnDiff</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.FindOnsetFrame">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Find the frame closest to a given time</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>H</code></strong> - int, hour</li>
+        <li><strong class="pname"><code>M</code></strong> - int, minute</li>
+        <li><strong class="pname"><code>S</code></strong> - int, seconds</li>
+        <li><strong class="pname"><code>MS</code></strong> - int, milliseconds</li>
+        <li><strong class="pname"><code>returnDiff</code></strong> - bool, return also the difference from the desired times on this 
+          frame?</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>closest frame, int, and time difference between that frame and 
+          this time, in ms, int</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Save"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Save</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">outFile</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.Save">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Save out information</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fileName</code></strong> - str?, name of file to save, must be not none if fileObject is 
+          None</li>
+        <li><strong class="pname"><code>outFile</code></strong> - zipfile?, existing object to write to</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#Save">VideoReader.VideoReader.Save</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Load"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Load</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">inFile</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.Load">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Loads in information</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fileName</code></strong> - str? name of file to read, must not be none if infile is none</li>
+        <li><strong class="pname"><code>inFile</code></strong> - zipfile? existing object to read from</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#Load">VideoReader.VideoReader.Load</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="templates"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">templates</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+array([[[ 20,  26,  15,  13,  22,  21,  20,  24],
+        [ 19,  21, 255, 255, 255, 255,  35,  27],
+        [  5, 255, 255,  16,  12, 255, 255,  20],
+        [ 26, 255, 255,  19,  23, 255, 255,  20],
+        [ 15, 255, 255,  19,  19, 255, 255,  29],
+        [ 22, 255, 255,  34,  21, 255, 255,  16],
+        [ 10, 255, 255,  16,  12, 255, 255,  24],
+        [ 12, 255, 255,   2,  19, 255, 255,  21],
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="flats"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">flats</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code>array([ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+5,
+       255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 255<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+,
+       255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 255<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+,
+        29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  16<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+,
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="numberTemplates"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">numberTemplates</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+array([[ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+5,
+        255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 25<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+5,
+        255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 25<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+5,
+         29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  1<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+6,
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Fri Aug 21 18:48:27 2020
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

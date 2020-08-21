@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Eyetracking.VideoReader</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="Eyetracking-module.html">Package&nbsp;Eyetracking</a> ::
+        Module&nbsp;VideoReader
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Eyetracking.VideoReader-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="Eyetracking.VideoReader-module.html">Module Eyetracking.VideoReader</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">cv2</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">zipfile</tt> <tt class="py-keyword">import</tt> <tt class="py-name">ZipFile</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Module Eyetracking.EyetrackingUtilities=Eyetracking.EyetrackingUtilities-module.html"><a title="Eyetracking.EyetrackingUtilities" class="py-name" href="#" onclick="return doclink('link-0', 'EyetrackingUtilities', 'link-0');">EyetrackingUtilities</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Function Eyetracking.EyetrackingUtilities.SaveNPY()=Eyetracking.EyetrackingUtilities-module.html#SaveNPY"><a title="Eyetracking.EyetrackingUtilities.SaveNPY" class="py-name" href="#" onclick="return doclink('link-1', 'SaveNPY', 'link-1');">SaveNPY</a></tt><tt class="py-op">,</tt> <tt id="link-2" class="py-name" targets="Function Eyetracking.EyetrackingUtilities.ReadNPY()=Eyetracking.EyetrackingUtilities-module.html#ReadNPY"><a title="Eyetracking.EyetrackingUtilities.ReadNPY" class="py-name" href="#" onclick="return doclink('link-2', 'ReadNPY', 'link-2');">ReadNPY</a></tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader"></a><div id="VideoReader-def"><a name="L6"></a><tt class="py-lineno">  6</tt> <a class="py-toggle" href="#" id="VideoReader-toggle" onclick="return toggle('VideoReader');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="VideoReader-expanded"><a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-docstring">        Base class that loads video rawFrames to an array</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="VideoReader.__init__"></a><div id="VideoReader.__init__-def"><a name="L10"></a><tt class="py-lineno"> 10</tt> <a class="py-toggle" href="#" id="VideoReader.__init__-toggle" onclick="return toggle('VideoReader.__init__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">videoFileName</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">other</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.__init__-expanded"><a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-docstring">                Constructor</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-docstring">                @param videoFileName:   str?, video file</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-docstring">                @param other:                   VideoReader?, use for copy constructing</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt> <tt class="py-op">=</tt> <tt class="py-name">videoFileName</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt>               <tt class="py-comment"># in seconds</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rawFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt>           <tt class="py-comment"># [t x w x h x 3] BGR video rawFrames</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">frames</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt>                      <tt class="py-comment"># [t x w x h] grayscale frames</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">frame</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt>                       <tt class="py-comment"># object for reading files</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">isVidCap</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt>            <tt class="py-comment"># bool?</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Method Eyetracking.VideoReader.VideoReader.GetVideoInfo()=Eyetracking.VideoReader.VideoReader-class.html#GetVideoInfo"><a title="Eyetracking.VideoReader.VideoReader.GetVideoInfo" class="py-name" href="#" onclick="return doclink('link-3', 'GetVideoInfo', 'link-3');">GetVideoInfo</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method Eyetracking.VideoReader.VideoReader.LoadFrames()=Eyetracking.VideoReader.VideoReader-class.html#LoadFrames"><a title="Eyetracking.VideoReader.VideoReader.LoadFrames" class="py-name" href="#" onclick="return doclink('link-4', 'LoadFrames', 'link-4');">LoadFrames</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">                        <tt class="py-keyword">print</tt><tt class="py-op">(</tt><tt class="py-string">'{}x{} (HxW) video at {} fps with {} frames'</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line">                <tt class="py-keyword">elif</tt> <tt class="py-op">(</tt><tt class="py-name">other</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method Eyetracking.PupilFinder.PupilFinder.InitFromOther()=Eyetracking.PupilFinder.PupilFinder-class.html#InitFromOther,Method Eyetracking.TemplatePupilFinder.TemplatePupilFinder.InitFromOther()=Eyetracking.TemplatePupilFinder.TemplatePupilFinder-class.html#InitFromOther,Method Eyetracking.VideoReader.VideoReader.InitFromOther()=Eyetracking.VideoReader.VideoReader-class.html#InitFromOther,Method Eyetracking.VideoTimestampReader.VideoTimestampReader.InitFromOther()=Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#InitFromOther"><a title="Eyetracking.PupilFinder.PupilFinder.InitFromOther
+Eyetracking.TemplatePupilFinder.TemplatePupilFinder.InitFromOther
+Eyetracking.VideoReader.VideoReader.InitFromOther
+Eyetracking.VideoTimestampReader.VideoTimestampReader.InitFromOther" class="py-name" href="#" onclick="return doclink('link-5', 'InitFromOther', 'link-5');">InitFromOther</a></tt><tt class="py-op">(</tt><tt class="py-name">other</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.InitFromOther"></a><div id="VideoReader.InitFromOther-def"><a name="L40"></a><tt class="py-lineno"> 40</tt> <a class="py-toggle" href="#" id="VideoReader.InitFromOther-toggle" onclick="return toggle('VideoReader.InitFromOther');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#InitFromOther">InitFromOther</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">other</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.InitFromOther-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.InitFromOther-expanded"><a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">                A jank copy constructor</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">                @param other:   VideoReader object</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">other</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rawFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">rawFrames</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> </tt>
+</div><a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.LoadFrames"></a><div id="VideoReader.LoadFrames-def"><a name="L55"></a><tt class="py-lineno"> 55</tt> <a class="py-toggle" href="#" id="VideoReader.LoadFrames-toggle" onclick="return toggle('VideoReader.LoadFrames');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#LoadFrames">LoadFrames</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.LoadFrames-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.LoadFrames-expanded"><a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">                Loads rawFrames to memory</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">isVidCap</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="Eyetracking.VideoReader.VideoReader.GetVideoInfo" class="py-name" href="#" onclick="return doclink('link-6', 'GetVideoInfo', 'link-3');">GetVideoInfo</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">isVidCap</tt><tt class="py-op">:</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">                        <tt class="py-name">frames</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">                        <tt class="py-name">success</tt><tt class="py-op">,</tt> <tt class="py-name">frame</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">                        <tt class="py-keyword">while</tt> <tt class="py-name">success</tt><tt class="py-op">:</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">                                <tt class="py-name">frames</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">frame</tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">                                <tt class="py-name">success</tt><tt class="py-op">,</tt> <tt class="py-name">frame</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rawFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">stack</tt><tt class="py-op">(</tt><tt class="py-name">frames</tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">release</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">                        <tt class="py-keyword">import</tt> <tt class="py-name">subprocess</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">                        <tt class="py-name">bufferSize</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">*</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">*</tt> <tt class="py-number">3</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                        <tt class="py-name">command</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">'ffmpeg'</tt><tt class="py-op">,</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">                                           <tt class="py-string">'-y'</tt><tt class="py-op">,</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">                                           <tt class="py-string">'-f'</tt><tt class="py-op">,</tt> <tt class="py-string">'avi'</tt><tt class="py-op">,</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">                                           <tt class="py-string">'-i'</tt><tt class="py-op">,</tt> <tt class="py-string">'-'</tt><tt class="py-op">,</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">                                           <tt class="py-string">'-f'</tt><tt class="py-op">,</tt> <tt class="py-string">'rawvideo'</tt><tt class="py-op">,</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">                                           <tt class="py-string">'-pix_fmt'</tt><tt class="py-op">,</tt> <tt class="py-string">'rgb24'</tt><tt class="py-op">,</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">                                           <tt class="py-string">'-vcodec'</tt><tt class="py-op">,</tt> <tt class="py-string">'rawvideo'</tt><tt class="py-op">,</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">                                           <tt class="py-string">'-'</tt><tt class="py-op">]</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                        <tt class="py-name">pipe</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">Popen</tt><tt class="py-op">(</tt><tt class="py-name">command</tt><tt class="py-op">,</tt> <tt class="py-name">stdin</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">PIPE</tt><tt class="py-op">,</tt> <tt class="py-name">stdout</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">PIPE</tt><tt class="py-op">,</tt> <tt class="py-name">bufsize</tt> <tt class="py-op">=</tt> <tt class="py-name">bufferSize</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">                        <tt class="py-name">rawFrameData</tt> <tt class="py-op">=</tt> <tt class="py-name">pipe</tt><tt class="py-op">.</tt><tt class="py-name">communicate</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">                        <tt class="py-name">frames</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">fromstring</tt><tt class="py-op">(</tt><tt class="py-name">rawFrameData</tt><tt class="py-op">,</tt> <tt class="py-name">dtype</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">uint8</tt><tt class="py-op">)</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rawFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">frames</tt><tt class="py-op">.</tt><tt class="py-name">reshape</tt><tt class="py-op">(</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">,</tt> <tt class="py-number">3</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">                        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">                                <tt class="py-name">pipe</tt><tt class="py-op">.</tt><tt class="py-name">kill</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">                        <tt class="py-keyword">except</tt> <tt class="py-name">OSError</tt><tt class="py-op">:</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">                                <tt class="py-keyword">pass</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">                        <tt class="py-keyword">del</tt> <tt class="py-name">pipe</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">                        <tt class="py-keyword">del</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt> </tt>
+</div><a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">                <tt class="py-comment"># self.rawFrames = self.rawFrames[:, :, :, 2]           # only keep red channel since that's where the time info is and everything else is is b/w</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.GetVideoInfo"></a><div id="VideoReader.GetVideoInfo-def"><a name="L100"></a><tt class="py-lineno">100</tt> <a class="py-toggle" href="#" id="VideoReader.GetVideoInfo-toggle" onclick="return toggle('VideoReader.GetVideoInfo');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#GetVideoInfo">GetVideoInfo</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.GetVideoInfo-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.GetVideoInfo-expanded"><a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">                Gets video info</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">                <tt class="py-name">vc</tt> <tt class="py-op">=</tt> <tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">VideoCapture</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">vc</tt><tt class="py-op">.</tt><tt class="py-name">isOpened</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt> <tt class="py-op">=</tt> <tt class="py-name">vc</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CAP_PROP_FRAME_WIDTH</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CAP_PROP_FRAME_HEIGHT</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CAP_PROP_FPS</tt><tt class="py-op">)</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">cv2</tt><tt class="py-op">.</tt><tt class="py-name">CAP_PROP_FRAME_COUNT</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">/</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt>  <tt class="py-comment"># duration in seconds</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">isVidCap</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt>   <tt class="py-comment"># not a video file on disk</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">                        <tt class="py-keyword">import</tt> <tt class="py-name">cottoncandy</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">isVidCap</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-number">3</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">'s3:'</tt><tt class="py-op">:</tt>          <tt class="py-comment"># file is on s3; assumed to the gzipped</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">                                <tt class="py-name">fileName</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt><tt class="py-op">[</tt><tt class="py-number">5</tt><tt class="py-op">:</tt><tt class="py-op">]</tt>    <tt class="py-comment"># since s3 files being with 's3://'</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">                                <tt class="py-name">bucket</tt> <tt class="py-op">=</tt> <tt class="py-name">fileName</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">'/'</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">                                <tt class="py-name">cloud</tt> <tt class="py-op">=</tt> <tt class="py-name">cottoncandy</tt><tt class="py-op">.</tt><tt class="py-name">get_interface</tt><tt class="py-op">(</tt><tt class="py-name">bucket</tt><tt class="py-op">)</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">                                <tt class="py-name">zippedData</tt> <tt class="py-op">=</tt> <tt class="py-name">cloud</tt><tt class="py-op">.</tt><tt class="py-name">download_stream</tt><tt class="py-op">(</tt><tt class="py-name">fileName</tt><tt class="py-op">[</tt><tt class="py-op">(</tt><tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">bucket</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">content</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">                        <tt class="py-keyword">else</tt><tt class="py-op">:</tt>                                                           <tt class="py-comment"># zipped file on disk</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                                <tt class="py-name">file</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fileName</tt><tt class="py-op">)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">                                <tt class="py-name">zippedData</tt> <tt class="py-op">=</tt> <tt class="py-name">file</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">                                <tt class="py-name">file</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt> <tt class="py-op">=</tt> <tt class="py-string">''</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">                        <tt class="py-name">zipFile</tt> <tt class="py-op">=</tt> <tt class="py-name">cottoncandy</tt><tt class="py-op">.</tt><tt class="py-name">utils</tt><tt class="py-op">.</tt><tt class="py-name">GzipInputStream</tt><tt class="py-op">(</tt><tt class="py-name">zippedData</tt><tt class="py-op">,</tt> <tt class="py-number">20</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">2</tt> <tt class="py-op">**</tt> <tt class="py-number">20</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">                        <tt class="py-keyword">while</tt> <tt class="py-name">True</tt><tt class="py-op">:</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">                                <tt class="py-name">chunk</tt> <tt class="py-op">=</tt> <tt class="py-name">zipFile</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-number">10</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">2</tt> <tt class="py-op">**</tt> <tt class="py-number">20</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">                                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">chunk</tt><tt class="py-op">:</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">                                        <tt class="py-keyword">break</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt> <tt class="py-op">+=</tt> <tt class="py-name">chunk</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">                        <tt class="py-keyword">del</tt> <tt class="py-name">zippedData</tt><tt class="py-op">,</tt> <tt class="py-name">zipFile</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">                        <tt class="py-keyword">import</tt> <tt class="py-name">struct</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">                        <tt class="py-name">metadata</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-string">'i'</tt> <tt class="py-op">*</tt> <tt class="py-number">14</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">video</tt><tt class="py-op">[</tt><tt class="py-number">32</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">32</tt> <tt class="py-op">+</tt> <tt class="py-number">56</tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">=</tt> <tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">8</tt><tt class="py-op">]</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">=</tt> <tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">9</tt><tt class="py-op">]</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-number">1</tt> <tt class="py-op">/</tt> <tt class="py-op">(</tt><tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-number">1000000</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> <tt class="py-op">=</tt> <tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-name">metadata</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt> <tt class="py-op">/</tt> <tt class="py-number">1000000.0</tt> </tt>
+</div><a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.WriteVideo"></a><div id="VideoReader.WriteVideo-def"><a name="L145"></a><tt class="py-lineno">145</tt> <a class="py-toggle" href="#" id="VideoReader.WriteVideo-toggle" onclick="return toggle('VideoReader.WriteVideo');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#WriteVideo">WriteVideo</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">outFileName</tt><tt class="py-op">,</tt> <tt class="py-param">frames</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.WriteVideo-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.WriteVideo-expanded"><a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">                Writes a video out to disk</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"><tt class="py-docstring">                @param outFileName:</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"><tt class="py-docstring">                @param frames:</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">frames</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">                        <tt class="py-name">frames</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">frames</tt> </tt>
+</div><a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.Save"></a><div id="VideoReader.Save-def"><a name="L157"></a><tt class="py-lineno">157</tt> <a class="py-toggle" href="#" id="VideoReader.Save-toggle" onclick="return toggle('VideoReader.Save');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#Save">Save</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">fileName</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">outFile</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.Save-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.Save-expanded"><a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"><tt class="py-docstring">                Save out information</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"><tt class="py-docstring">                @param fileName:        str?, name of file to save, must be not none if fileObject is None</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"><tt class="py-docstring">                @param outFile:         zipfile?, existing object to write to</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">                <tt class="py-name">closeOnFinish</tt> <tt class="py-op">=</tt> <tt class="py-name">outFile</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt>         <tt class="py-comment"># we close the file only if this is the actual function that started the file</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line"> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">outFile</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">                        <tt class="py-name">outFile</tt> <tt class="py-op">=</tt> <tt class="py-name">ZipFile</tt><tt class="py-op">(</tt><tt class="py-name">fileName</tt><tt class="py-op">,</tt> <tt class="py-string">'w'</tt><tt class="py-op">)</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">                <tt id="link-7" class="py-name"><a title="Eyetracking.EyetrackingUtilities.SaveNPY" class="py-name" href="#" onclick="return doclink('link-7', 'SaveNPY', 'link-1');">SaveNPY</a></tt><tt class="py-op">(</tt><tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt><tt class="py-op">,</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">                                                         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt><tt class="py-op">,</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">                                                         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt><tt class="py-op">,</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">                                                         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt><tt class="py-op">,</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">                                                         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">outFile</tt><tt class="py-op">,</tt> <tt class="py-string">'VideoInformation.npy'</tt><tt class="py-op">)</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line"> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">closeOnFinish</tt><tt class="py-op">:</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">                        <tt class="py-name">outFile</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="VideoReader.Load"></a><div id="VideoReader.Load-def"><a name="L179"></a><tt class="py-lineno">179</tt> <a class="py-toggle" href="#" id="VideoReader.Load-toggle" onclick="return toggle('VideoReader.Load');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="Eyetracking.VideoReader.VideoReader-class.html#Load">Load</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">fileName</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">inFile</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="VideoReader.Load-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="VideoReader.Load-expanded"><a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line"><tt class="py-docstring">                Loads in information</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line"><tt class="py-docstring">                @param fileName:        str? name of file to read, must not be none if infile is none</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"><tt class="py-docstring">                @param inFile:          zipfile? existing object to read from</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"><tt class="py-docstring">                @return:</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">                <tt class="py-name">closeOnFinish</tt> <tt class="py-op">=</tt> <tt class="py-name">inFile</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">inFile</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">                        <tt class="py-name">inFile</tt> <tt class="py-op">=</tt> <tt class="py-name">ZipFile</tt><tt class="py-op">(</tt><tt class="py-name">fileName</tt><tt class="py-op">,</tt> <tt class="py-string">'r'</tt><tt class="py-op">)</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line"> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">                <tt class="py-name">info</tt> <tt class="py-op">=</tt> <tt id="link-8" class="py-name"><a title="Eyetracking.EyetrackingUtilities.ReadNPY" class="py-name" href="#" onclick="return doclink('link-8', 'ReadNPY', 'link-2');">ReadNPY</a></tt><tt class="py-op">(</tt><tt class="py-name">inFile</tt><tt class="py-op">,</tt> <tt class="py-string">'VideoInformation.npy'</tt><tt class="py-op">)</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">fps</tt> <tt class="py-op">=</tt> <tt class="py-name">info</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">width</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">info</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">height</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">info</tt><tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">duration</tt> <tt class="py-op">=</tt> <tt class="py-name">info</tt><tt class="py-op">[</tt><tt class="py-number">3</tt><tt class="py-op">]</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nFrames</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">info</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">closeOnFinish</tt><tt class="py-op">:</tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">                        <tt class="py-name">inFile</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Fri Aug 21 18:48:27 2020
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

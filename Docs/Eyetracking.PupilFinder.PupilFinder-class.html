@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Eyetracking.PupilFinder.PupilFinder</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="Eyetracking-module.html">Package&nbsp;Eyetracking</a> ::
+        <a href="Eyetracking.PupilFinder-module.html">Module&nbsp;PupilFinder</a> ::
+        Class&nbsp;PupilFinder
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Eyetracking.PupilFinder.PupilFinder-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class PupilFinder</h1><p class="nomargin-top"><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+                           object --+        
+                                    |        
+              <a href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader.VideoReader</a> --+    
+                                        |    
+<a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a> --+
+                                            |
+                                           <strong class="uidshort">PupilFinder</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="Eyetracking.TemplatePupilFinder.TemplatePupilFinder-class.html">TemplatePupilFinder.TemplatePupilFinder</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Finds the pupil in the videos and generates a trace of it. See 
+  tweak_eyetrack_preproc</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">videoFileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">window</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">blur</span>=<span class="summary-sig-default">5</span>,
+        <span class="summary-sig-arg">dp</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">minDistance</span>=<span class="summary-sig-default">600</span>,
+        <span class="summary-sig-arg">param1</span>=<span class="summary-sig-default">80</span>,
+        <span class="summary-sig-arg">param2</span>=<span class="summary-sig-default">20</span>,
+        <span class="summary-sig-arg">minRadius</span>=<span class="summary-sig-default">5</span>,
+        <span class="summary-sig-arg">maxRadius</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">other</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Constructor</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#InitFromOther" class="summary-sig-name">InitFromOther</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Jank copy constructor</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.InitFromOther">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#FindPupils" class="summary-sig-name">FindPupils</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">endFrame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">bilateral</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">nThreads</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Find the circles, i.e.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.FindPupils">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#FilterPupils" class="summary-sig-name">FilterPupils</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">windowSize</span>=<span class="summary-sig-default">15</span>,
+        <span class="summary-sig-arg">outlierThresholds</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">filterPupilSize</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Filters raw pupil locations</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.FilterPupils">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#WritePupilFrames" class="summary-sig-name">WritePupilFrames</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>,
+        <span class="summary-sig-arg">startFrame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">endFrame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">filtered</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">burnLocation</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Draws frames back out with the pupil circled</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.WritePupilFrames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#WritePupilVideo" class="summary-sig-name">WritePupilVideo</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fileName</span>,
+        <span class="summary-sig-arg">startFrame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">endFrame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">filtered</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">burnLocation</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Writes a video with the pupil circled</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.WritePupilVideo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#GetTraces" class="summary-sig-name">GetTraces</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">filtered</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">fps</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Resamples traces to a different fps using closest frame</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.GetTraces">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#Save" class="summary-sig-name">Save</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">outFile</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Save out information</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.Save">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.PupilFinder.PupilFinder-class.html#Load" class="summary-sig-name">Load</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fileName</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">inFile</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Loads in information</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.Load">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#FindOnsetFrame" class="summary-sig-name">FindOnsetFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">H</span>,
+        <span class="summary-sig-arg">M</span>,
+        <span class="summary-sig-arg">S</span>,
+        <span class="summary-sig-arg">MS</span>,
+        <span class="summary-sig-arg">returnDiff</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Find the frame closest to a given time</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.FindOnsetFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#GetTimeStampForFrame" class="summary-sig-name">GetTimeStampForFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">frameIndex</span>)</span><br />
+      Gets the timestamp on a single frame.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.GetTimeStampForFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#ParseTimestamps" class="summary-sig-name">ParseTimestamps</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">nThreads</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Parses timestamps from the images</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoTimestampReader-pysrc.html#VideoTimestampReader.ParseTimestamps">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader.VideoReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#GetVideoInfo" class="summary-sig-name">GetVideoInfo</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Gets video info</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.GetVideoInfo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#LoadFrames" class="summary-sig-name">LoadFrames</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Loads rawFrames to memory</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.LoadFrames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoReader.VideoReader-class.html#WriteVideo" class="summary-sig-name">WriteVideo</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">outFileName</span>,
+        <span class="summary-sig-arg">frames</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Writes a video out to disk</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.VideoReader-pysrc.html#VideoReader.WriteVideo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#GetTimeStampForFrames" class="summary-sig-name">GetTimeStampForFrames</a>(<span class="summary-sig-arg">frames</span>)</span><br />
+      Parallelizable function for getting timestamps for a bunch of frames</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#MatchDigit" class="summary-sig-name">MatchDigit</a>(<span class="summary-sig-arg">image</span>)</span><br />
+      What number is this image?</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#flats" class="summary-name">flats</a> = <code title="[array([ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
+5,
+       255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 255\
+,
+       255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 255\
+,
+        29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  16\
+,
+..."><code class="variable-group">[</code>array([ 20,  26,  15,  13,  22,  21,  20,  24,  19,  <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="i"></a><span class="summary-name">i</span> = <code title="9">9</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#numberTemplates" class="summary-name">numberTemplates</a> = <code title="array([[ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
+5,
+        255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 25\
+5,
+        255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 25\
+5,
+         29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  1\
+6,
+...">array([[ 20,  26,  15,  13,  22,  21,  20,  <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#templates" class="summary-name">templates</a> = <code title="array([[[ 20,  26,  15,  13,  22,  21,  20,  24],
+        [ 19,  21, 255, 255, 255, 255,  35,  27],
+        [  5, 255, 255,  16,  12, 255, 255,  20],
+        [ 26, 255, 255,  19,  23, 255, 255,  20],
+        [ 15, 255, 255,  19,  19, 255, 255,  29],
+        [ 22, 255, 255,  34,  21, 255, 255,  16],
+        [ 10, 255, 255,  16,  12, 255, 255,  24],
+        [ 12, 255, 255,   2,  19, 255, 255,  21],
+...">array([[[ 20,  26,  15,  13,  22,  21,  20,  2<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">videoFileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">window</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">blur</span>=<span class="sig-default">5</span>,
+        <span class="sig-arg">dp</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">minDistance</span>=<span class="sig-default">600</span>,
+        <span class="sig-arg">param1</span>=<span class="sig-default">80</span>,
+        <span class="sig-arg">param2</span>=<span class="sig-default">20</span>,
+        <span class="sig-arg">minRadius</span>=<span class="sig-default">5</span>,
+        <span class="sig-arg">maxRadius</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">other</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Constructor</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>videoFileName</code></strong> - str?, name of video file to aprse</li>
+        <li><strong class="pname"><code>window</code></strong> - 4-ple&lt;int&gt;?, subwindow in frame to examine, order [left, 
+          right, top, bottom]</li>
+        <li><strong class="pname"><code>blur</code></strong> - int, median blur filter width</li>
+        <li><strong class="pname"><code>dp</code></strong> - float, inverse ratio of accumulator resolution to image 
+          resolution</li>
+        <li><strong class="pname"><code>minDistance</code></strong> - float, min distance between centers of detected circles</li>
+        <li><strong class="pname"><code>param1</code></strong> - float, higher threshold for canny edge detector</li>
+        <li><strong class="pname"><code>param2</code></strong> - float, accumulator threshold at detection stage, smaller =&gt; 
+          more errors</li>
+        <li><strong class="pname"><code>minRadius</code></strong> - int, min circle radius</li>
+        <li><strong class="pname"><code>maxRadius</code></strong> - int, max circle radius</li>
+        <li><strong class="pname"><code>other</code></strong> - VideoReader?, object to copy contruct from</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="InitFromOther"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">InitFromOther</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.InitFromOther">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Jank copy constructor</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - PupilFinder</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#InitFromOther">VideoReader.VideoReader.InitFromOther</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="FindPupils"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">FindPupils</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">endFrame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">bilateral</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">nThreads</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.FindPupils">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Find the circles, i.e. pupils in the rawFrames, see 
+  eyetrack.video2circles()</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>endFrame</code></strong> - int?, frame to read to, defaults to reading all rawFrames</li>
+        <li><strong class="pname"><code>bilateral</code></strong> - int?, if present, radius to use for surface blur</li>
+        <li><strong class="pname"><code>nThreads</code></strong> - int, number of threads to use for finding pupils. need to be 
+          implemented</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="FilterPupils"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">FilterPupils</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">windowSize</span>=<span class="sig-default">15</span>,
+        <span class="sig-arg">outlierThresholds</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">filterPupilSize</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.FilterPupils">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Filters raw pupil locations</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>windowSize</code></strong> - int, median filter time window size</li>
+        <li><strong class="pname"><code>outlierThresholds</code></strong> - list&lt;float&gt;?, thresholds in percentiles at which to nan 
+          outliers, if none, does not nan outliers</li>
+        <li><strong class="pname"><code>filterPupilSize</code></strong> - bool, filter pupil size alone with position?</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="WritePupilFrames"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WritePupilFrames</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>,
+        <span class="sig-arg">startFrame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">endFrame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">filtered</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">burnLocation</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.WritePupilFrames">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Draws frames back out with the pupil circled</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>directory</code></strong> - str, directory to which to save</li>
+        <li><strong class="pname"><code>startFrame</code></strong> - int?, first frame to draw</li>
+        <li><strong class="pname"><code>endFrame</code></strong> - int?, last frame to draw, defaults to all of them</li>
+        <li><strong class="pname"><code>filtered</code></strong> - bool, use filtered trace instead of unfiltered?</li>
+        <li><strong class="pname"><code>burnLocation</code></strong> - bool, burn location of pupil into image?</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="WritePupilVideo"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WritePupilVideo</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fileName</span>,
+        <span class="sig-arg">startFrame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">endFrame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">filtered</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">burnLocation</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.WritePupilVideo">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes a video with the pupil circled</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fileName</code></strong></li>
+        <li><strong class="pname"><code>startFrame</code></strong> - int?, first frame to draw</li>
+        <li><strong class="pname"><code>endFrame</code></strong> - int?, last frame to draw, defaults to all of them</li>
+        <li><strong class="pname"><code>filtered</code></strong> - bool, use filtered trace instead of unfiltered?</li>
+        <li><strong class="pname"><code>burnLocation</code></strong> - bool, burn location of pupil into image?</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTraces"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTraces</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">filtered</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">fps</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.GetTraces">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Resamples traces to a different fps using closest frame</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>filtered</code></strong></li>
+        <li><strong class="pname"><code>fps</code></strong> - int?, if present, resample the traces</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Save"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Save</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">outFile</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.Save">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Save out information</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fileName</code></strong> - str?, name of file to save, must be not none if fileObject is 
+          None</li>
+        <li><strong class="pname"><code>outFile</code></strong> - zipfile?, existing object to write to</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#Save">VideoReader.VideoReader.Save</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Load"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Load</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fileName</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">inFile</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.PupilFinder-pysrc.html#PupilFinder.Load">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Loads in information</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fileName</code></strong> - str? name of file to read, must not be none if infile is none</li>
+        <li><strong class="pname"><code>inFile</code></strong> - zipfile? existing object to read from</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="Eyetracking.VideoReader.VideoReader-class.html#Load">VideoReader.VideoReader.Load</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="Eyetracking-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >Eyetracking</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Fri Aug 21 18:48:27 2020
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
