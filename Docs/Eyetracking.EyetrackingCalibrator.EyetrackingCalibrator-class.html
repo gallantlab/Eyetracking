@@ -374,7 +374,8 @@ object --+
  27,
  1,
  28,
-..."><code class="variable-group">[</code>13<code class="variable-op">, </code>30<code class="variable-op">, </code>17<code class="variable-op">, </code>16<code class="variable-op">, </code>2<code class="variable-op">, </code>27<code class="variable-op">, </code>1<code class="variable-op">, </code>28<code class="variable-op">, </code>25<code class="variable-op">, </code>10<code class="variable-op">, </code>26<code class="variable-ellipsis">...</code></code>
+..."><code class="variable-group">[</code>13<code class="variable-op">, </code>30<code class="variable-op">, </code>17<code class="variable-op">, </code>16<code class="variable-op">, </code>2<code class="variable-op">, </code>27<code class="variable-op">, </code>1<code class="variable-op">, </code>28<code class="variable-op">, </code>25<code class="variable-op">, </code>10<code class="variable-op">, </code>26<code class="variable-ellipsis">...</code></code><br />
+      order used in 1024x768 single repeat calibration (e.g.
     </td>
   </tr>
 <tr>
@@ -389,7 +390,197 @@ object --+
  27,
  1,
  28,
-..."><code class="variable-group">[</code>13<code class="variable-op">, </code>30<code class="variable-op">, </code>17<code class="variable-op">, </code>16<code class="variable-op">, </code>2<code class="variable-op">, </code>27<code class="variable-op">, </code>1<code class="variable-op">, </code>28<code class="variable-op">, </code>25<code class="variable-op">, </code>10<code class="variable-op">, </code>26<code class="variable-ellipsis">...</code></code>
+..."><code class="variable-group">[</code>13<code class="variable-op">, </code>30<code class="variable-op">, </code>17<code class="variable-op">, </code>16<code class="variable-op">, </code>2<code class="variable-op">, </code>27<code class="variable-op">, </code>1<code class="variable-op">, </code>28<code class="variable-op">, </code>25<code class="variable-op">, </code>10<code class="variable-op">, </code>26<code class="variable-ellipsis">...</code></code><br />
+      order used in 1024x768 two repeat calibration (e.g.
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE VARIABLES ==================== -->
+<a name="section-InstanceVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+        <a name="calibrationVideoFile"></a><span class="summary-name">calibrationVideoFile</span><br />
+      video file name
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">PupilFinder</span>
+    </td><td class="summary">
+        <a name="pupilFinder"></a><span class="summary-name">pupilFinder</span><br />
+      pupil finder object used to find calibration pupils
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">bool</span>
+    </td><td class="summary">
+        <a name="hasGlint"></a><span class="summary-name">hasGlint</span><br />
+      can this object find the glint in addition to the pupil?
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">tuple&lt;int, int, int, int&gt;</span>
+    </td><td class="summary">
+        <a name="calibrationBeginTime"></a><span class="summary-name">calibrationBeginTime</span><br />
+      Timestamp of first TTL in calibration
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="calibrationPositions"></a><span class="summary-name">calibrationPositions</span><br />
+      screen pixel positions of calibration dots
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;int&gt;</span>
+    </td><td class="summary">
+        <a name="calibrationOrder"></a><span class="summary-name">calibrationOrder</span><br />
+      order in which the calibration dots are presented
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="calibrationDuration"></a><span class="summary-name">calibrationDuration</span><br />
+      time in seconds each dot is presented
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="calibrationDelay"></a><span class="summary-name">calibrationDelay</span><br />
+      time in seconds between the first TTL and presentation of first dot
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="bestDuration"></a><span class="summary-name">bestDuration</span><br />
+      If searching for different calibrationDurations, best duration found
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="bestDurationError"></a><span class="summary-name">bestDurationError</span><br />
+      If searching for different calibrationDurections, error corresponding
+      to best duration
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="initialCalibrationPositions"></a><span class="summary-name">initialCalibrationPositions</span><br />
+      Stored copy of calibration positions, because calibrationPositions 
+      will be shuffled according to presentation order
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;int&gt;</span>
+    </td><td class="summary">
+        <a name="initialCalibrationOrder"></a><span class="summary-name">initialCalibrationOrder</span><br />
+      Stored copy of calibration order
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="pupilCalibrationPositions"></a><span class="summary-name">pupilCalibrationPositions</span><br />
+      mean or median pupil positions in video positions for each 
+      calibration point
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="pupilCalibrationVariances"></a><span class="summary-name">pupilCalibrationVariances</span><br />
+      variance in calibration point eye positions
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="glintCalibrationPositions"></a><span class="summary-name">glintCalibrationPositions</span><br />
+      mean or median glint locations for each calibration point
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="glintCalibrationVariances"></a><span class="summary-name">glintCalibrationVariances</span><br />
+      variance in glint locations for each calibration point
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="bestSmoothness"></a><span class="summary-name">bestSmoothness</span><br />
+      best smootheness value for interpolating gaze location
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+        <a name="bestMethod"></a><span class="summary-name">bestMethod</span><br />
+      best method for interpolating gaze location
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="bestError"></a><span class="summary-name">bestError</span><br />
+      best leave-one-out error for gaze interpolation fitting
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">scipy.interpolate.Rbf</span>
+    </td><td class="summary">
+        <a name="horizontalInterpolater"></a><span class="summary-name">horizontalInterpolater</span><br />
+      final interpolator for X gaze location
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">scipy.interpolate.Rbf</span>
+    </td><td class="summary">
+        <a name="verticalInterpolater"></a><span class="summary-name">verticalInterpolater</span><br />
+      final interpolator for Y gaze location
     </td>
   </tr>
 </table>
@@ -806,7 +997,8 @@ object --+
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <h3 class="epydoc">CalibrationOrder35</h3>
-  
+  order used in 1024x768 single repeat calibration (e.g. driving auto 
+  calibration)
   <dl class="fields">
   </dl>
   <dl class="fields">
@@ -832,7 +1024,10 @@ object --+
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <h3 class="epydoc">CalibrationOrder70</h3>
-  
+  order used in 1024x768 two repeat calibration (e.g. 
+  stimulus/eyetracking/play.py) see stimulus/eyetracking/eyetrack.index in 
+  stimulus marchine these numbers are offset by -1 b/c image 0 there is a 
+  blank screen
   <dl class="fields">
   </dl>
   <dl class="fields">
@@ -885,7 +1080,7 @@ object --+
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Fri Aug 21 18:48:27 2020
+    on Fri Aug 21 19:24:05 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

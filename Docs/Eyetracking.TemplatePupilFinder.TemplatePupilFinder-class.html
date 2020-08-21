@@ -541,22 +541,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#numberTemplates" class="summary-name">numberTemplates</a> = <code title="array([[ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
-5,
-        255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 25\
-5,
-        255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 25\
-5,
-         29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  1\
-6,
-...">array([[ 20,  26,  15,  13,  22,  21,  20,  <code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
         <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#templates" class="summary-name">templates</a> = <code title="array([[[ 20,  26,  15,  13,  22,  21,  20,  24],
         [ 19,  21, 255, 255, 255, 255,  35,  27],
@@ -566,7 +551,293 @@
         [ 22, 255, 255,  34,  21, 255, 255,  16],
         [ 10, 255, 255,  16,  12, 255, 255,  24],
         [ 12, 255, 255,   2,  19, 255, 255,  21],
-...">array([[[ 20,  26,  15,  13,  22,  21,  20,  2<code class="variable-ellipsis">...</code></code>
+...">array([[[ 20,  26,  15,  13,  22,  21,  20,  2<code class="variable-ellipsis">...</code></code><br />
+      number templates for reading timestamps
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE VARIABLES ==================== -->
+<a name="section-InstanceVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;int&gt;</span>
+    </td><td class="summary">
+        <a name="radii"></a><span class="summary-name">radii</span><br />
+      Range of pupil radii to search for in pixels
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="pupilTemplates"></a><span class="summary-name">pupilTemplates</span><br />
+      Templates for matching pupils, black circles on white background
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="glintTemplates"></a><span class="summary-name">glintTemplates</span><br />
+      Templates for matching glints, is white circle on black background
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Optional[numpy.ndarray]</span>
+    </td><td class="summary">
+        <a name="rawGlintLocations"></a><span class="summary-name">rawGlintLocations</span><br />
+      Glint locations in each video frame
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Optional[numpy.ndarray]</span>
+    </td><td class="summary">
+        <a name="filteredGlintLocations"></a><span class="summary-name">filteredGlintLocations</span><br />
+      Temporally filtered glint locations
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.PupilFinder.PupilFinder-class.html">PupilFinder.PupilFinder</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;bool&gt;</span>
+    </td><td class="summary">
+        <a name="blinks"></a><span class="summary-name">blinks</span><br />
+      Is there a blink this frame?
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="blur"></a><span class="summary-name">blur</span><br />
+      Median filter width
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="dp"></a><span class="summary-name">dp</span><br />
+      Inverse ration of accumulator resolution to image resolution in Hough
+      transform
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="filteredPupilLocations"></a><span class="summary-name">filteredPupilLocations</span><br />
+      Pupil locations that have been temporally filtered
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="frameDiffs"></a><span class="summary-name">frameDiffs</span><br />
+      Diffs between each successive frame for pupil locations
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="maxRadius"></a><span class="summary-name">maxRadius</span><br />
+      Maximum circle radius in pixels
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="minDistance"></a><span class="summary-name">minDistance</span><br />
+      Minimum distance in pixels between multiple detected circules by 
+      Hough transform
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="minRadius"></a><span class="summary-name">minRadius</span><br />
+      Minimum circle radius in pixels
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="param1"></a><span class="summary-name">param1</span><br />
+      upper threshold for Canny edge detector in Hough transform
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a href="Eyetracking.PupilFinder.PupilFinder-class.html#param2" class="summary-name">param2</a><br />
+      accumulator threashold for Hough transform.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="rawPupilLocations"></a><span class="summary-name">rawPupilLocations</span><br />
+      Raw pupil locations read from video file, columns are [x, y, radius]
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">tuple&lt;int, int, int, int&gt;</span>
+    </td><td class="summary">
+        <a name="window"></a><span class="summary-name">window</span><br />
+      Window in frame to look for the pupil in [left, right, top bottom]
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html">VideoTimestampReader.VideoTimestampReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">bool</span>
+    </td><td class="summary">
+        <a name="isParsed"></a><span class="summary-name">isParsed</span><br />
+      Have we already parsed the video?
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#numberTemplates" class="summary-name">numberTemplates</a> = <code title="array([[ 20,  26,  15,  13,  22,  21,  20,  24,  19,  21, 255, 255, 25\
+5,
+        255,  35,  27,   5, 255, 255,  16,  12, 255, 255,  20,  26, 25\
+5,
+        255,  19,  23, 255, 255,  20,  15, 255, 255,  19,  19, 255, 25\
+5,
+         29,  22, 255, 255,  34,  21, 255, 255,  16,  10, 255, 255,  1\
+6,
+...">array([[ 20,  26,  15,  13,  22,  21,  20,  <code class="variable-ellipsis">...</code></code><br />
+      Number templates used for reading timestamps
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray&lt;int&gt;</span>
+    </td><td class="summary">
+        <a href="Eyetracking.VideoTimestampReader.VideoTimestampReader-class.html#time" class="summary-name">time</a><br />
+      Timestamps that have been read out.
+    </td>
+  </tr>
+<tr bgcolor="#e8f0f8" >
+  <th colspan="2" class="group-header"
+    >&nbsp;&nbsp;&nbsp;&nbsp;Inherited from <a href="Eyetracking.VideoReader.VideoReader-class.html">VideoReader.VideoReader</a></th></tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="duration"></a><span class="summary-name">duration</span><br />
+      Duration of video in seconds
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+        <a name="fileName"></a><span class="summary-name">fileName</span><br />
+      name of video file
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">float</span>
+    </td><td class="summary">
+        <a name="fps"></a><span class="summary-name">fps</span><br />
+      FPS of video
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">[w x h] numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="frame"></a><span class="summary-name">frame</span><br />
+      Current frame being processed
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">[time x w x h] numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="frames"></a><span class="summary-name">frames</span><br />
+      Grayscale frames
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="height"></a><span class="summary-name">height</span><br />
+      height of video
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">bool?</span>
+    </td><td class="summary">
+        <a name="isVidCap"></a><span class="summary-name">isVidCap</span><br />
+      Is this a VideoCap source from disk?
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="nFrames"></a><span class="summary-name">nFrames</span><br />
+      Number of frames in video
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">[time x w x h x 3] numpy.ndarray</span>
+    </td><td class="summary">
+        <a name="rawFrames"></a><span class="summary-name">rawFrames</span><br />
+      Frames that have been read in
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">cv2.VideoCapture</span>
+    </td><td class="summary">
+        <a name="video"></a><span class="summary-name">video</span><br />
+      Object for reading video files
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">int</span>
+    </td><td class="summary">
+        <a name="width"></a><span class="summary-name">width</span><br />
+      Width of video in pixels
     </td>
   </tr>
 </table>
@@ -908,7 +1179,7 @@
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Fri Aug 21 18:48:27 2020
+    on Fri Aug 21 19:24:05 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
