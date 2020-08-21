@@ -32,7 +32,6 @@ class VideoTimestampReader(VideoReader):
 		"""
 		Parallelizable function for getting timestamps for a bunch of frames
 		@param frames: 	[frame, w, h, 3] frames array
-		@param out: 	[frame, 4] timestamp array to write into
 		@return:
 		"""
 
