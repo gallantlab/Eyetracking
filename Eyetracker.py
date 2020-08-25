@@ -54,14 +54,20 @@ class Eyetracker(object):
 		Writes out a video using the input frames and given eyetracking.
 		If neither dataStart nor firstFrame are provided, then the assumption is that eyetracking calibration
 		is included in the data, and that the data start is the eyetracking calibration start.
-		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
-		@param fileName:		str, name of output file
-		@param dataStart:		tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
-		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
-		@param outResolution: 	tuple<int, in>, desired output resolution
-		@param flipColors:		bool, flip frame color channels order? original videos are in BGR
+		@param frames: 			assumed to be same fps as the eyetracking
+		@param fileName:		name of output file
+		@param dataStart:		timestamp of the start of the data frames, has precedence over firstFrame
+		@param firstFrame: 		the frame number in the eyetracking that the first frame of the video corresponds to
+		@param outResolution: 	desired output resolution
+		@param flipColors:		flip frame color channels order? original videos are in BGR
 		@param fps:				float, fps of the frames
-		@return:
+		@type frames: 			[t x h x w x 3] numpy.ndarray
+		@type fileName:			str
+		@type dataStart:		tuple<int, int, int, int>
+		@type firstFrame: 		int?
+		@type outResolution: 	tuple<int, int>
+		@type flipColors:		bool
+		@type fps:				float
 		"""
 		if (dataStart is None) and (firstFrame is None):
 			dataStart = self.calibrator.calibrationBeginTime
@@ -102,14 +108,20 @@ class Eyetracker(object):
 									outResolution = (1024, 768), flipColors = False, fps = 30):
 		"""
 		Writes out a video using the input frames and given eyetracking
-		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
-		@param folder:			str, name of folder into which to write frames
-		@param dataStart:		tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
-		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
-		@param outResolution: 	tuple<int, in>, desired output resolution
-		@param flipColors:		bool, flip frame color channels order?
-		@param fps:				float, fps of the frames
-		@return:
+		@param frames: 			assumed to be same fps as the eyetracking
+		@param folder:			name of folder into which to write frames
+		@param dataStart:		timestamp of the start of the data frames, has precedence over firstFrame
+		@param firstFrame: 		the frame number in the eyetracking that the first frame of the video corresponds to
+		@param outResolution: 	desired output resolution
+		@param flipColors:		flip frame color channels order?
+		@param fps:				fps of the frames		
+		@type frames: 			[t x h x w x 3] numpy.ndarray
+		@type folder:			str
+		@type dataStart:		tuple<int, int, int, int>
+		@type firstFrame: 		int?
+		@type outResolution: 	tuple<int, int>
+		@type flipColors:		bool
+		@type fps:				float
 		"""
 		if (dataStart is None) and (firstFrame is None):
 			dataStart = self.calibrator.calibrationBeginTime
@@ -151,16 +163,24 @@ class Eyetracker(object):
 		"""
 		Writes out a video in which the frames are moved such that the gaze position is always
 		the center
-		@param frames: 		[t x w x h x 3] array, video frames, assumed ot be same fps as eyetracking
-		@param fileName: 	str, name of output file
-		@param scale: 		float, scale of these frames relative to the eyetracking scale (typically 1024 x 768)
-		@param dataStart:	tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
-		@param firstFrame: 	int?, the frame number in the eyetracking that the first frame of the video corresponds to
-		@param flipColors:	bool, flip frame color channel order?
-		@param padValue:	float, range [0, 1] value to use for padding in the recentered frames
-		@param gazeSize:	tuple<int, int>, stimuli resolution on to which eyetracking is mapepd
-		@param fps:			float, fps of the frames
-		@return:
+		@param frames: 		video frames
+		@param fileName: 	name of output file
+		@param scale: 		scale of these frames relative to the eyetracking scale (typically 1024 x 768)
+		@param dataStart:	timestamp of the start of the data frames, has precedence over firstFrame
+		@param firstFrame: 	the frame number in the eyetracking that the first frame of the video corresponds to
+		@param flipColors:	flip frame color channel order?
+		@param padValue:	range [0, 1] value to use for padding in the recentered frames
+		@param gazeSize:	stimuli resolution on to which eyetracking is mapepd
+		@param fps:			fps of the frames
+		@type frames: 		[t x w x h x 3] array
+		@type fileName: 	str
+		@type scale: 		float
+		@type dataStart:	tuple<int, int, int, int>
+		@type firstFrame: 	int?
+		@type flipColors:	bool
+		@type padValue:		float
+		@type gazeSize:		tuple<int, int>
+		@type fps:			float
 		"""
 		if (dataStart is None) and (firstFrame is None):
 			dataStart = self.calibrator.calibrationBeginTime
@@ -198,16 +218,24 @@ class Eyetracker(object):
 					   flipColors = False, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
 		"""
 		Writes recentered frames to a folder
-		@param frames: 		[t x w x h x 3] array, video frames, assumed ot be same fps as eyetracking
-		@param folder: 		str, name of folder into which to write frames
-		@param scale: 		float, scale of these frames relative to the eyetracking scale (typically 1024 x 768)
-		@param dataStart:	tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
-		@param firstFrame: 	int?, the frame number in the eyetracking that the first frame of the video corresponds to
-		@param flipColors:	bool, flip frame color channel order?
-		@param padValue:	float, range [0, 1] value to use for padding
-		@param gazeSize:	tuple<int, int>, stimuli resolution on to which eyetracking is mapepd
-		@param fps:			float, fps of the frames
-		@return:
+		@param frames: 		video frames
+		@param folder: 		name of folder into which to write frames
+		@param scale: 		scale of these frames relative to the eyetracking scale (typically 1024 x 768)
+		@param dataStart:	timestamp of the start of the data frames, has precedence over firstFrame
+		@param firstFrame: 	the frame number in the eyetracking that the first frame of the video corresponds to
+		@param flipColors:	flip frame color channel order?
+		@param padValue:	range [0, 1] value to use for padding
+		@param gazeSize:	stimuli resolution on to which eyetracking is mapped
+		@param fps:			fps of the frames
+		@type frames: 		[t x w x h x 3] array
+		@type folder: 		str
+		@type scale: 		float
+		@type dataStart:	tuple<int, int, int, int>
+		@type firstFrame: 	int?
+		@type flipColors:	bool
+		@type padValue:		float
+		@type gazeSize:		tuple<int, int>
+		@type fps:			float
 		"""
 		if (dataStart is None) and (firstFrame is None):
 			dataStart = self.calibrator.calibrationBeginTime
@@ -242,19 +270,30 @@ class Eyetracker(object):
 			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
 
 
-	def WriteSideBySideVideo(self, frames, fileName, firstDataFrame = None, firstEyetrackingFrame = None,
+	def WriteSideBySideVideo(self, frames, fileName, dataStart = None, firstDataFrame = None,
 							 stimuliResolution = (1024, 768), flipColors = True, stimulusFPS = 30):
 		"""
 		Writes a video out with the eyetracking video and stimulus with gaze position side by side
-		@param frames:					[time x h x w x 3] stimulus frame array
-		@param fileName:				str, name for video file to write
-		@param firstDataFrame:
-		@param firstEyetrackingFrame:
-		@param stimuliResolution:
-		@param flipColors:				bool, reverse the colors dimension of the frames when writing the video?
-		@param stimulusFPS:				int, fps of the frames
-		@return:
+		@param frames:					stimulus frame array
+		@param fileName:				name for video file to write
+		@param dataStart:				timestamp of the start of the data frames, has precedence over firstDataFrame
+		@param firstDataFrame: 			the frame number in the eyetracking that the first frame of the video corresponds to
+		@param stimuliResolution:		size of the stimuli
+		@param flipColors:				reverse the colors dimension of the frames when writing the video?
+		@param stimulusFPS:				fps of the frames
+		@type frames:					[time x h x w x 3] numpy.ndarray
+		@type fileName:					str
+		@type dataStart:				tuple<int, int, int, int>
+		@type firstDataFrame: 			int?
+		@type stimuliResolution:		tuple<int, int>
+		@type flipColors:				bool
+		@type stimulusFPS:				int
 		"""
+		if (dataStart is None) and (firstDataFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (dataStart is not None) and (firstDataFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
 		nFrames = frames.shape[0]
 		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.filteredPupilLocations)
 
@@ -264,16 +303,14 @@ class Eyetracker(object):
 			transformation = AffineTransform(scale = [hScale, vScale], )
 		else: transformation = None
 
-		if not firstDataFrame:
-			firstDataFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
-
-		if not firstEyetrackingFrame:
-			firstEyetrackingFrame = self.calibrator.pupilFinder.FindOnsetFrame(self.calibrationStart[0], self.calibrationStart[1], self.calibrationStart[2], self.calibrationStart[3])
+		if dataStart is not None:
+			firstDataFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
 		eyetrackingFramesPerStimulusFrame = int(self.dataPupilFinder.fps / stimulusFPS)
 
 		circles = self.dataPupilFinder.filteredPupilLocations.astype(numpy.int)
-		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps, (stimuliResolution[0] + 320, stimuliResolution[1] if stimuliResolution[1] > 240 else 240))
+		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.dataPupilFinder.fps,
+								(stimuliResolution[0] + 320, stimuliResolution[1] if stimuliResolution[1] > 240 else 240))
 		thisFrame = numpy.zeros([stimuliResolution[1] if stimuliResolution[1] > 240 else 240, stimuliResolution[0] + 320, 3], dtype = numpy.uint8)
 		for frame in range(nFrames * eyetrackingFramesPerStimulusFrame):	# frame is output video frame, locked to pupil video fps
 			dataFrame = frame + firstDataFrame								# indexes correctly into the eyetracking video
