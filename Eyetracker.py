@@ -13,96 +13,61 @@ class Eyetracker(object):
 	Top-level class for doing things with the eyetracker
 	"""
 
-	def __init__(self, calibrationFileName = None, dataFileName = None, calibrator = None, dataPupilFinder = None,
-				 calibrationStart = None, dataStart = None, eyeWindow = None, calibrationPositions = None,
-				 calibrationOrder = None,
-				 config = None):
+	def __init__(self, calibrator, dataPupilFinder = None):
 		"""
 		Constructor
-		@param calibrationFileName:		str?, name of eyetracking video for calibration
-		@param dataFileName: 			str?, name of eyetracking video for data
-		@param calibrator: 				EyetrackingCalibrator?, pre-constructed calibration object
-		@param dataPupilFinder: 		PupilFinder?, pre-constructed pupil finding object
-		@param calibrationStart: 		tuple<int, int, int, int>?, (H, M, S, MS) timestamp of the start of the calibration sequence in video
-		@param dataStart: 				tuple<int, int, int, int>?, (H, M, S, MS) timestamp of the start of the data in video
-		@param eyeWindow: 				tuple<int, int, int, int>?, (Left, right, top, bottom) window in the video to look for the pupil
-		@param calibrationPositions: 	[n x 2] array<float>?, list of calibration point positions
-		@param calibrationOrder: 		list<int>?, order of presentation of the calibraiton points
-		@param config:
+		@param calibrator: 				pre-constructed calibration object that has been fit
+		@param dataPupilFinder: 		pre-constructed pupil finding object and pupils have been found, if none, will be that from the calibrator
+		@type calibrator: 				EyetrackingCalibrator
+		@type dataPupilFinder: 			PupilFinder?
+		"""
+		self.calibrator = calibrator
+		"""
+		@ivar: Object used to compute the pupil to gaze mapping on the calibration sequence
+		@type: EyetrackingCalibrator
 		"""
 
-		self.calibrationFileName = calibrationFileName
-		self.dataFileName = dataFileName
-
-		self.calibrationStart = calibrationStart if calibrationStart is not None else (0, 0, 0, 0)
-		self.dataStart = dataStart if dataStart is not None else (0, 0, 0, 0)
-		self.eyeWindow = eyeWindow if eyeWindow is not None else (0, 320, 0, 240)
-		self.calibrationOrder = calibrationOrder
-		self.calibrationPositions = calibrationPositions
-
-		if (config is not None):
-			self.InitFromConfig(config)
+		if dataPupilFinder is not None:
+			self.dataPupilFinder = dataPupilFinder
+			"""
+			@ivar: Object used to find pupil position in the actual data
+			@type: PupilFinder
+			"""
 		else:
-			if calibrator is not None:
-				self.calibrator = calibrator
-			else:
-				self.calibrator = None
-
-			if dataPupilFinder:
-				self.dataPupilFinder = dataPupilFinder
-			else:
-				self.dataPupilFinder = None
+			self.dataPupilFinder = calibrator.pupilFinder
 
 
-	def InitFromConfig(self, config):
+	def GetGazeLocations(self, filtered = True):
 		"""
-		initializes from a configuration file
-		@param config:
-		@return:
+		Gets the gaze positions from the data
+		@param filtered:	use temporally filtered traces?
+		@type filtered:		bool
+		@return: estimated gaze locations in screen space
+		@rtype:	numpy.ndarray
 		"""
-		# TODO: this
+		return self.calibrator.TransformToScreenCoordinates(self.dataPupilFinder.GetTraces(filtered))
 
 
-	def FindPupils(self, blur = 5, dp = 1, minDistance = 600, param1 = 80, param2 = 80, minRadius = 10, maxRadius = 0, surfaceBlur = False):
+	def WriteVideoWithGazePosition(self, frames, fileName, dataStart = None, firstFrame = None,
+								   outResolution = (1024, 768), flipColors = True, fps = 30):
 		"""
-		Find pupils in videos
-		@param blur:
-		@param dp:
-		@param minDistance:
-		@param param1:
-		@param param2:
-		@param minRadius:
-		@param maxRadius:
-		@param surfaceBlur:
-		@return:
-		"""
-		pass
-
-
-	def CalibrateEyetracking(self, startTime = None, calibrationOrder = None, calibrationPositions = None, filterLength = 29, varianceThreshold = None):
-		"""
-		Calibrates eyetracking and fits splines
-		@param startTime:
-		@param calibrationOrder:
-		@param calibrationPositions:
-		@param filterLength:
-		@param varianceThreshold:
-		@return:
-		"""
-		pass
-
-
-	def WriteVideoWithGazePosition(self, frames, fileName, firstFrame = None, outResolution = (1024, 768), flipColors = True, fps = 30):
-		"""
-		Writes out a video using the input frames and given eyetracking
+		Writes out a video using the input frames and given eyetracking.
+		If neither dataStart nor firstFrame are provided, then the assumption is that eyetracking calibration
+		is included in the data, and that the data start is the eyetracking calibration start.
 		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
 		@param fileName:		str, name of output file
+		@param dataStart:		tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
 		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param outResolution: 	tuple<int, in>, desired output resolution
-		@param flipColors:		bool, flip frame color channels order?
+		@param flipColors:		bool, flip frame color channels order? original videos are in BGR
 		@param fps:				float, fps of the frames
 		@return:
 		"""
+		if (dataStart is None) and (firstFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (dataStart is not None) and (firstFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
 		nFrames = frames.shape[0]
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, outResolution)
 
@@ -114,8 +79,8 @@ class Eyetracker(object):
 			transformation = AffineTransform(scale = [hScale, vScale], )
 		else: transformation = None
 
-		if not firstFrame:
-			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
+		if dataStart is not None:
+			firstFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
 		for frame in range(nFrames):
 			if (frame + firstFrame > gazeLocation.shape[0]):
@@ -133,17 +98,24 @@ class Eyetracker(object):
 		video.release()
 
 
-	def WriteFramesWithGazePosition(self, frames, folder, firstFrame = None, outResolution = (1024, 768), flipColors = False, fps = 30):
+	def WriteFramesWithGazePosition(self, frames, folder, dataStart = None, firstFrame = None,
+									outResolution = (1024, 768), flipColors = False, fps = 30):
 		"""
 		Writes out a video using the input frames and given eyetracking
 		@param frames: 			[t x h x w x 3] array, video frames, assumed to be same fps as the eyetracking
 		@param folder:			str, name of folder into which to write frames
+		@param dataStart:		tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
 		@param firstFrame: 		int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param outResolution: 	tuple<int, in>, desired output resolution
 		@param flipColors:		bool, flip frame color channels order?
 		@param fps:				float, fps of the frames
 		@return:
 		"""
+		if (dataStart is None) and (firstFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (dataStart is not None) and (firstFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
 		nFrames = frames.shape[0]
 		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
 
@@ -153,8 +125,8 @@ class Eyetracker(object):
 			transformation = AffineTransform(scale = [hScale, vScale], )
 		else: transformation = None
 
-		if not firstFrame:
-			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
+		if dataStart is not None:
+			firstFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
 		if not (os.path.exists(folder)):
 			os.makedirs(folder)
@@ -174,13 +146,15 @@ class Eyetracker(object):
 			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
 
 
-	def RecenterFramesToVideo(self, frames, fileName, scale = 0.125, firstFrame = None, flipColors = True, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
+	def RecenterFramesToVideo(self, frames, fileName, scale = 0.125, dataStart = None, firstFrame = None,
+							  flipColors = True, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
 		"""
 		Writes out a video in which the frames are moved such that the gaze position is always
 		the center
 		@param frames: 		[t x w x h x 3] array, video frames, assumed ot be same fps as eyetracking
 		@param fileName: 	str, name of output file
 		@param scale: 		float, scale of these frames relative to the eyetracking scale (typically 1024 x 768)
+		@param dataStart:	tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
 		@param firstFrame: 	int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param flipColors:	bool, flip frame color channel order?
 		@param padValue:	float, range [0, 1] value to use for padding in the recentered frames
@@ -188,14 +162,19 @@ class Eyetracker(object):
 		@param fps:			float, fps of the frames
 		@return:
 		"""
+		if (dataStart is None) and (firstFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (dataStart is not None) and (firstFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
 		nFrames = frames.shape[0]
 		width = frames.shape[2]
 		height = frames.shape[1]
 		video = cv2.VideoWriter(fileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width * 2, height * 2))
 		gazeLocation = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
 
-		if not firstFrame:
-			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
+		if dataStart is not None:
+			firstFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
 		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
 		frameIndexingFactor = self.dataPupilFinder.fps / fps
@@ -215,12 +194,14 @@ class Eyetracker(object):
 		video.release()
 
 
-	def RecenterFrames(self, frames, folder, scale = 0.125, firstFrame = None, flipColors = False, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
+	def RecenterFrames(self, frames, folder, scale = 0.125, dataStart = None, firstFrame = None,
+					   flipColors = False, padValue = 0.1, gazeSize = (1024, 768), fps = 30):
 		"""
 		Writes recentered frames to a folder
 		@param frames: 		[t x w x h x 3] array, video frames, assumed ot be same fps as eyetracking
 		@param folder: 		str, name of folder into which to write frames
 		@param scale: 		float, scale of these frames relative to the eyetracking scale (typically 1024 x 768)
+		@param dataStart:	tuple<int, int, int, int>, timestamp of the start of the data frames, has precedence over firstFrame
 		@param firstFrame: 	int?, the frame number in the eyetracking that the first frame of the video corresponds to
 		@param flipColors:	bool, flip frame color channel order?
 		@param padValue:	float, range [0, 1] value to use for padding
@@ -228,13 +209,18 @@ class Eyetracker(object):
 		@param fps:			float, fps of the frames
 		@return:
 		"""
+		if (dataStart is None) and (firstFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (dataStart is not None) and (firstFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
 		nFrames = frames.shape[0]
 		width = frames.shape[2]
 		height = frames.shape[1]
 		gazeLocation = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
 
-		if not firstFrame:
-			firstFrame = self.dataPupilFinder.FindOnsetFrame(self.dataStart[0], self.dataStart[1], self.dataStart[2], self.dataStart[3])
+		if dataStart is not None:
+			firstFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
 		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
 		frameIndexingFactor = self.dataPupilFinder.fps / fps
@@ -256,7 +242,8 @@ class Eyetracker(object):
 			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
 
 
-	def WriteSideBySideVideo(self, frames, fileName, firstDataFrame = None, firstEyetrackingFrame = None, stimuliResolution = (1024, 768), flipColors = True, stimulusFPS = 30):
+	def WriteSideBySideVideo(self, frames, fileName, firstDataFrame = None, firstEyetrackingFrame = None,
+							 stimuliResolution = (1024, 768), flipColors = True, stimulusFPS = 30):
 		"""
 		Writes a video out with the eyetracking video and stimulus with gaze position side by side
 		@param frames:					[time x h x w x 3] stimulus frame array
