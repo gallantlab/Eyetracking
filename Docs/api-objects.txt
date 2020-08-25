@@ -41,12 +41,12 @@ Eyetracking	Eyetracking-module.html
 Eyetracking.__package__	Eyetracking-module.html#__package__
 Eyetracking.Eyetracker.Eyetracker	Eyetracking.Eyetracker.Eyetracker-class.html
 Eyetracking.Eyetracker.Eyetracker.WriteVideoWithGazePosition	Eyetracking.Eyetracker.Eyetracker-class.html#WriteVideoWithGazePosition
-Eyetracking.Eyetracker.Eyetracker.FindPupils	Eyetracking.Eyetracker.Eyetracker-class.html#FindPupils
-Eyetracking.Eyetracker.Eyetracker.__init__	Eyetracking.Eyetracker.Eyetracker-class.html#__init__
-Eyetracking.Eyetracker.Eyetracker.CalibrateEyetracking	Eyetracking.Eyetracker.Eyetracker-class.html#CalibrateEyetracking
-Eyetracking.Eyetracker.Eyetracker.WriteSideBySideVideo	Eyetracking.Eyetracker.Eyetracker-class.html#WriteSideBySideVideo
+Eyetracking.Eyetracker.Eyetracker.calibrator	Eyetracking.Eyetracker.Eyetracker-class.html#calibrator
 Eyetracking.Eyetracker.Eyetracker.RecenterFrames	Eyetracking.Eyetracker.Eyetracker-class.html#RecenterFrames
-Eyetracking.Eyetracker.Eyetracker.InitFromConfig	Eyetracking.Eyetracker.Eyetracker-class.html#InitFromConfig
+Eyetracking.Eyetracker.Eyetracker.__init__	Eyetracking.Eyetracker.Eyetracker-class.html#__init__
+Eyetracking.Eyetracker.Eyetracker.GetGazeLocations	Eyetracking.Eyetracker.Eyetracker-class.html#GetGazeLocations
+Eyetracking.Eyetracker.Eyetracker.WriteSideBySideVideo	Eyetracking.Eyetracker.Eyetracker-class.html#WriteSideBySideVideo
+Eyetracking.Eyetracker.Eyetracker.dataPupilFinder	Eyetracking.Eyetracker.Eyetracker-class.html#dataPupilFinder
 Eyetracking.Eyetracker.Eyetracker.RecenterFramesToVideo	Eyetracking.Eyetracker.Eyetracker-class.html#RecenterFramesToVideo
 Eyetracking.Eyetracker.Eyetracker.WriteFramesWithGazePosition	Eyetracking.Eyetracker.Eyetracker-class.html#WriteFramesWithGazePosition
 Eyetracking.EyetrackingCalibrator.EyetrackingCalibrator	Eyetracking.EyetrackingCalibrator.EyetrackingCalibrator-class.html

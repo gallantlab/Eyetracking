@@ -95,16 +95,8 @@ object --+
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">calibrationFileName</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">dataFileName</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrator</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">dataPupilFinder</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrationStart</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">eyeWindow</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrationPositions</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrationOrder</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">config</span>=<span class="summary-sig-default">None</span>)</span><br />
+        <span class="summary-sig-arg">calibrator</span>,
+        <span class="summary-sig-arg">dataPupilFinder</span>=<span class="summary-sig-default">None</span>)</span><br />
       Constructor</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.__init__">source&nbsp;code</a></span>
@@ -117,62 +109,15 @@ object --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">numpy.ndarray</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#InitFromConfig" class="summary-sig-name">InitFromConfig</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">config</span>)</span><br />
-      initializes from a configuration file</td>
+          <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#GetGazeLocations" class="summary-sig-name">GetGazeLocations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">filtered</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Gets the gaze positions from the data</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.InitFromConfig">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#FindPupils" class="summary-sig-name">FindPupils</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">blur</span>=<span class="summary-sig-default">5</span>,
-        <span class="summary-sig-arg">dp</span>=<span class="summary-sig-default">1</span>,
-        <span class="summary-sig-arg">minDistance</span>=<span class="summary-sig-default">600</span>,
-        <span class="summary-sig-arg">param1</span>=<span class="summary-sig-default">80</span>,
-        <span class="summary-sig-arg">param2</span>=<span class="summary-sig-default">80</span>,
-        <span class="summary-sig-arg">minRadius</span>=<span class="summary-sig-default">10</span>,
-        <span class="summary-sig-arg">maxRadius</span>=<span class="summary-sig-default">0</span>,
-        <span class="summary-sig-arg">surfaceBlur</span>=<span class="summary-sig-default">False</span>)</span><br />
-      Find pupils in videos</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.FindPupils">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#CalibrateEyetracking" class="summary-sig-name">CalibrateEyetracking</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">startTime</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrationOrder</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">calibrationPositions</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">filterLength</span>=<span class="summary-sig-default">29</span>,
-        <span class="summary-sig-arg">varianceThreshold</span>=<span class="summary-sig-default">None</span>)</span><br />
-      Calibrates eyetracking and fits splines</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.CalibrateEyetracking">source&nbsp;code</a></span>
+            <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.GetGazeLocations">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -189,11 +134,12 @@ object --+
           <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#WriteVideoWithGazePosition" class="summary-sig-name">WriteVideoWithGazePosition</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">frames</span>,
         <span class="summary-sig-arg">fileName</span>,
+        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">firstFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">outResolution</span>=<span class="summary-sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="summary-sig-arg">flipColors</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">fps</span>=<span class="summary-sig-default">30</span>)</span><br />
-      Writes out a video using the input frames and given eyetracking</td>
+      Writes out a video using the input frames and given eyetracking.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.WriteVideoWithGazePosition">source&nbsp;code</a></span>
             
@@ -212,6 +158,7 @@ object --+
           <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#WriteFramesWithGazePosition" class="summary-sig-name">WriteFramesWithGazePosition</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">frames</span>,
         <span class="summary-sig-arg">folder</span>,
+        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">firstFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">outResolution</span>=<span class="summary-sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="summary-sig-arg">flipColors</span>=<span class="summary-sig-default">False</span>,
@@ -236,6 +183,7 @@ object --+
         <span class="summary-sig-arg">frames</span>,
         <span class="summary-sig-arg">fileName</span>,
         <span class="summary-sig-arg">scale</span>=<span class="summary-sig-default">0.125</span>,
+        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">firstFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">flipColors</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">padValue</span>=<span class="summary-sig-default">0.1</span>,
@@ -262,6 +210,7 @@ object --+
         <span class="summary-sig-arg">frames</span>,
         <span class="summary-sig-arg">folder</span>,
         <span class="summary-sig-arg">scale</span>=<span class="summary-sig-default">0.125</span>,
+        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">firstFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">flipColors</span>=<span class="summary-sig-default">False</span>,
         <span class="summary-sig-arg">padValue</span>=<span class="summary-sig-default">0.1</span>,
@@ -286,8 +235,8 @@ object --+
           <td><span class="summary-sig"><a href="Eyetracking.Eyetracker.Eyetracker-class.html#WriteSideBySideVideo" class="summary-sig-name">WriteSideBySideVideo</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">frames</span>,
         <span class="summary-sig-arg">fileName</span>,
+        <span class="summary-sig-arg">dataStart</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">firstDataFrame</span>=<span class="summary-sig-default">None</span>,
-        <span class="summary-sig-arg">firstEyetrackingFrame</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">stimuliResolution</span>=<span class="summary-sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="summary-sig-arg">flipColors</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">stimulusFPS</span>=<span class="summary-sig-default">30</span>)</span><br />
@@ -318,6 +267,41 @@ object --+
       <code>__str__</code>,
       <code>__subclasshook__</code>
       </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE VARIABLES ==================== -->
+<a name="section-InstanceVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">EyetrackingCalibrator</span>
+    </td><td class="summary">
+        <a name="calibrator"></a><span class="summary-name">calibrator</span><br />
+      Object used to compute the pupil to gaze mapping on the calibration 
+      sequence
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">PupilFinder</span>
+    </td><td class="summary">
+        <a name="dataPupilFinder"></a><span class="summary-name">dataPupilFinder</span><br />
+      Object used to find pupil position in the actual data
     </td>
   </tr>
 </table>
@@ -372,16 +356,8 @@ object --+
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">calibrationFileName</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">dataFileName</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrator</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">dataPupilFinder</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrationStart</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">eyeWindow</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrationPositions</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrationOrder</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">config</span>=<span class="sig-default">None</span>)</span>
+        <span class="sig-arg">calibrator</span>,
+        <span class="sig-arg">dataPupilFinder</span>=<span class="sig-default">None</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -393,19 +369,9 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>calibrationFileName</code></strong> - str?, name of eyetracking video for calibration</li>
-        <li><strong class="pname"><code>dataFileName</code></strong> - str?, name of eyetracking video for data</li>
-        <li><strong class="pname"><code>calibrator</code></strong> - EyetrackingCalibrator?, pre-constructed calibration object</li>
-        <li><strong class="pname"><code>dataPupilFinder</code></strong> - PupilFinder?, pre-constructed pupil finding object</li>
-        <li><strong class="pname"><code>calibrationStart</code></strong> - tuple&lt;int, int, int, int&gt;?, (H, M, S, MS) timestamp of the 
-          start of the calibration sequence in video</li>
-        <li><strong class="pname"><code>dataStart</code></strong> - tuple&lt;int, int, int, int&gt;?, (H, M, S, MS) timestamp of the 
-          start of the data in video</li>
-        <li><strong class="pname"><code>eyeWindow</code></strong> - tuple&lt;int, int, int, int&gt;?, (Left, right, top, bottom) 
-          window in the video to look for the pupil</li>
-        <li><strong class="pname"><code>calibrationPositions</code></strong> - [n x 2] array&lt;float&gt;?, list of calibration point positions</li>
-        <li><strong class="pname"><code>calibrationOrder</code></strong> - list&lt;int&gt;?, order of presentation of the calibraiton points</li>
-        <li><strong class="pname"><code>config</code></strong></li>
+        <li><strong class="pname"><code>calibrator</code></strong> (EyetrackingCalibrator) - pre-constructed calibration object that has been fit</li>
+        <li><strong class="pname"><code>dataPupilFinder</code></strong> (PupilFinder?) - pre-constructed pupil finding object and pupils have been found, 
+          if none, will be that from the calibrator</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
@@ -413,97 +379,29 @@ object --+
   </dl>
 </td></tr></table>
 </div>
-<a name="InitFromConfig"></a>
+<a name="GetGazeLocations"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">InitFromConfig</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">config</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetGazeLocations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">filtered</span>=<span class="sig-default">True</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.InitFromConfig">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.GetGazeLocations">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>initializes from a configuration file</p>
+  <p>Gets the gaze positions from the data</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>config</code></strong></li>
+        <li><strong class="pname"><code>filtered</code></strong> (bool) - use temporally filtered traces?</li>
     </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="FindPupils"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">FindPupils</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">blur</span>=<span class="sig-default">5</span>,
-        <span class="sig-arg">dp</span>=<span class="sig-default">1</span>,
-        <span class="sig-arg">minDistance</span>=<span class="sig-default">600</span>,
-        <span class="sig-arg">param1</span>=<span class="sig-default">80</span>,
-        <span class="sig-arg">param2</span>=<span class="sig-default">80</span>,
-        <span class="sig-arg">minRadius</span>=<span class="sig-default">10</span>,
-        <span class="sig-arg">maxRadius</span>=<span class="sig-default">0</span>,
-        <span class="sig-arg">surfaceBlur</span>=<span class="sig-default">False</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.FindPupils">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Find pupils in videos</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>blur</code></strong></li>
-        <li><strong class="pname"><code>dp</code></strong></li>
-        <li><strong class="pname"><code>minDistance</code></strong></li>
-        <li><strong class="pname"><code>param1</code></strong></li>
-        <li><strong class="pname"><code>param2</code></strong></li>
-        <li><strong class="pname"><code>minRadius</code></strong></li>
-        <li><strong class="pname"><code>maxRadius</code></strong></li>
-        <li><strong class="pname"><code>surfaceBlur</code></strong></li>
-    </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="CalibrateEyetracking"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">CalibrateEyetracking</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">startTime</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrationOrder</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">calibrationPositions</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">filterLength</span>=<span class="sig-default">29</span>,
-        <span class="sig-arg">varianceThreshold</span>=<span class="sig-default">None</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="Eyetracking.Eyetracker-pysrc.html#Eyetracker.CalibrateEyetracking">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Calibrates eyetracking and fits splines</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>startTime</code></strong></li>
-        <li><strong class="pname"><code>calibrationOrder</code></strong></li>
-        <li><strong class="pname"><code>calibrationPositions</code></strong></li>
-        <li><strong class="pname"><code>filterLength</code></strong></li>
-        <li><strong class="pname"><code>varianceThreshold</code></strong></li>
-    </ul></dd>
+    <dt>Returns: numpy.ndarray</dt>
+        <dd>estimated gaze locations in screen space</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -517,6 +415,7 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteVideoWithGazePosition</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">frames</span>,
         <span class="sig-arg">fileName</span>,
+        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">firstFrame</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">outResolution</span>=<span class="sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="sig-arg">flipColors</span>=<span class="sig-default">True</span>,
@@ -527,18 +426,22 @@ object --+
     </td>
   </tr></table>
   
-  <p>Writes out a video using the input frames and given eyetracking</p>
+  <p>Writes out a video using the input frames and given eyetracking. If 
+  neither dataStart nor firstFrame are provided, then the assumption is 
+  that eyetracking calibration is included in the data, and that the data 
+  start is the eyetracking calibration start.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>frames</code></strong> - [t x h x w x 3] array, video frames, assumed to be same fps as 
-          the eyetracking</li>
-        <li><strong class="pname"><code>fileName</code></strong> - str, name of output file</li>
-        <li><strong class="pname"><code>firstFrame</code></strong> - int?, the frame number in the eyetracking that the first frame of
-          the video corresponds to</li>
-        <li><strong class="pname"><code>outResolution</code></strong> - tuple&lt;int, in&gt;, desired output resolution</li>
-        <li><strong class="pname"><code>flipColors</code></strong> - bool, flip frame color channels order?</li>
-        <li><strong class="pname"><code>fps</code></strong> - float, fps of the frames</li>
+        <li><strong class="pname"><code>frames</code></strong> ([t x h x w x 3] numpy.ndarray) - assumed to be same fps as the eyetracking</li>
+        <li><strong class="pname"><code>fileName</code></strong> (str) - name of output file</li>
+        <li><strong class="pname"><code>dataStart</code></strong> (tuple&lt;int, int, int, int&gt;) - timestamp of the start of the data frames, has precedence over 
+          firstFrame</li>
+        <li><strong class="pname"><code>firstFrame</code></strong> (int?) - the frame number in the eyetracking that the first frame of the 
+          video corresponds to</li>
+        <li><strong class="pname"><code>outResolution</code></strong> (tuple&lt;int, int&gt;) - desired output resolution</li>
+        <li><strong class="pname"><code>flipColors</code></strong> (bool) - flip frame color channels order? original videos are in BGR</li>
+        <li><strong class="pname"><code>fps</code></strong> (float) - float, fps of the frames</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -553,6 +456,7 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteFramesWithGazePosition</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">frames</span>,
         <span class="sig-arg">folder</span>,
+        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">firstFrame</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">outResolution</span>=<span class="sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="sig-arg">flipColors</span>=<span class="sig-default">False</span>,
@@ -567,14 +471,15 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>frames</code></strong> - [t x h x w x 3] array, video frames, assumed to be same fps as 
-          the eyetracking</li>
-        <li><strong class="pname"><code>folder</code></strong> - str, name of folder into which to write frames</li>
-        <li><strong class="pname"><code>firstFrame</code></strong> - int?, the frame number in the eyetracking that the first frame of
-          the video corresponds to</li>
-        <li><strong class="pname"><code>outResolution</code></strong> - tuple&lt;int, in&gt;, desired output resolution</li>
-        <li><strong class="pname"><code>flipColors</code></strong> - bool, flip frame color channels order?</li>
-        <li><strong class="pname"><code>fps</code></strong> - float, fps of the frames</li>
+        <li><strong class="pname"><code>frames</code></strong> ([t x h x w x 3] numpy.ndarray) - assumed to be same fps as the eyetracking</li>
+        <li><strong class="pname"><code>folder</code></strong> (str) - name of folder into which to write frames</li>
+        <li><strong class="pname"><code>dataStart</code></strong> (tuple&lt;int, int, int, int&gt;) - timestamp of the start of the data frames, has precedence over 
+          firstFrame</li>
+        <li><strong class="pname"><code>firstFrame</code></strong> (int?) - the frame number in the eyetracking that the first frame of the 
+          video corresponds to</li>
+        <li><strong class="pname"><code>outResolution</code></strong> (tuple&lt;int, int&gt;) - desired output resolution</li>
+        <li><strong class="pname"><code>flipColors</code></strong> (bool) - flip frame color channels order?</li>
+        <li><strong class="pname"><code>fps</code></strong> (float) - fps of the frames</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -590,6 +495,7 @@ object --+
         <span class="sig-arg">frames</span>,
         <span class="sig-arg">fileName</span>,
         <span class="sig-arg">scale</span>=<span class="sig-default">0.125</span>,
+        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">firstFrame</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">flipColors</span>=<span class="sig-default">True</span>,
         <span class="sig-arg">padValue</span>=<span class="sig-default">0.1</span>,
@@ -606,19 +512,18 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>frames</code></strong> - [t x w x h x 3] array, video frames, assumed ot be same fps as 
-          eyetracking</li>
-        <li><strong class="pname"><code>fileName</code></strong> - str, name of output file</li>
-        <li><strong class="pname"><code>scale</code></strong> - float, scale of these frames relative to the eyetracking scale 
+        <li><strong class="pname"><code>frames</code></strong> ([t x w x h x 3] array) - video frames</li>
+        <li><strong class="pname"><code>fileName</code></strong> (str) - name of output file</li>
+        <li><strong class="pname"><code>scale</code></strong> (float) - scale of these frames relative to the eyetracking scale 
           (typically 1024 x 768)</li>
-        <li><strong class="pname"><code>firstFrame</code></strong> - int?, the frame number in the eyetracking that the first frame of
-          the video corresponds to</li>
-        <li><strong class="pname"><code>flipColors</code></strong> - bool, flip frame color channel order?</li>
-        <li><strong class="pname"><code>padValue</code></strong> - float, range [0, 1] value to use for padding in the recentered 
-          frames</li>
-        <li><strong class="pname"><code>gazeSize</code></strong> - tuple&lt;int, int&gt;, stimuli resolution on to which eyetracking
-          is mapepd</li>
-        <li><strong class="pname"><code>fps</code></strong> - float, fps of the frames</li>
+        <li><strong class="pname"><code>dataStart</code></strong> (tuple&lt;int, int, int, int&gt;) - timestamp of the start of the data frames, has precedence over 
+          firstFrame</li>
+        <li><strong class="pname"><code>firstFrame</code></strong> (int?) - the frame number in the eyetracking that the first frame of the 
+          video corresponds to</li>
+        <li><strong class="pname"><code>flipColors</code></strong> (bool) - flip frame color channel order?</li>
+        <li><strong class="pname"><code>padValue</code></strong> (float) - range [0, 1] value to use for padding in the recentered frames</li>
+        <li><strong class="pname"><code>gazeSize</code></strong> (tuple&lt;int, int&gt;) - stimuli resolution on to which eyetracking is mapepd</li>
+        <li><strong class="pname"><code>fps</code></strong> (float) - fps of the frames</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -634,6 +539,7 @@ object --+
         <span class="sig-arg">frames</span>,
         <span class="sig-arg">folder</span>,
         <span class="sig-arg">scale</span>=<span class="sig-default">0.125</span>,
+        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">firstFrame</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">flipColors</span>=<span class="sig-default">False</span>,
         <span class="sig-arg">padValue</span>=<span class="sig-default">0.1</span>,
@@ -649,18 +555,18 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>frames</code></strong> - [t x w x h x 3] array, video frames, assumed ot be same fps as 
-          eyetracking</li>
-        <li><strong class="pname"><code>folder</code></strong> - str, name of folder into which to write frames</li>
-        <li><strong class="pname"><code>scale</code></strong> - float, scale of these frames relative to the eyetracking scale 
+        <li><strong class="pname"><code>frames</code></strong> ([t x w x h x 3] array) - video frames</li>
+        <li><strong class="pname"><code>folder</code></strong> (str) - name of folder into which to write frames</li>
+        <li><strong class="pname"><code>scale</code></strong> (float) - scale of these frames relative to the eyetracking scale 
           (typically 1024 x 768)</li>
-        <li><strong class="pname"><code>firstFrame</code></strong> - int?, the frame number in the eyetracking that the first frame of
-          the video corresponds to</li>
-        <li><strong class="pname"><code>flipColors</code></strong> - bool, flip frame color channel order?</li>
-        <li><strong class="pname"><code>padValue</code></strong> - float, range [0, 1] value to use for padding</li>
-        <li><strong class="pname"><code>gazeSize</code></strong> - tuple&lt;int, int&gt;, stimuli resolution on to which eyetracking
-          is mapepd</li>
-        <li><strong class="pname"><code>fps</code></strong> - float, fps of the frames</li>
+        <li><strong class="pname"><code>dataStart</code></strong> (tuple&lt;int, int, int, int&gt;) - timestamp of the start of the data frames, has precedence over 
+          firstFrame</li>
+        <li><strong class="pname"><code>firstFrame</code></strong> (int?) - the frame number in the eyetracking that the first frame of the 
+          video corresponds to</li>
+        <li><strong class="pname"><code>flipColors</code></strong> (bool) - flip frame color channel order?</li>
+        <li><strong class="pname"><code>padValue</code></strong> (float) - range [0, 1] value to use for padding</li>
+        <li><strong class="pname"><code>gazeSize</code></strong> (tuple&lt;int, int&gt;) - stimuli resolution on to which eyetracking is mapped</li>
+        <li><strong class="pname"><code>fps</code></strong> (float) - fps of the frames</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -675,8 +581,8 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteSideBySideVideo</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">frames</span>,
         <span class="sig-arg">fileName</span>,
+        <span class="sig-arg">dataStart</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">firstDataFrame</span>=<span class="sig-default">None</span>,
-        <span class="sig-arg">firstEyetrackingFrame</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">stimuliResolution</span>=<span class="sig-default"><code class="variable-group">(</code>1024<code class="variable-op">, </code>768<code class="variable-group">)</code></span>,
         <span class="sig-arg">flipColors</span>=<span class="sig-default">True</span>,
         <span class="sig-arg">stimulusFPS</span>=<span class="sig-default">30</span>)</span>
@@ -691,14 +597,16 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>frames</code></strong> - [time x h x w x 3] stimulus frame array</li>
-        <li><strong class="pname"><code>fileName</code></strong> - str, name for video file to write</li>
-        <li><strong class="pname"><code>firstDataFrame</code></strong></li>
-        <li><strong class="pname"><code>firstEyetrackingFrame</code></strong></li>
-        <li><strong class="pname"><code>stimuliResolution</code></strong></li>
-        <li><strong class="pname"><code>flipColors</code></strong> - bool, reverse the colors dimension of the frames when writing the
+        <li><strong class="pname"><code>frames</code></strong> ([time x h x w x 3] numpy.ndarray) - stimulus frame array</li>
+        <li><strong class="pname"><code>fileName</code></strong> (str) - name for video file to write</li>
+        <li><strong class="pname"><code>dataStart</code></strong> (tuple&lt;int, int, int, int&gt;) - timestamp of the start of the data frames, has precedence over 
+          firstDataFrame</li>
+        <li><strong class="pname"><code>firstDataFrame</code></strong> (int?) - the frame number in the eyetracking that the first frame of the 
+          video corresponds to</li>
+        <li><strong class="pname"><code>stimuliResolution</code></strong> (tuple&lt;int, int&gt;) - size of the stimuli</li>
+        <li><strong class="pname"><code>flipColors</code></strong> (bool) - reverse the colors dimension of the frames when writing the 
           video?</li>
-        <li><strong class="pname"><code>stimulusFPS</code></strong> - int, fps of the frames</li>
+        <li><strong class="pname"><code>stimulusFPS</code></strong> (int) - fps of the frames</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -736,7 +644,7 @@ object --+
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Fri Aug 21 21:18:25 2020
+    on Tue Aug 25 17:51:04 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
