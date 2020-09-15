@@ -138,6 +138,49 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;tuple&lt;tuple&lt;float&gt;, int&gt;&gt;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.EyetrackingUtilities-module.html#ParseHistoryForEndTTLs" class="summary-sig-name">ParseHistoryForEndTTLs</a>(<span class="summary-sig-arg">historyFileName</span>,
+        <span class="summary-sig-arg">useMovieMarkers</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">TR</span>=<span class="summary-sig-default">2.0</span>,
+        <span class="summary-sig-arg">onset</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">threshold</span>=<span class="summary-sig-default">1.5</span>)</span><br />
+      Parses the history file from Avotec for the last TTL in each run</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.EyetrackingUtilities-pysrc.html#ParseHistoryForEndTTLs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list&lt;tuple&lt;list&lt;float&gt;, int&gt;&gt;, each run is a list 
+      of TTL timestamps and the number of TTLs</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Eyetracking.EyetrackingUtilities-module.html#ParseHistoryForTTLs" class="summary-sig-name">ParseHistoryForTTLs</a>(<span class="summary-sig-arg">historyFileName</span>,
+        <span class="summary-sig-arg">useMovieMarkers</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">TR</span>=<span class="summary-sig-default">2.0</span>,
+        <span class="summary-sig-arg">onset</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">threshold</span>=<span class="summary-sig-default">1.5</span>)</span><br />
+      Parses the history file from Avotec for the TTLs in each run</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Eyetracking.EyetrackingUtilities-pysrc.html#ParseHistoryForTTLs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -345,6 +388,76 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="ParseHistoryForEndTTLs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ParseHistoryForEndTTLs</span>(<span class="sig-arg">historyFileName</span>,
+        <span class="sig-arg">useMovieMarkers</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">TR</span>=<span class="sig-default">2.0</span>,
+        <span class="sig-arg">onset</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">threshold</span>=<span class="sig-default">1.5</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.EyetrackingUtilities-pysrc.html#ParseHistoryForEndTTLs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses the history file from Avotec for the last TTL in each run</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>historyFileName</code></strong> (str) - name of history file from avotec</li>
+        <li><strong class="pname"><code>useMovieMarkers</code></strong> (bool) - use the start/stop save movie entries to calculate runs? if true,
+          the TR, onset, and threshold arguments are useless</li>
+        <li><strong class="pname"><code>TR</code></strong> (float) - TR length used</li>
+        <li><strong class="pname"><code>onset</code></strong> (bool) - use the TTL pulse HI instead of the LO value?</li>
+        <li><strong class="pname"><code>threshold</code></strong> (float) - multiple of the TR interval to use as a threshold as a break?</li>
+    </ul></dd>
+    <dt>Returns: list&lt;tuple&lt;tuple&lt;float&gt;, int&gt;&gt;</dt>
+        <dd>first value is the timestamp of the last TTL in a run, and the 
+          second is number of TRs in each run</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ParseHistoryForTTLs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ParseHistoryForTTLs</span>(<span class="sig-arg">historyFileName</span>,
+        <span class="sig-arg">useMovieMarkers</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">TR</span>=<span class="sig-default">2.0</span>,
+        <span class="sig-arg">onset</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">threshold</span>=<span class="sig-default">1.5</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Eyetracking.EyetrackingUtilities-pysrc.html#ParseHistoryForTTLs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses the history file from Avotec for the TTLs in each run</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>historyFileName</code></strong> (str) - name of history file from avotec</li>
+        <li><strong class="pname"><code>useMovieMarkers</code></strong> (bool) - use the start/stop save movie entries to calculate runs? if true,
+          the TR, onset, and threshold arguments are useless</li>
+        <li><strong class="pname"><code>TR</code></strong> (float) - TR length used</li>
+        <li><strong class="pname"><code>onset</code></strong> (bool) - use the TTL pulse HI instead of the LO value?</li>
+        <li><strong class="pname"><code>threshold</code></strong> (float) - multiple of the TR interval to use as a threshold as a break?</li>
+    </ul></dd>
+    <dt>Returns: list&lt;tuple&lt;list&lt;float&gt;, int&gt;&gt;, each run is a list 
+      of TTL timestamps and the number of TTLs</dt>
+        <dd>timestamps of TTLs in each run</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="SaveNPY"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -486,7 +599,7 @@
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Tue Aug 25 17:51:04 2020
+    on Tue Sep 15 21:48:12 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
