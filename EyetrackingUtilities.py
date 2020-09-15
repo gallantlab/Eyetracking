@@ -87,36 +87,77 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 	@rtype:	list<tuple<tuple<float>, int>>
 	"""
 
+	runs = ParseHistoryForTTLs(historyFileName, useMovieMarkers, TR, onset, threshold)
+	return [(run[0][0], run[1]) for run in runs]
+
+
+def ParseHistoryForEndTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
+	"""
+	Parses the history file from Avotec for the last TTL in each run
+	@param historyFileName:	name of history file from avotec
+	@param useMovieMarkers:	use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
+	@param TR:				TR length used
+	@param onset:			use the TTL pulse HI instead of the LO value?
+	@param threshold:		multiple of the TR interval to use as a threshold as a break?
+	@type historyFileName:	str
+	@type useMovieMarkers:	bool
+	@type TR:				float
+	@type onset:			bool
+	@type threshold:		float
+	@return:	first value is the timestamp of the last TTL in a run, and the second is number of TRs in each run
+	@rtype:	list<tuple<tuple<float>, int>>
+	"""
+
+	runs = ParseHistoryForTTLs(historyFileName, useMovieMarkers, TR, onset, threshold)
+	return [(run[0][-1], run[1]) for run in runs]
+
+
+def ParseHistoryForTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
+	"""
+	Parses the history file from Avotec for the TTLs in each run
+	@param historyFileName:	name of history file from avotec
+	@param useMovieMarkers:	use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
+	@param TR:				TR length used
+	@param onset:			use the TTL pulse HI instead of the LO value?
+	@param threshold:		multiple of the TR interval to use as a threshold as a break?
+	@type historyFileName:	str
+	@type useMovieMarkers:	bool
+	@type TR:				float
+	@type onset:			bool
+	@type threshold:		float
+	@return:	timestamps of TTLs in each run
+	@rtype:	list<tuple<list<float>, int>>, each run is a list of TTL timestamps and the number of TTLs
+	"""
+
 	historyFile = open(historyFileName, 'r')
 	TTLtoken = 'HI' if onset else 'LO'
 	TTLs = []
-	starts = []
 	lastTime = (0, 0, 0, 0)
 	duplicates = 0
+
+	runs  = []
+	thisRun = []
 
 	if useMovieMarkers:
 		nTTLs = 0
 		isStarted = False
-		start = None
 		line = historyFile.readline()
 		while line != '':
 			tokens = line.split()
 			if len(tokens) > 0:
 				if tokens[-1] == 'saveMovie[0]:':
 					isStarted = True
-					start = None
 					nTTLs = 0
 				elif tokens[3] == 'Closing':
 					isStarted = False
-					starts.append((start, nTTLs))
+					runs.append((thisRun, nTTLs))
+					thisRun = []
 				if isStarted:
 					if tokens[-1] == TTLtoken and tokens[4] == 'TTL':
 						time = tuple([int(token) for token in re.split('[:\.]', tokens[0])])
-						if start is None:
-							start = time
 						if ((TimeToSeconds(time) - TimeToSeconds(lastTime)) > 0.1):	# long enough of an interval since last one such that it's not a duplicate
 							nTTLs += 1
-							lastTime = time
+							thisRun.append(time)
 						else:
 							duplicates += 1
 			line = historyFile.readline()
@@ -134,23 +175,24 @@ def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, 
 					duplicates += 1
 			line = historyFile.readline()
 
-		firstInRun = TTLs[0]
 		nTRs = 1
+		thisRun.append(TTLs[0])
 		for i in range(1, len(TTLs) - 1):
 			this = TTLs[i]
 			last = TTLs[i - 1]
 			dt = TimeToSeconds(this) - TimeToSeconds(last)
 			if dt > threshold * TR:
-				starts.append((firstInRun, nTRs))
-				firstInRun = this
+				runs.append((thisRun, nTRs))
+				thisRun = [this]
 				nTRs = 1
 			else:
+				thisRun.append(this)
 				nTRs += 1
-		starts.append((firstInRun, nTRs + 1))	# account for last run in which there's no faraway TR to make the math work
+		runs.append((thisRun, nTRs + 1)) # account for last run without a faraway TTL
 
 	historyFile.close()
 	print('{} duplicated TTLs'.format(duplicates))
-	return starts
+	return runs
 
 
 def SaveNPY(array, zipfile, name):
