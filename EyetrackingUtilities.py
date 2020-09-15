@@ -158,6 +158,7 @@ def ParseHistoryForTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset
 						if ((TimeToSeconds(time) - TimeToSeconds(lastTime)) > 0.1):	# long enough of an interval since last one such that it's not a duplicate
 							nTTLs += 1
 							thisRun.append(time)
+							lastTime = time
 						else:
 							duplicates += 1
 			line = historyFile.readline()
