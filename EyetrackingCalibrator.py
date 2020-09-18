@@ -225,7 +225,7 @@ class EyetrackingCalibrator(object):
 		@param blur: 				median blur filter width
 		@param dp: 					inverse ratio of accumulator resolution to image resolution
 		@param minDistance: 		min distance between centers of detected circles
-		@param param1: 				higher threshold for canny edge detector
+		@param param1: 				higher threshold for canny edge detector, or sigmas below normal for blink detection in templates
 		@param param2: 				accumulator threshold at detection stage, smaller => more errors
 		@param minRadius: 			min circle radius
 		@param maxRadius: 			max circle radius
@@ -260,8 +260,8 @@ class EyetrackingCalibrator(object):
 		self.pupilFinder.minDistance = minDistance
 		self.pupilFinder.param1 = param1
 		self.pupilFinder.param2 = param2
-		self.pupilFinder.minRadius = minRadius
-		self.pupilFinder.maxRadius = maxRadius
+		self.pupilFinder._minRadius = minRadius
+		self.pupilFinder._maxRadius = maxRadius
 		self.pupilFinder.FindPupils(bilateral = surfaceBlur, nThreads = nThreads)
 		self.pupilFinder.FilterPupils(windowSize, outlierThresholds, filterPupilSize)
 

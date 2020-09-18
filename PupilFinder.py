@@ -93,12 +93,12 @@ class PupilFinder(VideoTimestampReader):
 		@ivar: accumulator threashold for Hough transform. Smaller => more errors
 		@type: float
 		"""
-		self.minRadius = minRadius
+		self._minRadius = minRadius
 		"""
 		@ivar: Minimum circle radius in pixels
 		@type: int
 		"""
-		self.maxRadius = maxRadius
+		self._maxRadius = maxRadius
 		"""
 		@ivar: Maximum circle radius in pixels
 		@type: int
@@ -130,6 +130,36 @@ class PupilFinder(VideoTimestampReader):
 		"""
 
 
+	@property
+	def minRadius(self):
+		"""
+		Minimum possible radius of pupil
+		@return:
+		@rtype: int
+		"""
+		return self._minRadius
+
+
+	@minRadius.setter
+	def minRadius(self, value):
+		self._minRadius = value
+
+
+	@property
+	def maxRadius(self):
+		"""
+		Max possible radius of pupil
+		@return:
+		@rtype: int
+		"""
+		return self._maxRadius
+
+
+	@maxRadius.setter
+	def maxRadius(self, value):
+		self._maxRadius = value
+
+
 	def InitFromOther(self, other):
 		"""
 		Jank copy constructor
@@ -143,8 +173,8 @@ class PupilFinder(VideoTimestampReader):
 		self.minDistance = other.minDistance
 		self.param1 = other.param1
 		self.param2 = other.param2
-		self.minRadius = other.minRadius
-		self.maxRadius = other.maxRadius
+		self._minRadius = other._minRadius
+		self._maxRadius = other._maxRadius
 		if other.rawPupilLocations is not None:
 			self.rawPupilLocations = other.rawPupilLocations.copy()
 		if other.frameDiffs is not None:
@@ -181,7 +211,7 @@ class PupilFinder(VideoTimestampReader):
 				self.frame = cv2.medianBlur(self.frame, self.blur)
 			else:
 				self.frame = cv2.medianBlur(self.frames[frameIndex, :, :], self.blur)
-			circle = cv2.HoughCircles(self.frame, cv2.HOUGH_GRADIENT, self.dp, self.minDistance, self.param1, self.param2, self.minRadius, self.maxRadius)
+			circle = cv2.HoughCircles(self.frame, cv2.HOUGH_GRADIENT, self.dp, self.minDistance, self.param1, self.param2, self._minRadius, self._maxRadius)
 			if (circle is None):
 				circle = numpy.zeros(3) * numpy.nan
 			circle = circle.squeeze()

@@ -84,13 +84,14 @@ class TemplatePupilFinder(PupilFinder):
 			rawGlintLocations[frameIndex, 2] = (best + 2) / 2.0
 
 
-	def __init__(self, videoFileName = None, window = None, minRadius = 13, maxRadius = 23, other = None):
+	def __init__(self, videoFileName = None, window = None, minRadius = 13, maxRadius = 23, blinkThreshold = 1.5, other = None):
 		"""
 		Constructor
 		@param videoFileName:	name of video file to parse
 		@param window: 			subwindow in frame to examine, order [left, right, top bottom]
 		@param minRadius:		smallest radius to look for
 		@param maxRadius:		biggest radius to look for, should not be bigger than 25
+		@param blinkThreshold:	standard deviations below average confidence to consider to be blinks
 		@param other:			object to copy construct from
 		@type videoFileName:	str?
 		@type window: 			4-ple<int>?
@@ -114,9 +115,7 @@ class TemplatePupilFinder(PupilFinder):
 		@ivar: Templates for matching glints, is white circle on black background 
 		@type: numpy.ndarray
 		"""
-		for i in range(len(self.radii)):
-			y, x = circle(25, 25, self.radii[i])
-			self.pupilTemplates[x, y, i] = 0
+
 		for i in range(2, 11):
 			y, x = circle(7, 7, i / 2.0)
 			self.glintTemplates[x, y, i - 2] = 255
@@ -131,6 +130,25 @@ class TemplatePupilFinder(PupilFinder):
 		@ivar: Temporally filtered glint locations
 		@type: Optional[numpy.ndarray]
 		"""
+		self.param1 = blinkThreshold
+
+		self.staleTemplates = True
+		"""
+		@ivar: are the templates stale and need to be regenerated?
+		@type: bool
+		"""
+
+
+	@PupilFinder.minRadius.setter
+	def minRadius(self, value):
+		self._minRadius = value
+		self.staleTemplates = True
+
+
+	@PupilFinder.maxRadius.setter
+	def maxRadius(self, value):
+		self._maxRadius = value
+		self.staleTemplates = True
 
 
 	def InitFromOther(self, other):
@@ -146,6 +164,22 @@ class TemplatePupilFinder(PupilFinder):
 			self.filteredGlintLocations = other.filteredGlintLocations.copy()
 
 
+	def GeneratePupilTemplates(self):
+		"""
+		Generates templates for the pupil
+		@return:
+		"""
+		self.radii = range(self.minRadius, self.maxRadius + 1)
+
+		self.pupilTemplates = numpy.ones([2 * self.maxRadius + 5, 2 * self.maxRadius + 5, len(self.radii)], numpy.uint8) * 255
+
+		for i in range(len(self.radii)):
+			y, x = circle(self.maxRadius + 2, self.maxRadius + 2, self.radii[i])
+			self.pupilTemplates[x, y, i] = 0
+
+		self.staleTemplates = False
+
+
 	def FindPupils(self, endFrame = None, bilateral = None, nThreads = 1):
 		"""
 		Finds pupils by template matching
@@ -156,6 +190,9 @@ class TemplatePupilFinder(PupilFinder):
 		@type bilateral:		int?
 		@type nThreads:			int
 		"""
+		if (self.staleTemplates):
+			self.GeneratePupilTemplates()
+
 		if ((endFrame is None) or endFrame > self.nFrames):
 			endFrame = self.nFrames
 
@@ -187,7 +224,7 @@ class TemplatePupilFinder(PupilFinder):
 				thread.start()
 			for thread in threads:
 				thread.join()
-		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - 1.5 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -1.5 std confidence = blink
+		self.blinks = numpy.where(self.rawPupilLocations[:, 3] < (numpy.mean(self.rawPupilLocations[:, 3]) - self.param1 * numpy.std(self.rawPupilLocations[:, 3])), True, False)	# less than -1.5 std confidence = blink
 
 
 	def FilterPupils(self, windowSize = 15, outlierThresholds = None, filterPupilSize = True):
