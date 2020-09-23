@@ -232,8 +232,8 @@ class EyetrackingCalibrator(object):
 		return newCalibrator
 
 
-	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
-				   param2 = 20, minRadius = 15, maxRadius = 22, windowSize = 15, outlierThresholds = None,
+	def FindPupils(self, window = None, blur = 5, dp = 1, minDistance = 600, param1 = None,
+				   param2 = None, minRadius = 10, maxRadius = 18, windowSize = 15, outlierThresholds = None,
 				   filterPupilSize = True, surfaceBlur = None, nThreads = None):
 		"""
 		Finds pupil traces
@@ -254,8 +254,8 @@ class EyetrackingCalibrator(object):
 		@type blur: 				int
 		@type dp: 					float
 		@type minDistance: 			float
-		@type param1: 				float
-		@type param2: 				float
+		@type param1: 				float?
+		@type param2: 				float?
 		@type minRadius: 			int
 		@type maxRadius: 			int
 		@type windowSize:			int
@@ -274,8 +274,10 @@ class EyetrackingCalibrator(object):
 		self.pupilFinder.blur = blur
 		self.pupilFinder.dp = dp
 		self.pupilFinder.minDistance = minDistance
-		self.pupilFinder.param1 = param1
-		self.pupilFinder.param2 = param2
+		if param1 is not None:
+			self.pupilFinder.param1 = param1
+		if param2 is not None:
+			self.pupilFinder.param2 = param2
 		self.pupilFinder._minRadius = minRadius
 		self.pupilFinder._maxRadius = maxRadius
 		self.pupilFinder.FindPupils(bilateral = surfaceBlur, nThreads = nThreads)
