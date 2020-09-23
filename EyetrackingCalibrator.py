@@ -1,9 +1,21 @@
 import numpy
+from enum import IntEnum
 from zipfile import ZipFile
 from EyetrackingUtilities import ReadNPY, SaveNPY, parallelize
 from scipy.interpolate import Rbf as RBF
 from PupilFinder import PupilFinder
 from TemplatePupilFinder import TemplatePupilFinder
+from AvotecPupilFinder import AvotecPupilFinder
+
+
+class PupilFindingMethod(IntEnum):
+	"""
+	Enum for pupil finding method. Determines which pupil finder class to use
+	"""
+	Hough = 0		# Hough transform to find an ellipse
+	Templates = 1	# Use template matching for a black circle on a white background
+	Avotec = 2		# Use avotec output file
+
 
 class EyetrackingCalibrator(object):
 	"""
@@ -62,10 +74,10 @@ class EyetrackingCalibrator(object):
 
 
 	def __init__(self, calibrationVideoFile, calibrationBeginTime = None, calibrationPositions = None, calibrationOrder = None,
-				 calibrationDuration = 2, calibrationDelay = 2, templates = True):
+				 calibrationDuration = 2, calibrationDelay = 2, method = PupilFindingMethod.Templates):
 		"""
 		Constructor
-		@param calibrationVideoFile:	name of video file
+		@param calibrationVideoFile:	name of video file or avotec file
 		@type calibrationVideoFile:		str
 		@param calibrationBeginTime:	time of calibration sequence onset
 		@type calibrationBeginTime:		4ple<int>?
@@ -77,8 +89,8 @@ class EyetrackingCalibrator(object):
 		@type calibrationDuration:		float
 		@param calibrationDelay:		delay in seconds from begin time to first fixation
 		@type calibrationDelay:			float
-		@param templates:				use template matching instead of hough circles?
-		@type templates:				bool
+		@param method:					what method to use to find the pupil
+		@type method:					PupilFindingMethod
 		"""
 		self.calibrationVideoFile = calibrationVideoFile
 		"""
@@ -87,16 +99,20 @@ class EyetrackingCalibrator(object):
 		"""
 		# self.timestampReader = VideoTimestampReader(calibrationVideoFile)
 		# self.timestampReader.ParseTimestamps()
-		if templates:
+		if method == PupilFindingMethod.Templates:
 			self.pupilFinder = TemplatePupilFinder(calibrationVideoFile)
 			"""
 			@ivar: pupil finder object used to find calibration pupils
 			@type: PupilFinder
 			"""
-		else:
+		elif method == PupilFindingMethod.Hough:
 			self.pupilFinder = PupilFinder(calibrationVideoFile)
+		elif method == PupilFindingMethod.Avotec:
+			self.pupilFinder = AvotecPupilFinder(calibrationVideoFile)
+		else:
+			raise ValueError('Unknown pupil finding method: {}'.format(method))
 
-		self.hasGlint = templates
+		self.hasGlint = method == PupilFindingMethod.Templates
 		"""
 		@ivar: can this object find the glint in addition to the pupil?
 		@type: bool
