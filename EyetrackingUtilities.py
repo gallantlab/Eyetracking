@@ -152,8 +152,8 @@ def ParseHistoryForTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset
 	@type TR:				float
 	@type onset:			bool
 	@type threshold:		float
-	@return:	timestamps of TTLs in each run
-	@rtype:	list<tuple<list<float>, int>>, each run is a list of TTL timestamps and the number of TTLs
+	@return:	timestamps of TTLs in each run, each run is a list of TTL timestamps and the number of TTLs
+	@rtype:	list<tuple<list<float>, int>>
 	"""
 
 	historyFile = open(historyFileName, 'r')
@@ -235,8 +235,8 @@ def ParseEventsForTTLs(eventsFileName, TR = 2.0, onset = False, threshold = 5.0)
 	@type TR:				float
 	@type onset:			bool
 	@type threshold:		float
-	@return: timestamps of TTLs in each run
-	@rtype: list<tuple<list<float>, int>>, each run is a list of TTL timestamps and the number of TTLs
+	@return: timestamps of TTLs in each run, each run is a list of TTL timestamps and the number of TTLs
+	@rtype: list<tuple<list<float>, int>>
 	"""
 
 	eventsFile = open(eventsFileName, 'r')
