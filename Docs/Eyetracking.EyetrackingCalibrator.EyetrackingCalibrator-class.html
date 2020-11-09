@@ -102,7 +102,7 @@ object --+
         <span class="summary-sig-arg">calibrationOrder</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">calibrationDuration</span>=<span class="summary-sig-default">2</span>,
         <span class="summary-sig-arg">calibrationDelay</span>=<span class="summary-sig-default">2</span>,
-        <span class="summary-sig-arg">templates</span>=<span class="summary-sig-default">True</span>)</span><br />
+        <span class="summary-sig-arg">method</span>=<span class="summary-sig-default">&lt;PupilFindingMethod.Templates: 1&gt;</span>)</span><br />
       Constructor</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="Eyetracking.EyetrackingCalibrator-pysrc.html#EyetrackingCalibrator.__init__">source&nbsp;code</a></span>
@@ -144,10 +144,10 @@ object --+
         <span class="summary-sig-arg">blur</span>=<span class="summary-sig-default">5</span>,
         <span class="summary-sig-arg">dp</span>=<span class="summary-sig-default">1</span>,
         <span class="summary-sig-arg">minDistance</span>=<span class="summary-sig-default">600</span>,
-        <span class="summary-sig-arg">param1</span>=<span class="summary-sig-default">80</span>,
-        <span class="summary-sig-arg">param2</span>=<span class="summary-sig-default">20</span>,
-        <span class="summary-sig-arg">minRadius</span>=<span class="summary-sig-default">15</span>,
-        <span class="summary-sig-arg">maxRadius</span>=<span class="summary-sig-default">22</span>,
+        <span class="summary-sig-arg">param1</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">param2</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">minRadius</span>=<span class="summary-sig-default">10</span>,
+        <span class="summary-sig-arg">maxRadius</span>=<span class="summary-sig-default">18</span>,
         <span class="summary-sig-arg">windowSize</span>=<span class="summary-sig-default">15</span>,
         <span class="summary-sig-arg">outlierThresholds</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">filterPupilSize</span>=<span class="summary-sig-default">True</span>,
@@ -679,7 +679,7 @@ object --+
         <span class="sig-arg">calibrationOrder</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">calibrationDuration</span>=<span class="sig-default">2</span>,
         <span class="sig-arg">calibrationDelay</span>=<span class="sig-default">2</span>,
-        <span class="sig-arg">templates</span>=<span class="sig-default">True</span>)</span>
+        <span class="sig-arg">method</span>=<span class="sig-default">&lt;PupilFindingMethod.Templates: 1&gt;</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -691,13 +691,13 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>calibrationVideoFile</code></strong> (str) - name of video file</li>
+        <li><strong class="pname"><code>calibrationVideoFile</code></strong> (str) - name of video file or avotec file</li>
         <li><strong class="pname"><code>calibrationBeginTime</code></strong> (4ple&lt;int&gt;?) - time of calibration sequence onset</li>
         <li><strong class="pname"><code>calibrationPositions</code></strong> ([n x 2] array?) - pixel positions of calibration points</li>
         <li><strong class="pname"><code>calibrationOrder</code></strong> (array&lt;int&gt;?) - sequence in which points were presented</li>
         <li><strong class="pname"><code>calibrationDuration</code></strong> (float) - duration of fixation time per point</li>
         <li><strong class="pname"><code>calibrationDelay</code></strong> (float) - delay in seconds from begin time to first fixation</li>
-        <li><strong class="pname"><code>templates</code></strong> (bool) - use template matching instead of hough circles?</li>
+        <li><strong class="pname"><code>method</code></strong> (PupilFindingMethod) - what method to use to find the pupil</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
@@ -748,10 +748,10 @@ object --+
         <span class="sig-arg">blur</span>=<span class="sig-default">5</span>,
         <span class="sig-arg">dp</span>=<span class="sig-default">1</span>,
         <span class="sig-arg">minDistance</span>=<span class="sig-default">600</span>,
-        <span class="sig-arg">param1</span>=<span class="sig-default">80</span>,
-        <span class="sig-arg">param2</span>=<span class="sig-default">20</span>,
-        <span class="sig-arg">minRadius</span>=<span class="sig-default">15</span>,
-        <span class="sig-arg">maxRadius</span>=<span class="sig-default">22</span>,
+        <span class="sig-arg">param1</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">param2</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">minRadius</span>=<span class="sig-default">10</span>,
+        <span class="sig-arg">maxRadius</span>=<span class="sig-default">18</span>,
         <span class="sig-arg">windowSize</span>=<span class="sig-default">15</span>,
         <span class="sig-arg">outlierThresholds</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">filterPupilSize</span>=<span class="sig-default">True</span>,
@@ -771,8 +771,9 @@ object --+
         <li><strong class="pname"><code>blur</code></strong> (int) - median blur filter width</li>
         <li><strong class="pname"><code>dp</code></strong> (float) - inverse ratio of accumulator resolution to image resolution</li>
         <li><strong class="pname"><code>minDistance</code></strong> (float) - min distance between centers of detected circles</li>
-        <li><strong class="pname"><code>param1</code></strong> (float) - higher threshold for canny edge detector</li>
-        <li><strong class="pname"><code>param2</code></strong> (float) - accumulator threshold at detection stage, smaller =&gt; more 
+        <li><strong class="pname"><code>param1</code></strong> (float?) - higher threshold for canny edge detector, or sigmas below normal 
+          for blink detection in templates</li>
+        <li><strong class="pname"><code>param2</code></strong> (float?) - accumulator threshold at detection stage, smaller =&gt; more 
           errors</li>
         <li><strong class="pname"><code>minRadius</code></strong> (int) - min circle radius</li>
         <li><strong class="pname"><code>maxRadius</code></strong> (int) - max circle radius</li>
@@ -1079,7 +1080,7 @@ object --+
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Tue Sep 15 21:48:12 2020
+    on Mon Nov  9 17:48:12 2020
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -1,4 +1,5 @@
 import numpy
+from enum import IntEnum
 try:
 	import cPickle
 except:
@@ -70,45 +71,71 @@ def TimeToSeconds(time):
 	return 3600 * time[0] + 60 * time[1] + time[2] + 0.001 * time[3]
 
 
-def ParseHistoryForStartTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
+class AvotecFile(IntEnum):
 	"""
-	Parses the history file from Avotec for the start TTL timings for runs
-	@param historyFileName:	name of history file from avotec
+	Enum for files that can be parsed for TTL information
+	"""
+	History = 0,
+	Events = 1
+
+
+def ParseRecordsForStartTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5,
+							 fileType = AvotecFile.History):
+	"""
+	Parses either the history or events file from Avotec for the start TTL timings for runs
+	@param fileName:		name of file to parse
 	@param useMovieMarkers:	use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
 	@param TR:				TR length used
 	@param onset:			use the TTL pulse HI instead of the LO value?
 	@param threshold:		multiple of the TR interval to use as a threshold as a break?
-	@type historyFileName:	str
+	@param fileType:		are we parsing a history or events file?
+	@type fileName:			str
 	@type useMovieMarkers:	bool
 	@type TR:				float
 	@type onset:			bool
 	@type threshold:		float
+	@type fileType:			AvotecFile
 	@return:	first value is the timestamp of the first TTL in a run, and the second is number of TRs in each run
 	@rtype:	list<tuple<tuple<float>, int>>
 	"""
 
-	runs = ParseHistoryForTTLs(historyFileName, useMovieMarkers, TR, onset, threshold)
+	runs = None
+	if (fileType == AvotecFile.History):
+		runs = ParseHistoryForTTLs(fileName, useMovieMarkers, TR, onset, threshold)
+	elif (fileType == AvotecFile.Events):
+		runs = ParseEventsForTTLs(fileName, TR, onset, threshold)
+	else:
+		raise ValueError('Unknown file type')
 	return [(run[0][0], run[1]) for run in runs]
 
 
-def ParseHistoryForEndTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5):
+def ParseRecordsForEndTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5,
+						   fileType = AvotecFile.History):
 	"""
-	Parses the history file from Avotec for the last TTL in each run
-	@param historyFileName:	name of history file from avotec
+	Parses either the history or events file from Avotec for the last TTL in each run
+	@param fileName:		name of file from avotec to parse
 	@param useMovieMarkers:	use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
 	@param TR:				TR length used
 	@param onset:			use the TTL pulse HI instead of the LO value?
 	@param threshold:		multiple of the TR interval to use as a threshold as a break?
-	@type historyFileName:	str
+	@param fileType:		are we parsing a history or events file?
+	@type fileName:			str
 	@type useMovieMarkers:	bool
 	@type TR:				float
 	@type onset:			bool
 	@type threshold:		float
+	@type fileType:			AvotecFile
 	@return:	first value is the timestamp of the last TTL in a run, and the second is number of TRs in each run
 	@rtype:	list<tuple<tuple<float>, int>>
 	"""
 
-	runs = ParseHistoryForTTLs(historyFileName, useMovieMarkers, TR, onset, threshold)
+	runs = None
+	if (fileType == AvotecFile.History):
+		runs = ParseHistoryForTTLs(fileName, useMovieMarkers, TR, onset, threshold)
+	elif (fileType == AvotecFile.Events):
+		runs = ParseEventsForTTLs(fileName, TR, onset, threshold)
+	else:
+		raise ValueError('Unknown file type')
 	return [(run[0][-1], run[1]) for run in runs]
 
 
@@ -193,6 +220,75 @@ def ParseHistoryForTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset
 
 	historyFile.close()
 	print('{} duplicated TTLs'.format(duplicates))
+	return runs
+
+
+def ParseEventsForTTLs(eventsFileName, TR = 2.0, onset = False, threshold = 5.0):
+	"""
+	Parses the events file from Avotec for TTLs. Use if history file is not available.
+	The events files does not contain save movie start/stops, so use the history file if possible
+	@param eventsFileName: 	name of events file from avotec
+	@param TR: 				TR duration in seconds
+	@param onset: 			use the TTL pulse onset instead of the offset for timestamps?
+	@param threshold: 		multiple of the TR interval to use as a threshold as a break between runs
+	@type eventsFileName:	str
+	@type TR:				float
+	@type onset:			bool
+	@type threshold:		float
+	@return: timestamps of TTLs in each run
+	@rtype: list<tuple<list<float>, int>>, each run is a list of TTL timestamps and the number of TTLs
+	"""
+
+	eventsFile = open(eventsFileName, 'r')
+	TTLtoken = 'S' if onset else 's'
+	TTLs = []
+	lastTime = (0, 0, 0, 0)
+	duplicates = 0
+
+	runs = []
+	thisRun = []
+
+	line = eventsFile.readline()
+	while line != '':
+		tokens = line.split()
+		if len(tokens) > 0 and tokens[-1] == TTLtoken:
+			time = []
+			for token in re.split('[:\.]', re.match('[0-9\. ]+:[0-9\. ]+:[0-9 ]+\.[0-9]+', line).group()):
+				if (len(token) > 2):	# the milliseconds have rather high precision
+					time.append(int(numpy.round(float(token) * 0.001)))
+				else:
+					time.append(int(token))
+			time = tuple(time)
+			if (TimeToSeconds(time) - TimeToSeconds(lastTime) > 0.1):  # long enough of an interval since last one such that it's not a duplicate
+				TTLs.append(time)
+				lastTime = time
+			else:
+				duplicates += 1
+		line = eventsFile.readline()
+
+	nTRs = 1
+	thisRun.append(TTLs[0])
+	for i in range(1, len(TTLs) - 1):
+		this = TTLs[i]
+		last = TTLs[i - 1]
+		dt = TimeToSeconds(this) - TimeToSeconds(last)
+		if dt > threshold * TR:
+			runs.append((thisRun, nTRs))
+			thisRun = [this]
+			nTRs = 1
+		else:
+			thisRun.append(this)
+			nTRs += 1
+	runs.append((thisRun, nTRs + 1))  # account for last run without a faraway TTL
+
+	eventsFile.close()
+	print('{} duplicated TTLs'.format(duplicates))
+	for i in range(len(runs)):
+		duration = TimeToSeconds(runs[i][0][-1]) - TimeToSeconds(runs[i][0][0])
+		expectedTRs = int(numpy.round(duration / TR))
+		if (i == len(runs) - 1):
+			expectedTRs += 1	# account for last run without a faraway TTL
+		print('Run {} expected {} TTLs from duration, actual recorded {} TTLs'.format(i + 1, expectedTRs, len(runs[i][0])))
 	return runs
 
 
