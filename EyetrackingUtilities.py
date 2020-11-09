@@ -79,7 +79,7 @@ class AvotecFile(IntEnum):
 	Events = 1
 
 
-def ParseRecordsForStartTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5,
+def ParseRecordsForStartTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 5.0,
 							 fileType = AvotecFile.History):
 	"""
 	Parses either the history or events file from Avotec for the start TTL timings for runs
@@ -109,7 +109,7 @@ def ParseRecordsForStartTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset =
 	return [(run[0][0], run[1]) for run in runs]
 
 
-def ParseRecordsForEndTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 1.5,
+def ParseRecordsForEndTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 5.0,
 						   fileType = AvotecFile.History):
 	"""
 	Parses either the history or events file from Avotec for the last TTL in each run
