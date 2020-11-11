@@ -177,7 +177,8 @@ def ParseHistoryForTTLs(historyFileName, useMovieMarkers = True, TR = 2.0, onset
 					nTTLs = 0
 				elif tokens[3] == 'Closing':
 					isStarted = False
-					runs.append((thisRun, nTTLs))
+					if (nTTLs > 0):
+						runs.append((thisRun, nTTLs))
 					thisRun = []
 				if isStarted:
 					if tokens[-1] == TTLtoken and tokens[4] == 'TTL':

@@ -272,9 +272,12 @@ class VideoTimestampReader(VideoReader):
 		if inFile is None:
 			inFile = ZipFile(fileName, 'r')
 
-		super(VideoTimestampReader, self).Load(None, inFile)
-		self.time = ReadNPY(inFile, 'time.npy')
-		self.isParsed = True
+		try:
+			super(VideoTimestampReader, self).Load(None, inFile)
+			self.time = ReadNPY(inFile, 'time.npy')
+			self.isParsed = True
+		except KeyError as e:
+			print(e)
 
 		if closeOnFinish:
 			inFile.close()

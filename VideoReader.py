@@ -232,12 +232,15 @@ class VideoReader(object):
 		if inFile is None:
 			inFile = ZipFile(fileName, 'r')
 
-		info = ReadNPY(inFile, 'VideoInformation.npy')
-		self.fps = info[0]
-		self.width = int(info[1])
-		self.height = int(info[2])
-		self.duration = info[3]
-		self.nFrames = int(info[4])
+		try:
+			info = ReadNPY(inFile, 'VideoInformation.npy')
+			self.fps = info[0]
+			self.width = int(info[1])
+			self.height = int(info[2])
+			self.duration = info[3]
+			self.nFrames = int(info[4])
+		except KeyError as e:
+			print(e)
 
 		if closeOnFinish:
 			inFile.close()
