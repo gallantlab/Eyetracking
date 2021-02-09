@@ -1,7 +1,7 @@
 import numpy
 import cv2
 from zipfile import ZipFile
-from EyetrackingUtilities import SaveNPY, ReadNPY
+from .EyetrackingUtilities import SaveNPY, ReadNPY
 
 class VideoReader(object):
 	"""

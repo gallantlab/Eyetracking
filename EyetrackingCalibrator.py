@@ -1,11 +1,13 @@
 import numpy
 from enum import IntEnum
 from zipfile import ZipFile
-from EyetrackingUtilities import ReadNPY, SaveNPY, parallelize
+from .EyetrackingUtilities import ReadNPY, SaveNPY, parallelize
 from scipy.interpolate import Rbf as RBF
-from PupilFinder import PupilFinder
-from TemplatePupilFinder import TemplatePupilFinder
-from AvotecPupilFinder import AvotecPupilFinder
+from .PupilFinder import PupilFinder
+from .TemplatePupilFinder import TemplatePupilFinder
+from .AvotecPupilFinder import AvotecPupilFinder
+import sys
+PYTHON_VERSION = sys.version_info.major
 
 
 class PupilFindingMethod(IntEnum):
@@ -62,11 +64,17 @@ class EyetrackingCalibrator(object):
 		Yspace = int(height / nVertical / DPIUnscaleFactor)
 		Xspace = int(width / nHorizontal / DPIUnscaleFactor)
 
+		xStart = int(- nHorizontal / 2)
+		yStart = int(-nVertical / 2)
+		if (PYTHON_VERSION < 3):
+			xStart += 1
+			yStart += 1
+
 		points = numpy.zeros([nHorizontal * nVertical, 2], dtype = int)
 		index = 0
-		for i in range(-nHorizontal / 2 + 1, nHorizontal / 2 + 1):
+		for i in range(xStart, int(nHorizontal / 2) + 1):
 			x = width / 2 + i * Xspace
-			for j in range(-nVertical / 2 + 1, nVertical / 2 + 1):
+			for j in range(yStart, int(nVertical / 2) + 1):
 				y = height / 2 + j * Yspace
 				points[index, :] = [x, y]
 				index += 1
