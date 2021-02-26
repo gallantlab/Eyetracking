@@ -365,31 +365,17 @@ class PupilFinder(VideoTimestampReader):
 		if fps is None:
 			return traces
 
-		if (fps - self.fps) < 0.1:
+		if numpy.abs(fps - self.fps) < 0.1:
 			return traces
-		# outTrace = numpy.zeros([int(self.duration * fps), 4])
 
-		# dt = 1000.0 / float(fps)	# in ms
-		# hour = self.time[0, 0]
-		# minute = self.time[0, 1]
-		# second = self.time[0, 2]
-		# millisecond = self.time[0, 3]
-		#
-		# for frame in range(outTrace.shape[0]):
-		# 	time = int(dt * frame)
-		# 	dH = time / (60 * 60 * 1000)
-		# 	time -= dH * (60 * 60 * 1000)
-		# 	dM = time / (60 * 1000)
-		# 	time -= dM * (60 * 1000)
-		# 	dS = time / (1000)
-		# 	dMS = time % 1000
-		#
-		# 	closestFrame = self.FindOnsetFrame(hour + dH, minute + dM, second + dS, millisecond + dMS)
-		# 	outTrace[frame, :] = traces[closestFrame, :]
+		timeScaleFactor = float(fps) / float(self.fps)
+		nFramesOut = int(traces.shape[0] * timeScaleFactor)
+		outTrace = numpy.zeros([nFramesOut, traces.shape[1]])
+		for i in range(nFramesOut):
+			start = int(i / timeScaleFactor)
+			end = int((i + 1) / timeScaleFactor)
+			outTrace[i, :] = traces[start:end, :].mean(0)
 
-		outTrace = []
-		for i in range(0, traces.shape[0], 2):
-			outTrace.append(traces[i, :])
 		outTrace = numpy.array(outTrace)
 
 		return outTrace

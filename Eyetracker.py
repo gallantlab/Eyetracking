@@ -47,8 +47,8 @@ class Eyetracker(object):
 		return self.calibrator.TransformToScreenCoordinates(self.dataPupilFinder.GetTraces(filtered))
 
 
-	def WriteVideosWithGazePosition(self, videoFileName, outFileName = None, eyetrackingStartTime = None, firstEyetrackingFrame = None,
-									firstFrameInVideo = None, flipColors = False):
+	def WriteVideoWithGazePosition(self, videoFileName, outFileName = None, eyetrackingStartTime = None, firstEyetrackingFrame = None,
+								   firstFrameInVideo = None, flipColors = True, numFrames = None):
 		"""
 		Reads in a video, and writes the eyetracking position on the frames
 		@param videoFileName: 			video frame to read in
@@ -58,12 +58,17 @@ class Eyetracker(object):
 		@param firstFrameInVideo: 		the frame in the video at which the data start, if None, will use the TTL marker/gray screen to figure it out
 		@note firstFrameInVideo is specific to the driving project
 		@param flipColors: 				flip colors because BGR->RGB?
+		@param numFrames:				number of frames to write? if non will write whole video
 		@return:
 		"""
 		if (eyetrackingStartTime is None) and (firstEyetrackingFrame is None):
-			dataStart = self.calibrator.calibrationBeginTime
+			eyetrackingStartTime = self.calibrator.calibrationBeginTime
 		if (eyetrackingStartTime is not None) and (firstEyetrackingFrame is not None):
 			print('Both dataStart and firstFrame are provided, using dataStart')
+
+		if eyetrackingStartTime is not None:
+			firstEyetrackingFrame = self.dataPupilFinder.FindOnsetFrame(eyetrackingStartTime [0], eyetrackingStartTime [1],
+																		eyetrackingStartTime [2], eyetrackingStartTime [3])
 
 		videoIn = cv2.VideoCapture(videoFileName)
 		if (not videoIn.isOpened()):
@@ -77,9 +82,12 @@ class Eyetracker(object):
 		height = int(videoIn.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		fps = videoIn.get(cv2.CAP_PROP_FPS)
 
-		videoOut = cv2.videoWriter(outFileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width, height))
+		videoOut = cv2.VideoWriter(outFileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width, height))
 
 		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
+
+		# because the gaze traces are resampled to the video fps
+		firstEyetrackingFrame = int(firstEyetrackingFrame * fps / self.dataPupilFinder.fps)
 
 		success = True
 		if (firstFrameInVideo is not None):
@@ -107,15 +115,31 @@ class Eyetracker(object):
 		color = [30, 144, 255] if not flipColors else [255, 144, 30]
 
 		dataFrame = 0
+		success, frame = videoIn.read()
 		while (success):
-			success, frame = videoIn.read()
-			gazeX = int(gazeLocation[dataFrame + firstEyetrackingFrame, 0])
-			gazeY = int(gazeLocation[dataFrame + firstEyetrackingFrame, 1])
+			gazeIndex = dataFrame + firstEyetrackingFrame
+			if (gazeIndex >= gazeLocation.shape[0]):
+				break
+			gazeX = int(gazeLocation[gazeIndex, 0])
+			gazeY = int(gazeLocation[gazeIndex, 1])
 
-			frame[(gazeY - 5):(gazeY + 5), (gazeX - 10):(gazeX + 10), :] = color
-			frame[(gazeY - 10):(gazeY + 10), (gazeX - 5):(gazeX + 5), :] = color
+			cv2.circle(frame, (gazeX, gazeY), int(width / 10), color, 4)
+			top = gazeY - 5 if gazeY - 5 >= 0 else 0
+			bottom = gazeY + 5 if gazeY + 5 < height else height - 1
+			left = gazeX - 10 if gazeX - 10 >= 0 else 0
+			right = gazeX + 10 if gazeX + 10 < width else width - 1
+			frame[top:bottom, left:right, :] = color
+			top = gazeY - 10 if gazeY - 10 >= 0 else 0
+			bottom = gazeY + 10 if gazeY + 10 < height else height - 1
+			left = gazeX - 5 if gazeX - 5 >= 0 else 0
+			right = gazeX + 5 if gazeX + 5 < width else width - 1
+			frame[top:bottom, left:right, :] = color
 
 			videoOut.write(frame)
+			dataFrame += 1
+			if ((numFrames is not None) and (dataFrame > numFrames)):
+				break
+			success, frame = videoIn.read()
 
 		videoIn.release()
 		videoOut.release()
