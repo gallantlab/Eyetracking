@@ -2,7 +2,6 @@ import numpy
 import cv2
 import os
 from .EyetrackingCalibrator import EyetrackingCalibrator
-from .PupilFinder import PupilFinder
 from skimage.transform import warp, AffineTransform
 from skimage.draw import circle_perimeter as DrawCircle
 from skimage import io
@@ -48,8 +47,82 @@ class Eyetracker(object):
 		return self.calibrator.TransformToScreenCoordinates(self.dataPupilFinder.GetTraces(filtered))
 
 
-	def WriteVideoWithGazePosition(self, frames, fileName, dataStart = None, firstFrame = None,
-								   outResolution = (1024, 768), flipColors = True, fps = 30):
+	def WriteVideosWithGazePosition(self, videoFileName, outFileName = None, eyetrackingStartTime = None, firstEyetrackingFrame = None,
+									firstFrameInVideo = None, flipColors = False):
+		"""
+		Reads in a video, and writes the eyetracking position on the frames
+		@param videoFileName: 			video frame to read in
+		@param outFileName: 			video file name to write out
+		@param eyetrackingStartTime: 	timestamp of the start of the data frames in eyetrakcing, has precedence over firstEyetrackingFrame
+		@param firstEyetrackingFrame: 	the frame in the eyetracking that the first frame of the video corresponds to
+		@param firstFrameInVideo: 		the frame in the video at which the data start, if None, will use the TTL marker/gray screen to figure it out
+		@note firstFrameInVideo is specific to the driving project
+		@param flipColors: 				flip colors because BGR->RGB?
+		@return:
+		"""
+		if (eyetrackingStartTime is None) and (firstEyetrackingFrame is None):
+			dataStart = self.calibrator.calibrationBeginTime
+		if (eyetrackingStartTime is not None) and (firstEyetrackingFrame is not None):
+			print('Both dataStart and firstFrame are provided, using dataStart')
+
+		videoIn = cv2.VideoCapture(videoFileName)
+		if (not videoIn.isOpened()):
+			raise ValueError('Could not open video file {}'.format(videoFileName))
+
+		if (outFileName is None):
+			tokens = os.path.splitext(videoFileName)
+			outFileName = tokens[0] + ' with gaze position.avi'
+
+		width = int(videoIn.get(cv2.CAP_PROP_FRAME_WIDTH))
+		height = int(videoIn.get(cv2.CAP_PROP_FRAME_HEIGHT))
+		fps = videoIn.get(cv2.CAP_PROP_FPS)
+
+		videoOut = cv2.videoWriter(outFileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width, height))
+
+		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
+
+		success = True
+		if (firstFrameInVideo is not None):
+			for i in range(firstFrameInVideo):
+				videoIn.read()
+		else:
+			print('Warning: if this is not a video from the driving project, results will be garbage')
+
+			nFramesRead = 0
+			TTLTemplate = numpy.load(os.path.dirname(__file__) + '/indicator-template.npy').ravel()
+
+			while (success):
+				nFramesRead += 1
+				success, frame = videoIn.read()
+				patch = frame[745:763, 1000:1018, :] > 196  # lower right corner in which TTL indicator appears
+				patch = patch.mean(2)
+				if (numpy.corrcoef(TTLTemplate, patch.ravel())[0, 1] > 0.9):
+					break
+				elif (numpy.sum(frame[745:763, 1000:1018, :] - 137) == 0):
+					nFramesRead -= 2
+					break
+
+			videoIn.set(cv2.CAP_PROP_POS_FRAMES, nFramesRead)
+
+		color = [30, 144, 255] if not flipColors else [255, 144, 30]
+
+		dataFrame = 0
+		while (success):
+			success, frame = videoIn.read()
+			gazeX = int(gazeLocation[dataFrame + firstEyetrackingFrame, 0])
+			gazeY = int(gazeLocation[dataFrame + firstEyetrackingFrame, 1])
+
+			frame[(gazeY - 5):(gazeY + 5), (gazeX - 10):(gazeX + 10), :] = color
+			frame[(gazeY - 10):(gazeY + 10), (gazeX - 5):(gazeX + 5), :] = color
+
+			videoOut.write(frame)
+
+		videoIn.release()
+		videoOut.release()
+
+
+	def WriteVideoWithGazePositionFromFrames(self, frames, fileName, dataStart = None, firstFrame = None,
+								   			 outResolution = (1024, 768), flipColors = True, fps = 30):
 		"""
 		Writes out a video using the input frames and given eyetracking.
 		If neither dataStart nor firstFrame are provided, then the assumption is that eyetracking calibration
