@@ -530,7 +530,9 @@ class EyetrackingCalibrator(object):
 
 		# grumble grumble function overloading...
 		isNone = [pupilFinder is not None, trace is not None, videoFileName is not None]
-		if (sum(isNone) != 1):
+		if (sum(isNone) < 1):
+			raise(ValueError('No inputs given'))
+		if (sum(isNone) > 1):
 			print('Check your input. there can be only one!')
 			return
 

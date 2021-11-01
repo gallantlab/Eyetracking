@@ -1,7 +1,7 @@
 import numpy
 import cv2
 import os
-import io
+import threading
 from zipfile import ZipFile
 from .EyetrackingUtilities import ReadNPY, SaveNPY
 from .VideoTimestampReader import VideoTimestampReader
@@ -43,6 +43,39 @@ class PupilFinder(VideoTimestampReader):
 	Uses the hough transform.
 	See tweak_eyetrack_preproc
 	"""
+
+	@staticmethod
+	def HoughWorker(rawFrames, window, bilateral, blur, dp, minDistance, param1, param2,
+					minRadius, maxRadius, rawPupilLocations):
+		"""
+		For multithreading
+		@param rawFrames:
+		@param radii:
+		@param window:
+		@param bilateral:
+		@param blur:
+		@return:
+		"""
+		pupilLocation = []
+		### === parallel for ===
+		for frameIndex in range(rawFrames.shape[0]):
+			# eyetrack.find pupil()
+			frame = rawFrames[frameIndex, window[2]:window[3], window[0]:window[1], :].mean(-1).astype(numpy.uint8)
+			if (bilateral is not None) and (bilateral > 0):
+				frame = cv2.bilateralFilter(frame, bilateral, 100, 75)
+				frame = cv2.medianBlur(frame, blur)
+			else:
+				frame = cv2.medianBlur(rawFrames[frameIndex, :, :].mean(-1).astype(numpy.uint8), blur)
+			circle = cv2.HoughCircles(frame, cv2.HOUGH_GRADIENT, dp, minDistance, param1, param2, minRadius, maxRadius)
+			if (circle is None):
+				circle = numpy.zeros(3) * numpy.nan
+			circle = circle.squeeze()
+			if (window is not None):
+				circle[0] += window[0]
+				circle[1] += window[2]
+
+			rawPupilLocations[frameIndex, :] = circle
+
 
 	def __init__(self, videoFileName = None, window = None, blur = 5, dp = 1, minDistance = 600, param1 = 80,
 				 param2 = 20, minRadius = 5, maxRadius = 0, other = None):
@@ -201,26 +234,28 @@ class PupilFinder(VideoTimestampReader):
 		self.frameDiffs = numpy.r_[0, numpy.sum(numpy.diff(self.rawFrames, axis = 0) ** 2, (1, 2, 3))]
 		self.blinks = numpy.where(self.frameDiffs > self.frameDiffs.mean() + self.frameDiffs.std() * 2, True, False)
 
-		pupilLocation = []
+		self.rawPupilLocations = numpy.zeros([self.rawFrames.shape[0], 3])
 		### === parallel for ===
-		for frameIndex in range(endFrame):
-			# eyetrack.find pupil()
-			self.frame = self.rawFrames[frameIndex, self.window[2]:self.window[3], self.window[0]:self.window[1], :].mean(-1).astype(numpy.uint8)
-			if (bilateral is not None) and (bilateral > 0):
-				self.frame = cv2.bilateralFilter(self.frame, bilateral, 100, 75)
-				self.frame = cv2.medianBlur(self.frame, self.blur)
-			else:
-				self.frame = cv2.medianBlur(self.frames[frameIndex, :, :], self.blur)
-			circle = cv2.HoughCircles(self.frame, cv2.HOUGH_GRADIENT, self.dp, self.minDistance, self.param1, self.param2, self._minRadius, self._maxRadius)
-			if (circle is None):
-				circle = numpy.zeros(3) * numpy.nan
-			circle = circle.squeeze()
-			if (self.window is not None):
-				circle[0] += self.window[0]
-				circle[1] += self.window[2]
-
-			pupilLocation.append(circle)
-		self.rawPupilLocations = numpy.asarray(pupilLocation)
+		if nThreads == 1:
+			PupilFinder.HoughWorker(self.rawFrames, self.window, bilateral, self.blur, self.dp,
+									self.minDistance, self.param1, self.param2, self._minRadius, self._maxRadius,
+									self.rawPupilLocations)
+		else:
+			chunkSize = int(endFrame / nThreads)
+			threads = []
+			for thread in range(nThreads):
+				start = chunkSize * thread
+				end = start + chunkSize
+				if thread == (nThreads - 1):
+					end = endFrame
+				threads.append(threading.Thread(target = PupilFinder.HoughWorker,
+												args = (self.rawFrames[start:end, :, :, :], self.window, bilateral, self.blur, self.dp,
+														self.minDistance, self.param1, self.param2, self._minRadius, self._maxRadius,
+														self.rawPupilLocations[start:end, :])))
+			for thread in threads:
+				thread.start()
+			for thread in threads:
+				thread.join()
 
 
 	def FilterPupils(self, windowSize = 15, outlierThresholds = None, filterPupilSize = True):
@@ -292,8 +327,8 @@ class PupilFinder(VideoTimestampReader):
 					for radiusOffset in range(-2, 3):
 						y, x = DrawCircle(circles[frame, 0], circles[frame, 1], circles[frame, 2] + radiusOffset, shape = (self.height, self.width))
 						image[x, y, 2] = 255
-						image[(circles[frame, 1] - 4):(circles[frame, 1] + 4), (circles[frame, 0] - 1):(circles[frame, 0] + 1), 2] = 255
-						image[(circles[frame, 1] - 1):(circles[frame, 1] + 1), (circles[frame, 0] - 4):(circles[frame, 0] + 4), 2] = 255
+					image[(circles[frame, 1] - 4):(circles[frame, 1] + 4), (circles[frame, 0] - 1):(circles[frame, 0] + 1), 2] = 255
+					image[(circles[frame, 1] - 1):(circles[frame, 1] + 1), (circles[frame, 0] - 4):(circles[frame, 0] + 4), 2] = 255
 					if burnLocation:
 						cv2.putText(image, 'x: {:03d} y: {:03d} r: {:03d}'.format(circles[frame, 0], circles[frame, 1], circles[frame, 2]), (30, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])
 						cv2.putText(image, 'frame {:06d}'.format(frame), (60, 20), cv2.FONT_HERSHEY_DUPLEX, 0.75, [0, 255, 0])

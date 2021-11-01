@@ -12,17 +12,27 @@ class Eyetracker(object):
 	Top-level class for doing things with the eyetracker
 	"""
 
-	def __init__(self, calibrator, dataPupilFinder = None):
+	def __init__(self, calibrator, dataPupilFinder = None, calibrator2 = None):
 		"""
-		Constructor
+		Constructor. Can take either one or two calibrators. If there is only one calibrator,
+		then the mapping function from that calibrator will be applied to the pupil traces.
+		If there are two calibrators, it is assumed that the second calibrator occurred aftrer the data,
+		and the mapping will be a smooth linear interpolation between the results of the first and second calibrators.
 		@param calibrator: 				pre-constructed calibration object that has been fit
 		@param dataPupilFinder: 		pre-constructed pupil finding object and pupils have been found, if none, will be that from the calibrator
+		@param calibrator2:				optiuonal, pre-constructed second calibrator to interpolate pupil traces with
 		@type calibrator: 				EyetrackingCalibrator
 		@type dataPupilFinder: 			PupilFinder?
+		@type calibrator2:				EyetrackingCalibrator
 		"""
 		self.calibrator = calibrator
 		"""
 		@ivar: Object used to compute the pupil to gaze mapping on the calibration sequence
+		@type: EyetrackingCalibrator
+		"""
+		self.calibrator2 = calibrator2
+		"""
+		@ivar: Object used to interpolat mappings from pupil video to stimulus video space
 		@type: EyetrackingCalibrator
 		"""
 
@@ -36,15 +46,27 @@ class Eyetracker(object):
 			self.dataPupilFinder = calibrator.pupilFinder
 
 
-	def GetGazeLocations(self, filtered = True):
+	def GetGazeLocations(self, filtered = True, fps = None):
 		"""
 		Gets the gaze positions from the data
 		@param filtered:	use temporally filtered traces?
+		@param fps:			fps to resample the gaze locations to
 		@type filtered:		bool
+		@type fps:			int?
 		@return: estimated gaze locations in screen space
 		@rtype:	numpy.ndarray
 		"""
-		return self.calibrator.TransformToScreenCoordinates(self.dataPupilFinder.GetTraces(filtered))
+		traces = self.dataPupilFinder.GetTraces(filtered, fps)
+		gazeLocations = self.calibrator.TransformToScreenCoordinates(trace = traces)
+		if (self.calibrator2 is not None):
+			calibrator2Positions = self.calibrator2.TransformToScreenCoordinates(trace = traces)
+			ramp = numpy.linspace(0, 1, gazeLocations.shape[0])
+			for i in range(gazeLocations.shape[1]):
+				gazeLocations[:, i] *= (1 - ramp)
+				gazeLocations[:, i] += ramp * calibrator2Positions[:, i]
+
+		return gazeLocations
+
 
 
 	def WriteVideoWithGazePosition(self, videoFileName, outFileName = None, eyetrackingStartTime = None, firstEyetrackingFrame = None,
@@ -84,7 +106,7 @@ class Eyetracker(object):
 
 		videoOut = cv2.VideoWriter(outFileName, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (width, height))
 
-		gazeLocation = self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces(fps = fps))
+		gazeLocation = self.GetGazeLocations(True, fps = fps)
 
 		# because the gaze traces are resampled to the video fps
 		firstEyetrackingFrame = int(firstEyetrackingFrame * fps / self.dataPupilFinder.fps)
@@ -355,7 +377,7 @@ class Eyetracker(object):
 
 		for frame in range(nFrames):
 			eyetrackingFrame = int(frame * frameIndexingFactor) + firstFrame
-			if (eyetrackingFrame > gazeLocation.shape[0]):
+			if (eyetrackingFrame >= gazeLocation.shape[0]):
 				break
 			dx = int(gazeSize[0] / 2 - gazeLocation[eyetrackingFrame, 0])
 			dy = int(gazeSize[1] / 2 - gazeLocation[eyetrackingFrame, 1])

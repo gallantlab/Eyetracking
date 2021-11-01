@@ -80,33 +80,39 @@ class AvotecFile(IntEnum):
 
 
 def ParseRecordsForStartTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 5.0,
-							 fileType = AvotecFile.History):
+							 fileType = AvotecFile.History, index = 0):
 	"""
-	Parses either the history or events file from Avotec for the start TTL timings for runs
+	Parses either the history or events file from Avotec for the start TTL timings for runs. Use index to
+	specify the nth TTL to return
 	@param fileName:		name of file to parse
 	@param useMovieMarkers:	use the start/stop save movie entries to calculate runs? if true, the TR, onset, and threshold arguments are useless
 	@param TR:				TR length used
 	@param onset:			use the TTL pulse HI instead of the LO value?
 	@param threshold:		multiple of the TR interval to use as a threshold as a break?
 	@param fileType:		are we parsing a history or events file?
+	@param index:			0-indexed index of TTL to return
 	@type fileName:			str
 	@type useMovieMarkers:	bool
 	@type TR:				float
 	@type onset:			bool
 	@type threshold:		float
 	@type fileType:			AvotecFile
+	@type index:			int
 	@return:	first value is the timestamp of the first TTL in a run, and the second is number of TRs in each run
 	@rtype:	list<tuple<tuple<float>, int>>
 	"""
 
 	runs = None
+	if (index < 0):
+		index = 0
+		print('negative index set to 0')
 	if (fileType == AvotecFile.History):
 		runs = ParseHistoryForTTLs(fileName, useMovieMarkers, TR, onset, threshold)
 	elif (fileType == AvotecFile.Events):
 		runs = ParseEventsForTTLs(fileName, TR, onset, threshold)
 	else:
 		raise ValueError('Unknown file type')
-	return [(run[0][0], run[1]) for run in runs]
+	return [(run[0][index], run[1]) for run in runs]
 
 
 def ParseRecordsForEndTTLs(fileName, useMovieMarkers = True, TR = 2.0, onset = False, threshold = 5.0,
