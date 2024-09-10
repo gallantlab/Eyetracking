@@ -293,22 +293,24 @@ class EyetrackingCalibrator(object):
 
 
 	def EstimateCalibrationPointPositions(self, beginTime = None, method = numpy.nanmedian, startDelay = 1.0 / 6.0, endSkip = 0.0, duration = None,
-										  filtered = True, verbose = True):
+										  filtered = True, verbose = True, beginFrame: int = None):
 		"""
 		Estimates the pupil positions corresponding to each calibration point
-		@param beginTime:		time of calibration sequence onset	TODO: replace this with a frame number
+		@param beginTime:		time of calibration sequence onset
 		@param method:			method used to aggregated points to one summary point
 		@param startDelay:		time delay in seconds to account for eye movement delay
 		@param endSkip:			time in seconds to clip from the end of a fixation period
 		@param duration:		duration of each fixation point, if list, search through all and select best
 		@param filtered:		use filtered pupil locations?
 		@param verbose:			verbose?
+		@param beginFrame:		frame number of calibration sequence onset, if given, overrides beginTime
 		@type method:			function
 		@type startDelay:		float
 		@type endSkip:			float
 		@type duration:			float|list<float>?
 		@type filtered:			bool
 		@type verbose:			bool
+		@type beginFrame:		Optional<int>
 		@return:
 		"""
 		if (self.pupilFinder is None):
@@ -336,7 +338,9 @@ class EyetrackingCalibrator(object):
 					self.bestDuration = duration[i]
 			self.EstimateCalibrationPointPositions(beginTime, method, startDelay, endSkip, self.bestDuration, filtered)
 		else:
-			firstFrame = self.pupilFinder.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
+			firstFrame = beginFrame
+			if beginFrame is None:
+				firstFrame = self.pupilFinder.FindOnsetFrame(beginTime[0], beginTime[1], beginTime[2], beginTime[3])
 			firstFrame += int(self.calibrationDelay * self.pupilFinder.fps)
 			startOffset = int(self.pupilFinder.fps * startDelay)	# convert startDelay time to frame counts
 			endOffset = int(self.pupilFinder.fps * endSkip)  # convert startDelay time to frame counts
