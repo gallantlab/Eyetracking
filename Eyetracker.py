@@ -1,6 +1,7 @@
 import numpy
 import cv2
 import os
+from typing import Tuple
 from .EyetrackingCalibrator import EyetrackingCalibrator
 from skimage.transform import warp, AffineTransform
 from skimage.draw import circle_perimeter as DrawCircle
@@ -11,6 +12,46 @@ class Eyetracker(object):
 	"""
 	Top-level class for doing things with the eyetracker
 	"""
+	@staticmethod
+	def RecenterFramesWithGaze(frames: numpy.ndarray, gaze: numpy.ndarray, folder: str,
+							   frameFPS: int = 30, gazeFPS: int = 60, gazeSize: Tuple[int, int] = (1024, 768),
+							   frameScale: float = 0.125, padValue: float = 0.1, flipColors: bool = False):
+		"""
+		Static method for recentering frames with gaze locations. Used mainly for manually corrected gaze locations
+		@param frames: 		4D array of [index, h, w, color] frames
+		@param gaze: 		2d array of [time, xy] gaze locations, starts are same time as frames
+		@param folder: 		folder to write output frames to
+		@param frameFPS: 	FPS of frames
+		@param gazeFPS: 	FPS of gaze locations
+		@param gazeSize: 	gaze bounds
+		@param frameScale: 	size of frames relative to the eyetracking scale
+		@param padValue: 	range [0, 1] for padding
+		@param flipColors: 	flip to BGR?
+		@return:
+		"""
+		nFrames = frames.shape[0]
+		width = frames.shape[2]
+		height = frames.shape[1]
+
+		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
+		frameIndexingFactor = gazeFPS / frameFPS
+
+		if not (os.path.exists(folder)):
+			os.makedirs(folder)
+
+		for frame in range(nFrames):
+			eyetrackingFrame = int(frame * frameIndexingFactor)
+			if (eyetrackingFrame >= gaze.shape[0]):
+				break
+			dx = int(gazeSize[0] / 2 - gaze[eyetrackingFrame, 0])
+			dy = int(gazeSize[1] / 2 - gaze[eyetrackingFrame, 1])
+			transform = AffineTransform(translation = [dx * frameScale + width / 2, dy * frameScale + height / 2])
+			image = warp(frames[frame, :, :, :3], transform.inverse, output_shape = (height * 2, width * 2), cval = padValue) * 255
+			image = image.astype(numpy.uint8)
+			if flipColors:
+				image = image[:, :, ::-1]
+			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
+
 
 	def __init__(self, calibrator, dataPupilFinder = None, calibrator2 = None):
 		"""
@@ -360,33 +401,14 @@ class Eyetracker(object):
 			dataStart = self.calibrator.calibrationBeginTime
 		if (dataStart is not None) and (firstFrame is not None):
 			print('Both dataStart and firstFrame are provided, using dataStart')
-
-		nFrames = frames.shape[0]
-		width = frames.shape[2]
-		height = frames.shape[1]
-		gazeLocation = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
+			
+		gaze = numpy.nan_to_num(self.calibrator.TransformToScreenCoordinates(trace = self.dataPupilFinder.GetTraces()))
 
 		if dataStart is not None:
 			firstFrame = self.dataPupilFinder.FindOnsetFrame(dataStart[0], dataStart[1], dataStart[2], dataStart[3])
 
-		# basically, use stimulus frame time as the standard, and convert/index into the gazeLocation vector with that
-		frameIndexingFactor = self.dataPupilFinder.fps / fps
-
-		if not (os.path.exists(folder)):
-			os.makedirs(folder)
-
-		for frame in range(nFrames):
-			eyetrackingFrame = int(frame * frameIndexingFactor) + firstFrame
-			if (eyetrackingFrame >= gazeLocation.shape[0]):
-				break
-			dx = int(gazeSize[0] / 2 - gazeLocation[eyetrackingFrame, 0])
-			dy = int(gazeSize[1] / 2 - gazeLocation[eyetrackingFrame, 1])
-			transform = AffineTransform(translation = [dx * scale + width / 2, dy * scale + height / 2])
-			image = warp(frames[frame, :, :, :3], transform.inverse, output_shape = (height * 2, width * 2), cval = padValue) * 255
-			image = image.astype(numpy.uint8)
-			if flipColors:
-				image = image[:, :, ::-1]
-			io.imsave(folder + '/frame-{:06d}.png'.format(frame), image)
+		Eyetracker.RecenterFramesWithGaze(frames, gaze[firstFrame:, :], folder, fps, self.calibrator.pupilFinder.fps,
+										  gazeSize, scale, padValue, flipColors)
 
 
 	def WriteSideBySideVideo(self, frames, fileName, dataStart = None, firstDataFrame = None,
